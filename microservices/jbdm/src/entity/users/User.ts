@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, Unique } from "typeorm";
+import { Relationship } from "./Relationship";
 
 export enum UserGender {
   FEMALE = "female",
@@ -11,10 +12,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({unique: true})
   email: string;
 
-  @Column()
+  @Column({unique: true})
   username: string;
 
   @Column({ nullable: true })
@@ -22,4 +23,8 @@ export class User {
 
   @Column({ nullable: true })
   age: number;
+
+  @ManyToMany(type => Relationship, relation => relation.users)
+  @JoinTable()
+  relations: Relationship[];
 }

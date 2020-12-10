@@ -1,4 +1,4 @@
-import { Entity, Column, RelationId, Unique, Check } from "typeorm";
+import { Entity, Column, Unique, Check, ManyToMany } from "typeorm";
 import { User } from "./User";
 
 export enum RelationshipStatus {
@@ -24,4 +24,7 @@ export class Relationship {
 
   @Column()
   status: RelationshipStatus;
+
+  @ManyToMany(type => User, user => user.relations)
+  users: User[];
 }

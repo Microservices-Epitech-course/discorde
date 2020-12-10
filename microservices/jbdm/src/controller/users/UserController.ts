@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { Request } from "express";
 import { User } from "../../entity/users/User";
+import { Relationship } from "../../entity/users/Relationship";
 
 export class UserController {
   private userRepository = getRepository(User);
@@ -22,7 +23,8 @@ export class UserController {
   }
 
   async remove(req: Request) {
-    let userToRemove = await this.one(req);
-    await this.userRepository.remove(userToRemove);
+    let userToRemove = await this.userRepository.findOne(req.params.userId, {relations: ["relations"]});
+    await getRepository(Relationship).remove(userToRemove.relations);
+    return this.userRepository.remove(userToRemove);
   }
 }
