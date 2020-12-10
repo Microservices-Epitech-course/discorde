@@ -11,15 +11,15 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false })
+  @Column()
   email: string;
 
-  @Column({ nullable: false })
+  @Column()
   username: string;
 
-  @Column()
+  @Column({ nullable: true })
   gender: UserGender;
 
-  @Column()
+  @Column({ nullable: true })
   age: number;
 }

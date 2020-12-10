@@ -1,23 +1,65 @@
-import {UserController} from "./controller/UserController";
+import { UserController } from "./controller/users/UserController";
+import { RelationshipController } from "./controller/users/RelationshipController";
 
-export const Routes = [{
+export const Routes = [
+  {
     method: "get",
     route: "/users",
     controller: UserController,
-    action: "all"
-}, {
+    action: "all",
+  },
+  {
     method: "get",
-    route: "/users/:id",
+    route: "/users/:userId",
     controller: UserController,
-    action: "one"
-}, {
+    action: "one",
+  },
+  {
     method: "post",
     route: "/users",
     controller: UserController,
-    action: "save"
-}, {
-    method: "delete",
-    route: "/users/:id",
+    action: "add",
+  },
+  {
+    method: "patch",
+    route: "/users/:userId",
     controller: UserController,
-    action: "remove"
-}];
+    action: "update",
+  },
+  {
+    method: "delete",
+    route: "/users/:userId",
+    controller: UserController,
+    action: "remove",
+  },
+  {
+    method: "get",
+    route: "/users/:userId/relationships",
+    controller: RelationshipController,
+    action: "all",
+  },
+  {
+    method: "get",
+    route: "/users/:userId/relationships/:relationshipId",
+    controller: RelationshipController,
+    action: "one",
+  },
+  {
+    method: "post",
+    route: "/users/:userId/relationships/:relationshipId",
+    controller: RelationshipController,
+    action: "add",
+  },
+  {
+    method: "patch",
+    route: "/users/:userId/relationships/:relationshipId",
+    controller: RelationshipController,
+    action: "update",
+  },
+  {
+    method: "delete",
+    route: "/users/:userId/relationships/:relationshipId",
+    controller: RelationshipController,
+    action: "remove",
+  },
+];
