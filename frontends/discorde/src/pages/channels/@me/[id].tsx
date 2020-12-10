@@ -1,5 +1,9 @@
-import {NextPage} from "next";
+import { useRouter } from 'next/router';
 
-const PrivateMessage: NextPage<{ id: string }> = ({ id }) => <div>PrivateMessage: {id}</div>
+const PrivateMessage = (): JSX.Element => {
+  const router = useRouter();
+  const { id } = router.query;
+  return <div>PrivateMessage: {id}</div>;
+};
 
 export default PrivateMessage;

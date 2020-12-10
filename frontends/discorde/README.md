@@ -1,30 +1,71 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Discorde Front-end
 
-## Getting Started
+Web Interface for Discorde website
 
-First, run the development server:
+## Requirements
 
-```bash
-npm run dev
-# or
-yarn dev
+| Name | Version |
+|------|---------|
+| **node** | **>= 15** |
+| **docker** | **>= 19** |
+| **docker-compose** | **>= 1.26** |
+
+### Install dependencies
+
+```sh
+$> yarn # or npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Usages
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+> Don't forget to `Install dependencies` before running any command below
 
-## Learn More
+### Build App
 
-To learn more about Next.js, take a look at the following resources:
+```sh
+$> yarn build # or npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Start
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+In Developpement
 
-## Deploy on Vercel
+```sh
+$> yarn dev # or npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+In Production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```sh
+$> yarn start # or npm start
+```
+
+### Serve
+
+```sh
+$> yarn serve ## or npm run serve
+```
+
+### Lint
+
+```sh
+$> yarn lint # or npm run lint
+```
+
+### Test
+
+[Cypress](https://www.cypress.io/) is an end-to-end testing tools for anything that runs in a browser.
+
+> Before running any command below, start the in developpement or production mode
+
+Run cypress with GUI
+
+```sh
+$> yarn cypress:open # or npm run cypress:open
+```
+
+Run cypress without GUI
+
+```sh
+$> yarn cypress # or npm run cypress
+```
