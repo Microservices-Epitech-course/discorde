@@ -1,7 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request } from "express";
-import { User } from "../../entity/users/User";
-import { Relationship } from "../../entity/users/Relationship";
+import { User, Relationship } from "@discorde/datamodel";
 
 export class UserController {
   private userRepository = getRepository(User);

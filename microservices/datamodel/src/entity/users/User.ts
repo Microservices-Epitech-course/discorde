@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, Unique, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Relationship } from "./Relationship";
 
 export enum UserGender {
@@ -27,4 +27,10 @@ export class User {
   @ManyToMany(type => Relationship, relation => relation.users)
   @JoinTable()
   relations: Relationship[];
+
+
+  @CreateDateColumn()
+  createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
