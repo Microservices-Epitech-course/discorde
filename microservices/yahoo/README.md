@@ -1,2 +1,16 @@
+# Yahoo 
 
-**Yahoo** is a service handling searches (messages, user, servers, ...)
+### Service for handling searches (messages, user, servers, ...)
+
+## How to setup
+
+1. Install packages
+   `npm install`
+
+2. Edit the `ormconfig.json` file and put Postgres's credentials in there.
+   You can find these credentials on `heroku.com` at `discorde-app` => `Resources` => `Heroku Postgres` => `Settings` => `View Credentials...`.
+
+## How to start
+
+1. Start the Express server
+   `npm start`
