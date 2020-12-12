@@ -1,7 +1,7 @@
 {
-   "name": "jbdm",
+   "name": "hermes",
    "version": "0.0.1",
-   "description": "Discorde JBDM",
+   "description": "Discorde Hermes",
    "devDependencies": {
       "@types/node": "^8.0.29",
       "nodemon": "^2.0.6",
