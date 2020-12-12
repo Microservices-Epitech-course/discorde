@@ -4,8 +4,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { Routes } from "./routes";
-import { User } from "./entity/users/User";
-import { Relationship, RelationshipStatus } from "./entity/users/Relationship";
+import { User } from "@discorde/datamodel";
 
 createConnection()
   .then(async (connection) => {
@@ -34,27 +33,18 @@ createConnection()
     await connection.manager.remove(await connection.manager.find(User));
 
     // insert new users for test
-    // const user1 = await connection.manager.save(
-    //   connection.manager.create(User, {
-    //     email: "nudges@gmail.com" + Date.now(),
-    //     username: "Nudges",
-    //   })
-    // );
-    // const user2 = await connection.manager.save(
-    //   connection.manager.create(User, {
-    //     email: "toto@gmail.com" + Date.now(),
-    //     username: "Toto",
-    //   })
-    // );
-    // const relationship = await connection.manager.save(
-    //   connection.manager.create(Relationship, {
-    //      userOneId: user1.id,
-    //      userTwoId: user2.id,
-    //      actionUserId: user1.id,
-    //      status: RelationshipStatus.PENDING,
-    //      users: [user1, user2]
-    //   })
-    // );
+    const user1 = await connection.manager.save(
+      connection.manager.create(User, {
+        email: "nudges@gmail.com" + Date.now(),
+        username: "Nudges",
+      })
+    );
+    const user2 = await connection.manager.save(
+      connection.manager.create(User, {
+        email: "toto@gmail.com" + Date.now(),
+        username: "Toto",
+      })
+    );
 
     console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results");
   })
