@@ -22,8 +22,6 @@ export class UserController {
   }
 
   async remove(req: Request) {
-    let userToRemove = await this.userRepository.findOne(req.params.userId, {relations: ["relations"]});
-    await getRepository(Relationship).remove(userToRemove.relations);
-    return this.userRepository.remove(userToRemove);
+    return this.userRepository.remove(await this.one(req));
   }
 }

@@ -1,4 +1,4 @@
-import { Entity, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
 import { User, Role, Server, Message, Reaction } from "./";
 
 @Entity()
@@ -25,4 +25,12 @@ export class Member {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeRemove()
+  async deleteListener() {
+    const member = await getRepository(Member).findOne(this.id, {relations: ['messages', 'reactions']});
+
+    await getRepository(Message).remove(member.messages);
+    await getRepository(Reaction).remove(member.reactions);
+  }
 }

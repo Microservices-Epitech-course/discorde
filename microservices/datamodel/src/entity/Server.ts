@@ -1,4 +1,4 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, BeforeRemove, getRepository } from "typeorm";
 import { Member, Channel, Role, Invitation } from ".";
 
 @Entity()
@@ -22,4 +22,15 @@ export class Server {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+
+  @BeforeRemove()
+  async deleteListener() {
+    const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'channels', 'roles', 'invitations']});
+
+    await getRepository(Member).remove(server.members);
+    await getRepository(Channel).remove(server.channels);
+    await getRepository(Role).remove(server.roles);
+    await getRepository(Invitation).remove(server.invitations);
+  }
 }

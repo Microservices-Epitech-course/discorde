@@ -1,4 +1,4 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
 import { Server, ChannelRoleSettings, Message } from ".";
 
 enum ChannelType {
@@ -30,4 +30,12 @@ export class Channel {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeRemove()
+  async deleteListener() {
+    const channel = await getRepository(Channel).findOne(this.id, {relations: ['channelRoleSettings', 'messages']});
+
+    await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
+    await getRepository(Message).remove(channel.messages);
+  }
 }

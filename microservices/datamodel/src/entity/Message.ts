@@ -1,4 +1,4 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
 import { Member, Channel, Reaction, Conversation } from ".";
 
 export enum MessageParent {
@@ -36,4 +36,11 @@ export class Message {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeRemove()
+  async deleteListener() {
+    const message = await getRepository(Message).findOne(this.id, {relations: ['reactions']});
+
+    await getRepository(Reaction).remove(message.reactions);
+  }
 }

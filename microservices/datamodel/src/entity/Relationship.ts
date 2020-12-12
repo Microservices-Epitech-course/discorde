@@ -16,10 +16,10 @@ export class Relationship {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ primary: true })
+  @Column()
   userOneId: number;
 
-  @Column({ primary: true })
+  @Column()
   userTwoId: number;
 
   @Column()
