@@ -1,11 +1,11 @@
 {
   "name": "@discorde/datamodel",
-  "version": "1.0.15",
+  "version": "1.0.29",
   "description": "discorde project shared datamodel",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf lib/ && tsc",
     "prepare": "npm run build",
     "publish-version": "npm version patch && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"

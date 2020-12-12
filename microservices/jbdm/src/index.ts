@@ -4,7 +4,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import { Routes } from "./routes";
-import { User } from "@discorde/datamodel";
+import { Relationship, RelationshipStatus, User, UserStatus } from "@discorde/datamodel";
 
 createConnection()
   .then(async (connection) => {
@@ -31,18 +31,32 @@ createConnection()
     app.listen(3000);
 
     await connection.manager.remove(await connection.manager.find(User));
+    await connection.manager.remove(await connection.manager.find(Relationship));
 
     // insert new users for test
     const user1 = await connection.manager.save(
       connection.manager.create(User, {
         email: "nudges@gmail.com" + Date.now(),
         username: "Nudges",
+        password: "test",
+        status: UserStatus.ONLINE,
       })
     );
     const user2 = await connection.manager.save(
       connection.manager.create(User, {
         email: "toto@gmail.com" + Date.now(),
         username: "Toto",
+        password: "test",
+        status: UserStatus.ONLINE,
+      })
+    );
+    const relation = await connection.manager.save(
+      connection.manager.create(Relationship, {
+        userOneId: user1.id,
+        userTwoId: user2.id,
+        status: RelationshipStatus.PENDING,
+        users: [user1, user2],
+        actionUserId: user1.id,
       })
     );
 

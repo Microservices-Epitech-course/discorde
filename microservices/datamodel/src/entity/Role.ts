@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinTable } from "typeorm";
+import { Entity, Column, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinTable, BeforeRemove, getRepository } from "typeorm";
 import { Member, Server, ChannelRoleSettings } from ".";
 
 @Entity()
@@ -26,4 +26,11 @@ export class Role {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeRemove()
+  async deleteListener() {
+    const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
+
+    await getRepository(ChannelRoleSettings).remove(role.channelRoleSettings);
+  }
 }
