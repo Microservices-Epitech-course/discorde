@@ -1,5 +1,5 @@
-import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./User";
+import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { User } from ".";
 
 export enum RelationshipStatus {
   PENDING = "pending",
@@ -13,6 +13,9 @@ export enum RelationshipStatus {
 @Check(`"userOneId" < "userTwoId"`)
 @Check(`"actionUserId" = "userOneId" OR "actionUserId" = "userTwoId"`)
 export class Relationship {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({ primary: true })
   userOneId: number;
 
