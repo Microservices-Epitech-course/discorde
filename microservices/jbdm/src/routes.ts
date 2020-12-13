@@ -1,5 +1,5 @@
 import { UserController } from "./controller/users/UserController";
-import { RelationshipController } from "./controller/users/RelationshipController";
+import { RelationController } from "./controller/users/RelationController";
 
 export const Routes = [
   {
@@ -34,32 +34,32 @@ export const Routes = [
   },
   {
     method: "get",
-    route: "/users/:userId/relationships",
-    controller: RelationshipController,
+    route: "/users/:userId/relations",
+    controller: RelationController,
     action: "all",
   },
   {
     method: "get",
-    route: "/users/:userId/relationships/:relationshipId",
-    controller: RelationshipController,
+    route: "/users/:userId/relations/:relationId",
+    controller: RelationController,
     action: "one",
   },
   {
     method: "post",
-    route: "/users/:userId/relationships/:relationshipId",
-    controller: RelationshipController,
+    route: "/users/:userId/relations/:relationId",
+    controller: RelationController,
     action: "add",
   },
   {
     method: "patch",
-    route: "/users/:userId/relationships/:relationshipId",
-    controller: RelationshipController,
+    route: "/users/:userId/relations/:relationId",
+    controller: RelationController,
     action: "update",
   },
   {
     method: "delete",
-    route: "/users/:userId/relationships/:relationshipId",
-    controller: RelationshipController,
+    route: "/users/:userId/relations/:relationId",
+    controller: RelationController,
     action: "remove",
   },
 ];
