@@ -1,6 +1,6 @@
 {
   "name": "@discorde/datamodel",
-  "version": "1.0.29",
+  "version": "1.0.35",
   "description": "discorde project shared datamodel",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

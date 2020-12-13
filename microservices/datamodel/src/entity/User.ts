@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, getConnection } from "typeorm";
-import { Conversation, Member, Relationship } from ".";
+import { Conversation, Member, Relation } from ".";
 
 export enum UserGender {
   FEMALE = "female",
@@ -20,10 +20,10 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   username: string;
 
   @Column()
@@ -38,9 +38,9 @@ export class User {
   @Column({ nullable: true })
   image: string;
 
-  @ManyToMany(type => Relationship, relation => relation.users)
+  @ManyToMany(type => Relation, relation => relation.users)
   @JoinTable()
-  relations: Relationship[];
+  relations: Relation[];
 
   @OneToMany(type => Member, member => member.user)
   serverMembers: Member[];
@@ -58,13 +58,13 @@ export class User {
 
   @BeforeRemove()
   async deleteListener() {
-    const user = await getRepository(User).findOne(this.id, {relations: ['relations', 'serverMembers', 'conversations']});
+    const user = await getRepository(User).findOne(this.id, { relations: ['relations', 'serverMembers', 'conversations'] });
 
-    await getRepository(Relationship).remove(user.relations);
+    await getRepository(Relation).remove(user.relations);
     await getRepository(Member).remove(user.serverMembers);
 
-    const conversations = (await getRepository(Conversation).findByIds(user.conversations, {relations: ['users']})).map((conversation) => { conversation.users = conversation.users.filter((e) => e.id !== user.id); return conversation; });
+    const conversations = (await getRepository(Conversation).findByIds(user.conversations, { relations: ['users'] })).map((conversation) => { conversation.users = conversation.users.filter((e) => e.id !== user.id); return conversation; });
     await getRepository(Conversation).save(conversations);
-    await getRepository(Conversation).remove(conversations.filter((conversation) => conversation.users.length === 0));
+    await getRepository(Conversation).remove(conversations.filter((conversation) => conversation.users.length < 2));
   }
 }

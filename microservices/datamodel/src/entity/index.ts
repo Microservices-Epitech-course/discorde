@@ -6,7 +6,7 @@ export * from './Invitation';
 export * from './Member';
 export * from './Message';
 export * from './Reaction';
-export * from './Relationship';
+export * from './Relation';
 export * from './Role';
 export * from './Server';
 export * from './User';
