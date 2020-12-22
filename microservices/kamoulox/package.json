@@ -1,7 +1,7 @@
 {
-   "name": "hermes",
+   "name": "kamoulox",
    "version": "0.0.1",
-   "description": "Discorde Hermes",
+   "description": "Discorde Kamoulox",
    "devDependencies": {
       "@types/node": "^8.0.29",
       "nodemon": "^2.0.6",

@@ -14,17 +14,17 @@ export class RelationController {
   async one(req: Request) {
     return this.relationRepository.findOne({
       where: {
-        userOneId: Math.min(req.params.userId, req.params.relationId),
-        userTwoId: Math.max(req.params.userId, req.params.relationId),
+        userOneId: Math.min(Number(req.params.userId), Number(req.params.relationId)),
+        userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
       },
     });
   }
 
   async add(req: Request) {
     return this.relationRepository.save({
-      userOneId: Math.min(req.params.userId, req.params.relationId),
-      userTwoId: Math.max(req.params.userId, req.params.relationId),
-      actionUserId: req.params.userId,
+      userOneId: Math.min(Number(req.params.userId), Number(req.params.relationId)),
+      userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
+      actionUserId: Number(req.params.userId),
       status: RelationStatus.PENDING,
     });
   }
@@ -42,7 +42,7 @@ export class RelationController {
         relationToUpdate.status = RelationStatus.BLOCKED;
         break;
     }
-    relationToUpdate.actionUserId = req.params.userId;
+    relationToUpdate.actionUserId = Number(req.params.userId);
     return this.relationRepository.save(relationToUpdate);
   }
 
