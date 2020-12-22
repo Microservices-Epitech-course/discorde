@@ -1,7 +1,7 @@
 {
-   "name": "hermes",
+   "name": "sven",
    "version": "0.0.1",
-   "description": "Discorde Hermes",
+   "description": "Discorde Sven",
    "devDependencies": {
       "@types/node": "^8.0.29",
       "nodemon": "^2.0.6",
