@@ -11,11 +11,12 @@ const checkRole = (roles: Array<string>) => {
     try {
       const user = await userRepository.findOneOrFail(id);
 
-      next();
-      // if (roles.indexOf(user.role) > -1)
-      //   next();
-      // else
-      //   res.status(401).send();
+      if (roles.indexOf(user.role) > -1) {
+        res.locals.role = user.role;
+        next();
+      } else {
+        res.status(401).send();
+      }
     } catch (id) {
       res.status(401).send();
     }

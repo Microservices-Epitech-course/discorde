@@ -9,7 +9,7 @@
       "typescript": "3.3.3333"
    },
    "dependencies": {
-      "@discorde/datamodel": "^1.0.35",
+      "@discorde/datamodel": "^1.0.59",
       "body-parser": "^1.18.1",
       "express": "^4.15.4",
       "pg": "^8.4.0",
