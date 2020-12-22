@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
+import jwtSecret from "../config/jwtSecret";
 
-const jwtSecret = "discorde-microservices";
 
 const checkJwt = (req: Request, res: Response, next: NextFunction) => {
   const token = <string>req.headers["authorization"];

@@ -1,5 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, getConnection } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, BeforeInsert } from "typeorm";
 import { Conversation, Member, Relation } from ".";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import jwtSecret from "../config/jwtSecret";
 
 export enum UserGender {
   FEMALE = "female",
@@ -15,6 +18,11 @@ export enum UserStatus {
   INVISIBLE = "invisible",
 }
 
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -28,6 +36,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column({ default: UserRole.USER })
+  role: UserRole;
 
   @Column({ nullable: true })
   gender: UserGender;
@@ -48,13 +59,18 @@ export class User {
   @ManyToMany(type => Conversation, conversation => conversation.users)
   conversations: Conversation[];
 
-  @Column()
+  @Column({ default: UserStatus.OFFLINE })
   status: UserStatus;
 
   @CreateDateColumn()
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @BeforeInsert()
+  async insertListener() {
+    this.password = bcrypt.hashSync(this.password, 8);
+  }
 
   @BeforeRemove()
   async deleteListener() {
@@ -66,5 +82,17 @@ export class User {
     const conversations = (await getRepository(Conversation).findByIds(user.conversations, { relations: ['users'] })).map((conversation) => { conversation.users = conversation.users.filter((e) => e.id !== user.id); return conversation; });
     await getRepository(Conversation).save(conversations);
     await getRepository(Conversation).remove(conversations.filter((conversation) => conversation.users.length < 2));
+  }
+
+  checkPassword(password: string) {
+    return bcrypt.compareSync(password, this.password);
+  }
+
+  getJWTToken() {
+    return jwt.sign(
+      { userId: this.id, username: this.username },
+      jwtSecret,
+      { expiresIn: "1h" },
+    );
   }
 }

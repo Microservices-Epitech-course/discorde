@@ -2,26 +2,33 @@ import { AccountController } from "./controller/account/AccountController";
 
 export const Routes = [
   {
-    method: "get",
-    route: "/account/:userId",
-    controller: AccountController,
-    action: "confirm"
-  },
-  {
+    // Register
     method: "post",
-    route: "/account",
+    route: "/register",
     controller: AccountController,
     action: "register",
+    noAuth: true,
   },
+  // {
+  //   // Email Confirmation
+  //   method: "get",
+  //   route: "/register/:userId",
+  //   controller: AccountController,
+  //   action: "confirm"
+  // },
   {
+    // Account Deletion
     method: "delete",
-    route: "/account/:userId",
+    route: "/account",
     controller: AccountController,
     action: "remove",
   },
-
   {
-    method: "goet",
+    // Login
+    method: "post",
     route: "/auth",
+    controller: AccountController,
+    action: "login",
+    noAuth: true,
   }
 ];
