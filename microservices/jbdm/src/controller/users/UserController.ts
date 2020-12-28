@@ -6,11 +6,11 @@ export class UserController {
   private userRepository = getRepository(User);
 
   async all() {
-    return this.userRepository.find();
+    return this.userRepository.find({ relations: ['relations', 'serverMembers', 'conversations'] });
   }
 
   async one(req: Request) {
-    return this.userRepository.findOne(req.params.userId);
+    return this.userRepository.findOne(req.params.userId, { relations: ['relations', 'serverMembers', 'conversations'] });
   }
 
   async add(req: Request) {
