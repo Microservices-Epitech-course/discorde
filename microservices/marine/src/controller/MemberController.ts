@@ -6,12 +6,13 @@ export class MemberController {
     private memberRepository = getRepository(Member);
 
     async all(req: Request) {
-        return this.memberRepository.find();
+        return this.memberRepository.find({ relations: ['user', 'roles', 'server', 'messages', 'reactions'] });
     }
 
     async one(req: Request) {
         return this.memberRepository.findOne({
-            where: { id: req.params.memberId }
+            where: { id: req.params.memberId },
+            relations: ['user', 'roles', 'server', 'messages', 'reactions']
         });
     }
 

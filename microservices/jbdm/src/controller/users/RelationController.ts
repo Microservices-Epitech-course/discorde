@@ -8,6 +8,7 @@ export class RelationController {
   async all(req: Request) {
     return this.relationRepository.find({
       where: [{ userOneId: req.params.userId }, { userTwoId: req.params.userId }],
+      relations: ['users']
     });
   }
 
@@ -17,6 +18,7 @@ export class RelationController {
         userOneId: Math.min(Number(req.params.userId), Number(req.params.relationId)),
         userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
       },
+      relations: ['users']
     });
   }
 

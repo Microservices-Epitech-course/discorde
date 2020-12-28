@@ -6,21 +6,26 @@ export class ServerController {
     private serverRepository = getRepository(Server);
 
     async all(req: Request) {
-        return this.serverRepository.find();
+        return this.serverRepository.find({ relations: ['members', 'channels', 'roles', 'invitations'] });
     }
 
     async one(req: Request) {
         return this.serverRepository.findOne({
-            where: { id: req.params.serverId }
+            where: { id: req.params.serverId },
+            relations: ['members', 'channels', 'roles', 'invitations']
         });
     }
 
     async add(req: Request) {
         const user = await getRepository(User).findOne({ where: { id: req.body.creatorId } })
-        const creatorMember = await getRepository(Member).save({ user })
-        const server = this.serverRepository.create({ members: [creatorMember] })
-        creatorMember.server = server;
-        return this.serverRepository.save(server);
+        let creatorMember = new Member();
+        let server = new Server();
+
+        creatorMember.user = user;
+        server.members = [creatorMember];
+
+        await getRepository(Member).save(creatorMember)
+        return (await this.serverRepository.save(server));
     }
 
     async remove(req: Request) {
