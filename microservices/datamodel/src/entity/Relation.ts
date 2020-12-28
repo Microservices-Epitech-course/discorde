@@ -1,4 +1,4 @@
-import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, AfterInsert, getRepository } from "typeorm";
+import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, AfterInsert, getRepository, JoinTable } from "typeorm";
 import { User } from ".";
 
 export enum RelationStatus {
