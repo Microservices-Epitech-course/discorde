@@ -26,24 +26,24 @@ export class RelationController {
       userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
       actionUserId: Number(req.params.userId),
       status: RelationStatus.PENDING,
-    });
+    })
   }
 
   async update(req: Request) {
-    let relationToUpdate = await this.one(req);
+    let relation = await this.one(req);
     switch (req.query.action) {
       case "accept":
-        relationToUpdate.status = RelationStatus.ACCEPTED;
+        relation.status = RelationStatus.ACCEPTED;
         break;
       case "deny":
-        relationToUpdate.status = RelationStatus.DECLINED;
+        relation.status = RelationStatus.DECLINED;
         break;
       case "block":
-        relationToUpdate.status = RelationStatus.BLOCKED;
+        relation.status = RelationStatus.BLOCKED;
         break;
     }
-    relationToUpdate.actionUserId = Number(req.params.userId);
-    return this.relationRepository.save(relationToUpdate);
+    relation.actionUserId = Number(req.params.userId);
+    return this.relationRepository.save(relation);
   }
 
   async remove(req: Request) {
