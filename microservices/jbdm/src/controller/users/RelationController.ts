@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request } from "express";
-import { Relation, RelationStatus } from "@discorde/datamodel";
+import { Relation, RelationStatus, User } from "@discorde/datamodel";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
@@ -23,12 +23,15 @@ export class RelationController {
   }
 
   async add(req: Request) {
-    return this.relationRepository.save({
-      userOneId: Math.min(Number(req.params.userId), Number(req.params.relationId)),
-      userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
-      actionUserId: Number(req.params.userId),
-      status: RelationStatus.PENDING,
-    })
+    let relation = new Relation();
+
+    relation.userOneId = Math.min(Number(req.params.userId), Number(req.params.relationId));
+    relation.userTwoId = Math.max(Number(req.params.userId), Number(req.params.relationId));
+    relation.actionUserId = Number(req.params.userId);
+    relation.status = RelationStatus.PENDING;
+    relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId])
+
+    return (await this.relationRepository.save(relation));
   }
 
   async update(req: Request) {
@@ -45,7 +48,7 @@ export class RelationController {
         break;
     }
     relation.actionUserId = Number(req.params.userId);
-    return this.relationRepository.save(relation);
+    return (await this.relationRepository.save(relation));
   }
 
   async remove(req: Request) {
