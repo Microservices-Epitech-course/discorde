@@ -1,10 +1,12 @@
 import { Channel, Message } from "@discorde/datamodel";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
+import * as redis from "redis";
 
 export class MessagesController {
   private messageRepository = getRepository(Message);
   private channelRepository = getRepository(Channel);
+  private publisher = redis.createClient();
 
   async findChannel(req: Request, res: Response) {
     try {
@@ -46,7 +48,7 @@ export class MessagesController {
     channel.messages.push(message);
     this.messageRepository.save(message);
     this.channelRepository.save(channel);
-    // TODO: Notify with WebSockets
+    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: message}));
     res.status(200).send();
   }
 
@@ -65,7 +67,7 @@ export class MessagesController {
     const { content } = req.body;
     message.content = content;
     this.messageRepository.save(message);
-    // TODO: Notify with WebSockets
+    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: message}));
     res.status(200).send();
   }
 
@@ -81,7 +83,7 @@ export class MessagesController {
       return;
     }
     this.messageRepository.remove(message);
-    // TODO: Notify with WebSockets
+    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageDelete", data: messageId}));
     res.status(200).send();
   }
 }
