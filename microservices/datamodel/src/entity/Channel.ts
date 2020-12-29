@@ -1,5 +1,6 @@
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
 import { Server, ChannelRoleSettings, Message } from ".";
+import { publisher } from "./redis";
 
 enum ChannelType {
   TEXTUAL = "textual",
@@ -35,6 +36,7 @@ export class Channel {
   async deleteListener() {
     const channel = await getRepository(Channel).findOne(this.id, {relations: ['channelRoleSettings', 'messages']});
 
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "delete", data: {}}));
     await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
     await getRepository(Message).remove(channel.messages);
   }

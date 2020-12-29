@@ -21,7 +21,7 @@
 |"channel:{channelId}"|{ action: "messageAdd", data: ...Message } | New Message on channel |
 ||{ action: "messageUpdate", data: ...Message } | Message updated on channel |
 ||{ action: "messageDelete", data: messageId } | Message deleted on channel |
-
+||{ action: "delete", data: {}} | Channel deleted |
 ---
 
 ### JBDM

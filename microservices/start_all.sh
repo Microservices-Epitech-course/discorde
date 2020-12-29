@@ -14,6 +14,7 @@ killall() {
   echo DONE
 }
 
+npm run $1 --prefix ./chaussettes/ &
 npm run $1 --prefix ./hermes/ &
 npm run $1 --prefix ./jbdm/ &
 npm run $1 --prefix ./kamoulox/ &
