@@ -15,3 +15,5 @@ cd ../hermes/ && npm install @discorde/datamodel@$VERSION &
 cd ../kamoulox/ && npm install @discorde/datamodel@$VERSION &
 cd ../yahoo/ && npm install @discorde/datamodel@$VERSION &
 cd ../marine/ && npm install @discorde/datamodel@$VERSION &
+
+wait
