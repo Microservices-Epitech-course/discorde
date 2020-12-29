@@ -26,7 +26,7 @@ export class AccountController {
     try {
       const user = await this.userRepository.findOneOrFail(id);
       await this.userRepository.remove(user);
-      res.status(204).send();
+      res.status(204).send("User deleted");
       return;
     } catch (e) {
       res.status(404).send("User not found");

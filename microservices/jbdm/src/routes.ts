@@ -18,7 +18,7 @@ export const Routes = [
     action: "one",
   },
   {
-    // Change User Password
+    // Change User username
     method: "patch",
     route: "/users/:userId",
     controller: UserController,
@@ -35,28 +35,28 @@ export const Routes = [
   {
     // Get one User Relation
     method: "get",
-    route: "/users/:userId/relations/:relationId",
+    route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "one",
   },
   {
     // Friend Request
     method: "post",
-    route: "/users/:userId/relations/:relationId",
+    route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "add",
   },
   {
     // Modify Relation
     method: "patch",
-    route: "/users/:userId/relations/:relationId",
+    route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "update",
   },
   {
     // Delete Relation
     method: "delete",
-    route: "/users/:userId/relations/:relationId",
+    route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "remove",
   },

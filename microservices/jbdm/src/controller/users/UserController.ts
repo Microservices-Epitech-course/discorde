@@ -1,9 +1,11 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { User, UserRole } from "@discorde/datamodel";
+import * as redis from "redis";
 
 export class UserController {
   private userRepository = getRepository(User);
+  private publisher = redis.createClient();
 
   async all(req: Request, res: Response) {
     return this.userRepository.find({ relations: ['relations', 'members'] });
@@ -25,6 +27,9 @@ export class UserController {
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
     const { username } = req.body;
-    return this.userRepository.update(userId, { username: username });
+    const user = await this.userRepository.findOne(userId);
+    user.username = username;
+    this.publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
+    return await this.userRepository.save(user);
   }
 }

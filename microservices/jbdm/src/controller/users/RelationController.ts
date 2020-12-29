@@ -1,9 +1,11 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { Relation, RelationStatus, User, UserRole } from "@discorde/datamodel";
+import * as redis from "redis";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
+  private publisher = redis.createClient();
 
   private async getRelation(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
@@ -12,8 +14,8 @@ export class RelationController {
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
     const relation = this.relationRepository.findOne({
       where: {
-        userOneId: Math.min(Number(userId), Number(req.params.relationId)),
-        userTwoId: Math.max(Number(userId), Number(req.params.relationId)),
+        userOneId: Math.min(Number(userId), Number(req.params.userTwoId)),
+        userTwoId: Math.max(Number(userId), Number(req.params.userTwoId)),
       },
       relations: ['users']
     });
@@ -54,12 +56,13 @@ export class RelationController {
     if (existing)
       return existing;
     let relation = new Relation();
-    relation.userOneId = Math.min(Number(userId), Number(req.params.relationId));
-    relation.userTwoId = Math.max(Number(userId), Number(req.params.relationId));
+    relation.userOneId = Math.min(Number(userId), Number(req.params.userTwoId));
+    relation.userTwoId = Math.max(Number(userId), Number(req.params.userTwoId));
     relation.actionUserId = Number(userId);
     relation.status = RelationStatus.PENDING;
     relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId])
 
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationAdd", data: relation}));
     return (await this.relationRepository.save(relation));
   }
 
@@ -80,7 +83,8 @@ export class RelationController {
         break;
     }
     relation.actionUserId = Number(req.params.userId);
-    return (await this.relationRepository.save(relation));
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationUpdate", data: relation}));
+    return await this.relationRepository.save(relation);
   }
 
   async remove(req: Request, res: Response) {
@@ -88,6 +92,8 @@ export class RelationController {
 
     if (!relationToRemove)
       return;
-    return this.relationRepository.remove(relationToRemove);
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationDelete", data: relationToRemove.id}));
+    await this.relationRepository.remove(relationToRemove);
+    return relationToRemove.id;
   }
 }
