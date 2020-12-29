@@ -1,41 +1,73 @@
 import { getRepository } from "typeorm";
-import { Request } from "express";
-import { Relation, RelationStatus, User } from "@discorde/datamodel";
+import { Request, Response } from "express";
+import { Relation, RelationStatus, User, UserRole } from "@discorde/datamodel";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
 
-  async all(req: Request) {
-    return this.relationRepository.find({
-      where: [{ userOneId: req.params.userId }, { userTwoId: req.params.userId }],
-      relations: ['users']
-    });
-  }
-
-  async one(req: Request) {
-    return this.relationRepository.findOne({
+  private async getRelation(req: Request, res: Response) {
+    if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
+      return null;
+    }
+    const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
+    const relation = this.relationRepository.findOne({
       where: {
-        userOneId: Math.min(Number(req.params.userId), Number(req.params.relationId)),
-        userTwoId: Math.max(Number(req.params.userId), Number(req.params.relationId)),
+        userOneId: Math.min(Number(userId), Number(req.params.relationId)),
+        userTwoId: Math.max(Number(userId), Number(req.params.relationId)),
       },
       relations: ['users']
     });
+    if (!relation)
+      return null;
+    return relation;
   }
 
-  async add(req: Request) {
-    let relation = new Relation();
+  async all(req: Request, res: Response) {
+    if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
+      res.status(404).send();
+      return;
+    }
+    const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
+    return this.relationRepository.find({
+      where: [{ userOneId: userId }, { userTwoId: userId }],
+      relations: ['users']
+    });
+  }
 
-    relation.userOneId = Math.min(Number(req.params.userId), Number(req.params.relationId));
-    relation.userTwoId = Math.max(Number(req.params.userId), Number(req.params.relationId));
-    relation.actionUserId = Number(req.params.userId);
+  async one(req: Request, res: Response) {
+    const relation = await this.getRelation(req, res);
+    if (!relation) {
+      res.status(404).send();
+      return;
+    }
+    return relation;
+  }
+
+  async add(req: Request, res: Response) {
+    if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
+      res.status(404).send();
+      return;
+    }
+    const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
+    const existing = await this.getRelation(req, res);
+
+    if (existing)
+      return existing;
+    let relation = new Relation();
+    relation.userOneId = Math.min(Number(userId), Number(req.params.relationId));
+    relation.userTwoId = Math.max(Number(userId), Number(req.params.relationId));
+    relation.actionUserId = Number(userId);
     relation.status = RelationStatus.PENDING;
     relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId])
 
     return (await this.relationRepository.save(relation));
   }
 
-  async update(req: Request) {
-    let relation = await this.one(req);
+  async update(req: Request, res: Response) {
+    let relation = await this.one(req, res);
+
+    if (!relation)
+      return;
     switch (req.query.action) {
       case "accept":
         relation.status = RelationStatus.ACCEPTED;
@@ -51,8 +83,11 @@ export class RelationController {
     return (await this.relationRepository.save(relation));
   }
 
-  async remove(req: Request) {
-    let relationToRemove = await this.one(req);
+  async remove(req: Request, res: Response) {
+    let relationToRemove = await this.one(req, res);
+
+    if (!relationToRemove)
+      return;
     return this.relationRepository.remove(relationToRemove);
   }
 }
