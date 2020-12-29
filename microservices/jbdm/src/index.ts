@@ -5,6 +5,6 @@ import configServer from "@discorde/datamodel/lib/config/configServer";
 
 createConnection()
   .then(async (connection) => {
-    configServer(3001, Routes, connection);
+    configServer(3001, Routes, connection, "JBDM");
   })
   .catch((error) => console.log(error));
