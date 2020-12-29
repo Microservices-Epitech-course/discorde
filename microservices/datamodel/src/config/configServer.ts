@@ -18,7 +18,7 @@ export interface Routes {
 
 const empty = (req: Request, res: Response, next: NextFunction) => next();
 
-const configServer = async (port: number, routes: Array<Routes>, connection: Connection) => {
+const configServer = async (port: number, routes: Array<Routes>, connection: Connection, name: String) => {
   const app = express();
   app.use(cors());
   app.use(bodyParser.json());
@@ -39,7 +39,7 @@ const configServer = async (port: number, routes: Array<Routes>, connection: Con
   });
 
   app.listen(port, () => {
-    console.log(`Express server has started on port ${port}.`);
+    console.log(`[${name}]: Server has started on port ${port}.`);
   });
 }
 

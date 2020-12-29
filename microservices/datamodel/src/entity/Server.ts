@@ -1,5 +1,10 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, BeforeRemove, getRepository } from "typeorm";
+import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, BeforeRemove, getRepository, Column } from "typeorm";
 import { Member, Channel, Role, Invitation } from ".";
+
+export enum ServerType {
+  SERVER = "server",
+  CONVERSATION = "conversation",
+}
 
 @Entity()
 export class Server {
@@ -17,6 +22,9 @@ export class Server {
 
   @OneToMany(type => Invitation, invitation => invitation.server)
   invitations: Invitation[];
+
+  @Column({ default: ServerType.SERVER })
+  type: ServerType;
 
   @CreateDateColumn()
   createdAt: Date;
