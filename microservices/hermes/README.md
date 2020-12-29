@@ -14,3 +14,13 @@
 
 1. Start the Express server
    `npm start`
+
+
+## API Routes
+
+| Method | Route | Description | Return Value | Auth Required | Admin Only |
+|--------|-------|-------------|--------------|---------------|------------|
+| GET | /channels/:id/messages | Get messages from channel (:id) | Message[] | Yes | No |
+| POST | /channels/:id/messages | Send message on channel (:id) | Nothing (Update with WebSocket) | Yes | No |
+| PATCH | /channels/:id/messages/:messageId | Modify message (:messageId) on channel (:id) | Nothing (Update with WebSocket) | Yes | No |
+| DELETE | /channels/:id/messages/:messageId | Delete message (:messageId) on channel (:id) | Nothing (Update with WebSocket) | Yes | No |
