@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, BeforeInsert } from "typeorm";
-import { Conversation, Member, Relation } from ".";
+import { Member, Relation } from ".";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import jwtSecret from "../config/jwtSecret";
@@ -54,10 +54,7 @@ export class User {
   relations: Relation[];
 
   @OneToMany(type => Member, member => member.user)
-  serverMembers: Member[];
-
-  @ManyToMany(type => Conversation, conversation => conversation.users)
-  conversations: Conversation[];
+  members: Member[];
 
   @Column({ default: UserStatus.OFFLINE })
   status: UserStatus;
@@ -74,14 +71,10 @@ export class User {
 
   @BeforeRemove()
   async deleteListener() {
-    const user = await getRepository(User).findOne(this.id, { relations: ['relations', 'serverMembers', 'conversations'] });
+    const user = await getRepository(User).findOne(this.id, { relations: ['relations', 'members'] });
 
     await getRepository(Relation).remove(user.relations);
-    await getRepository(Member).remove(user.serverMembers);
-
-    const conversations = (await getRepository(Conversation).findByIds(user.conversations, { relations: ['users'] })).map((conversation) => { conversation.users = conversation.users.filter((e) => e.id !== user.id); return conversation; });
-    await getRepository(Conversation).save(conversations);
-    await getRepository(Conversation).remove(conversations.filter((conversation) => conversation.users.length < 2));
+    await getRepository(Member).remove(user.members);
   }
 
   checkPassword(password: string) {

@@ -1,6 +1,5 @@
 export * from './ChannelRoleSettings';
 export * from './Channel';
-export * from './Conversation';
 export * from './index';
 export * from './Invitation';
 export * from './Member';
