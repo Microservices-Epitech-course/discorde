@@ -62,7 +62,7 @@ export class RelationController {
     relation.status = RelationStatus.PENDING;
     relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId])
 
-    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationAdd", data: relation}));
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationAdd", data: relation }));
     return (await this.relationRepository.save(relation));
   }
 
@@ -83,17 +83,17 @@ export class RelationController {
         break;
     }
     relation.actionUserId = Number(req.params.userId);
-    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationUpdate", data: relation}));
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
     return await this.relationRepository.save(relation);
   }
 
   async remove(req: Request, res: Response) {
-    let relationToRemove = await this.one(req, res);
+    let relation = await this.one(req, res);
 
-    if (!relationToRemove)
+    if (!relation)
       return;
-    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({action: "relationDelete", data: relationToRemove.id}));
-    await this.relationRepository.remove(relationToRemove);
-    return relationToRemove.id;
+    this.publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
+    await this.relationRepository.remove(relation);
+    return relation.id;
   }
 }

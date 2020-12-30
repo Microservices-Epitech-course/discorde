@@ -1,9 +1,9 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Member, Server, User, UserRole } from "@discorde/datamodel";
+import { Channel, Server, UserRole } from "@discorde/datamodel";
 
-export class MemberController {
-    private memberRepository = getRepository(Member);
+export class ChannelController {
+    private channelRepository = getRepository(Channel);
 
     async all(req: Request, res: Response) {
         const server = await getRepository(Server).findOne({ where: { id: req.params.serverId } })
@@ -11,49 +11,44 @@ export class MemberController {
             res.status(404).send();
             return;
         }
-        let relations = ['user', 'roles', 'server'];
-        if (res.locals.user.role === UserRole.ADMIN) {
-            relations.push('messages', 'reactions');
-        }
-        return this.memberRepository.find({ relations: relations });
+        // TODO: Remove channels user do not have perimissions to see
+        return this.channelRepository.find({ relations: ['channelRoleSettings', 'messages', 'server'] });
     }
 
     async one(req: Request, res: Response) {
         const server = await getRepository(Server).findOne({ where: { id: req.params.serverId } })
+        // TODO: Check if member have enough permissions to see this channel
         if (!server.hasMember(res.locals.user.id) && res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
             return;
         }
-        let relations = ['user', 'roles', 'server'];
-        if (res.locals.user.role === UserRole.ADMIN) {
-            relations.push('messages', 'reactions');
-        }
-        return this.memberRepository.findOne({ where: { id: req.params.memberId }, relations: relations });
+        return this.channelRepository.findOne({
+            where: { id: req.params.channelId },
+            relations: ['channelRoleSettings', 'messages', 'server']
+        });
     }
 
     async add(req: Request, res: Response) {
         const server = await getRepository(Server).findOne({ where: { id: req.params.serverId } })
-        // TODO: Check if member have enough permissions to add member
+        // TODO: Check if member have enough permissions to create channel
         if (!server.hasMember(res.locals.user.id) && res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
             return;
         }
-
-        const user = await getRepository(User).findOne({ where: { id: res.locals.user.id } })
-        let member = new Member();
-        member.server = server;
-        member.user = user;
-        return (await this.memberRepository.save(member))
+        let channel = new Channel();
+        channel.type = req.body.type;
+        channel.server = server;
+        return (await this.channelRepository.save(channel))
     }
 
     async remove(req: Request, res: Response) {
         const server = await getRepository(Server).findOne({ where: { id: req.params.serverId } })
-        // TODO: Check if member have enough permissions to remove member
+        // TODO: Check if member have enough permissions to delete channel
         if (!server.hasMember(res.locals.user.id) && res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
             return;
         }
-        let member = await this.one(req, res);
-        return this.memberRepository.remove(member);
+        let channel = await this.one(req, res);
+        return this.channelRepository.remove(channel);
     }
 }

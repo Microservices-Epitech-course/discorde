@@ -2,7 +2,7 @@ import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedCol
 import { Server, ChannelRoleSettings, Message } from ".";
 import { publisher } from "./redis";
 
-enum ChannelType {
+export enum ChannelType {
   TEXTUAL = "textual",
   VOCAL = "vocal"
 }
@@ -34,9 +34,9 @@ export class Channel {
 
   @BeforeRemove()
   async deleteListener() {
-    const channel = await getRepository(Channel).findOne(this.id, {relations: ['channelRoleSettings', 'messages']});
+    const channel = await getRepository(Channel).findOne(this.id, { relations: ['channelRoleSettings', 'messages'] });
 
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "delete", data: {}}));
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({ action: "delete", data: {} }));
     await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
     await getRepository(Message).remove(channel.messages);
   }
