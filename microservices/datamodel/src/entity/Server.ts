@@ -41,4 +41,10 @@ export class Server {
     await getRepository(Role).remove(server.roles);
     await getRepository(Invitation).remove(server.invitations);
   }
+
+  hasMember(userId: number) {
+    if (this.members.find(member => member.user.id === userId))
+      return true;
+    return false;
+  }
 }
