@@ -1,0 +1,19 @@
+{
+  "name": "discorde",
+  "version": "1.0.0",
+  "description": "A discord-like application used to learn about microservices",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Microservices-Epitech-course/discorde.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Microservices-Epitech-course/discorde/issues"
+  },
+  "homepage": "https://github.com/Microservices-Epitech-course/discorde#readme"
+}
