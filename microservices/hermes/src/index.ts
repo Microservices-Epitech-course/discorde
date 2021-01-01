@@ -5,6 +5,6 @@ import configServer from "@discorde/datamodel/lib/config/configServer";
 
 createConnection()
   .then(async (connection) => {
-    configServer(3000, Routes, connection, "Hermes");
+    configServer(Number(process.env.PORT) || 3000, Routes, connection, "Hermes");
   })
   .catch((error) => console.log(error));
