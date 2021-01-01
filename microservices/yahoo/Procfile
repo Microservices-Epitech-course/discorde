@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/yahoo/ start
+web: yarn --cwd microservices/yahoo/ install && yarn --cwd microservices/yahoo/ start
