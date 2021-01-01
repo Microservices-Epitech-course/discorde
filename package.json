@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "A discord-like application used to learn about microservices",
   "main": "index.js",
+  "engines": {
+    "node": "12.15.0",
+    "yarn": "1.22.4"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
