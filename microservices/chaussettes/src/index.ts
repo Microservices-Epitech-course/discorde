@@ -33,6 +33,7 @@ wss.on('connection', (ws: WebSocket) => {
   ws.send('Connected to WebSocket server');
 });
 
-server.listen(3006, () => {
-  console.log('[Chaussette]: Server has started on port 3006.');
+const port = process.env.PORT || 3006;
+server.listen(port, () => {
+  console.log(`[Chaussette]: Server has started on port ${port}.`);
 });
