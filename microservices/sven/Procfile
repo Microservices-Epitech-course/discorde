@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/sven/ start
+web: yarn --cwd microservices/sven/ install && yarn --cwd microservices/sven/ start
