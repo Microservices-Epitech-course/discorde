@@ -9,6 +9,8 @@
     "lint": "eslint . --ext .jsx,.tsx,.ts"
   },
   "dependencies": {
+    "@types/axios": "^0.14.0",
+    "axios": "^0.21.1",
     "compression": "^1.7.4",
     "express": "^4.17.1",
     "next": "^10.0.1",
