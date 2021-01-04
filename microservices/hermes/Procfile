@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/hermes/ start
+web: yarn install @discorde/datamodel && yarn --cwd microservices/hermes/ start
