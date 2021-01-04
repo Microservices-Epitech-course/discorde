@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/kamoulox/ install && yarn --cwd microservices/kamoulox/ start
+worker: yarn --cwd microservices/kamoulox/ install && yarn --cwd microservices/kamoulox/ start
