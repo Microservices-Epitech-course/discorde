@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/sven/ install && yarn --cwd microservices/sven/ start
+worker: yarn --cwd microservices/sven/ start
