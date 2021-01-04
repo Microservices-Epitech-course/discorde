@@ -12,7 +12,7 @@ export class ChannelController {
             return;
         }
         // TODO: Remove channels user do not have perimissions to see
-        return this.channelRepository.find({ relations: ['channelRoleSettings', 'messages', 'server'] });
+        return this.channelRepository.find({ where: { [server.id]: req.params.serverId }, relations: ['channelRoleSettings', 'messages', 'server'] });
     }
 
     async one(req: Request, res: Response) {
@@ -23,7 +23,7 @@ export class ChannelController {
             return;
         }
         return this.channelRepository.findOne({
-            where: { id: req.params.channelId },
+            where: { id: req.params.channelId, [server.id]: req.params.serverId },
             relations: ['channelRoleSettings', 'messages', 'server']
         });
     }
