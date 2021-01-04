@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/marine/ start
+web: yarn --cwd microservices/marine/ start
