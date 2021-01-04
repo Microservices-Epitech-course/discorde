@@ -1,1 +1,1 @@
-web: mkdir ./microservices/kamoulox/node_modules && cp ./node_modules/@discorde/ ./microservices/kamoulox/node_modules/ && yarn --cwd microservices/kamoulox/ start 
+web: mkdir ./microservices/kamoulox/node_modules && cp -r ./node_modules/@discorde/ ./microservices/kamoulox/node_modules/ && yarn --cwd microservices/kamoulox/ start 

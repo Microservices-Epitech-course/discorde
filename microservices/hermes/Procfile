@@ -1,1 +1,1 @@
-web: mkdir ./microservices/hermes/node_modules && cp ./node_modules/@discorde/ ./microservices/hermes/node_modules/ && yarn --cwd microservices/hermes/ start 
+web: mkdir ./microservices/hermes/node_modules && cp -r ./node_modules/@discorde/ ./microservices/hermes/node_modules/ && yarn --cwd microservices/hermes/ start 
