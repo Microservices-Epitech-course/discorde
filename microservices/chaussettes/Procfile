@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/chaussettes/ install && yarn --cwd microservices/chaussettes/ start
+worker: yarn --cwd microservices/chaussettes/ install && yarn --cwd microservices/chaussettes/ start
