@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/jbdm/ install && yarn --cwd microservices/jbdm/ start
+worker: yarn --cwd microservices/jbdm/ start

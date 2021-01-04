@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/hermes/ install && yarn --cwd microservices/hermes/ start
+worker: yarn --cwd microservices/hermes/ start
