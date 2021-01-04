@@ -1,1 +1,1 @@
-web: yarn install @discorde/datamodel && yarn --cwd microservices/yahoo/ start
+web: mkdir ./microservices/yahoo/node_modules && cp ./node_modules/@discorde/ ./microservices/yahoo/node_modules/ && yarn --cwd microservices/yahoo/ start 
