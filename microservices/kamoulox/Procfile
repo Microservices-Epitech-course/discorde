@@ -1,1 +1,1 @@
-web: yarn --cwd microservices/kamoulox/ start
+web: yarn install @discorde/datamodel && yarn --cwd microservices/kamoulox/ start
