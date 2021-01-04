@@ -1,10 +1,6 @@
-{
+module.exports = {
   "type": "postgres",
-  "host": "<HOST>",
-  "port": "<PORT>",
-  "username": "<USER>",
-  "password": "<PASSWORD>",
-  "database": "<DATABASE>",
+  "url": process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
   "ssl": true,
@@ -21,4 +17,4 @@
     "migrationsDir": "src/migration",
     "subscribersDir": "src/subscriber"
   }
-}
+};
