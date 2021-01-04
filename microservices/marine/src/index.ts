@@ -1,3 +1,4 @@
+require('dotenv').config();
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { Routes } from "./routes";

@@ -5,7 +5,7 @@ import * as redis from "redis";
 
 export class UserController {
   private userRepository = getRepository(User);
-  private publisher = redis.createClient();
+  private publisher = redis.createClient(process.env.REDIS_URL);
 
   async all() {
     return this.userRepository.find({ relations: ['relations', 'members'] });

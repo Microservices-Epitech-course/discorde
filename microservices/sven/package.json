@@ -3,6 +3,7 @@
    "version": "0.0.1",
    "description": "Discorde Sven",
    "devDependencies": {
+      "@types/dotenv": "^8.2.0",
       "@types/node": "^8.0.29",
       "@types/redis": "^2.8.28",
       "nodemon": "^2.0.6",
@@ -12,6 +13,7 @@
    "dependencies": {
       "@discorde/datamodel": "^1.0.70",
       "body-parser": "^1.18.1",
+      "dotenv": "^8.2.0",
       "express": "^4.15.4",
       "pg": "^8.4.0",
       "redis": "^3.0.2",

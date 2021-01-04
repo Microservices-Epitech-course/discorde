@@ -5,7 +5,7 @@ import * as redis from "redis";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
-  private publisher = redis.createClient();
+  private publisher = redis.createClient(process.env.REDIS_URL);
 
   private async getRelation(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {

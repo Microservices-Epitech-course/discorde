@@ -6,7 +6,7 @@ import * as redis from "redis";
 export class MessagesController {
   private messageRepository = getRepository(Message);
   private channelRepository = getRepository(Channel);
-  private publisher = redis.createClient();
+  private publisher = redis.createClient(process.env.REDIS_URL);
 
   async findChannel(req: Request, res: Response) {
     try {
