@@ -11,6 +11,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/node": "^8.0.29",
     "@types/redis": "^2.8.28",
+    "@types/ws": "^7.4.0",
     "nodemon": "^2.0.6",
     "ts-node": "3.3.0",
     "typescript": "3.3.3333"
@@ -25,7 +26,8 @@
     "reflect-metadata": "^0.1.10",
     "typeorm": "0.2.29",
     "ts-node": "3.3.0",
-    "typescript": "3.3.3333"
+    "typescript": "3.3.3333",
+    "ws": "^7.4.1"
   },
   "scripts": {
   },
