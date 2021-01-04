@@ -1,1 +1,1 @@
-web: yarn install @discorde/datamodel && yarn --cwd microservices/jbdm/ start
+web: mkdir ./microservices/jbdm/node_modules && cp ./node_modules/@discorde/ ./microservices/jbdm/node_modules/ && yarn --cwd microservices/jbdm/ start 
