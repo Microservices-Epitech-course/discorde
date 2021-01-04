@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/sven/ start
+web: yarn --cwd microservices/sven/ start

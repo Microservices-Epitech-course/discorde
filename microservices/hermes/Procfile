@@ -1,1 +1,1 @@
-worker: yarn --cwd microservices/hermes/ start
+web: yarn --cwd microservices/hermes/ start
