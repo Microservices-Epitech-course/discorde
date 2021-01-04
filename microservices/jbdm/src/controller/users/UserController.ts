@@ -7,7 +7,7 @@ export class UserController {
   private userRepository = getRepository(User);
   private publisher = redis.createClient();
 
-  async all(req: Request, res: Response) {
+  async all() {
     return this.userRepository.find({ relations: ['relations', 'members'] });
   }
 

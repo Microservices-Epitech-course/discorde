@@ -15,7 +15,7 @@ export class MemberController {
         if (res.locals.user.role === UserRole.ADMIN) {
             relations.push('messages', 'reactions');
         }
-        return this.memberRepository.find({ relations: relations });
+        return this.memberRepository.find({ where: { [server.id]: req.params.serverId }, relations: relations });
     }
 
     async one(req: Request, res: Response) {
@@ -28,7 +28,10 @@ export class MemberController {
         if (res.locals.user.role === UserRole.ADMIN) {
             relations.push('messages', 'reactions');
         }
-        return this.memberRepository.findOne({ where: { id: req.params.memberId }, relations: relations });
+        return this.memberRepository.findOne({
+            where: { id: req.params.memberId, [server.id]: req.params.serverId },
+            relations: relations
+        });
     }
 
     async add(req: Request, res: Response) {
@@ -39,10 +42,9 @@ export class MemberController {
             return;
         }
 
-        const user = await getRepository(User).findOne({ where: { id: res.locals.user.id } })
         let member = new Member();
         member.server = server;
-        member.user = user;
+        member.user = res.locals.user;
         return (await this.memberRepository.save(member))
     }
 

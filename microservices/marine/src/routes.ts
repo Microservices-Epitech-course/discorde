@@ -8,6 +8,7 @@ export const Routes = [
         route: "/servers",
         controller: ServerController,
         action: "all",
+        adminOnly: true
     },
     {
         method: "get",

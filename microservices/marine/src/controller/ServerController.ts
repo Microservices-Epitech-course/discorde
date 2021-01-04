@@ -34,12 +34,11 @@ export class ServerController {
     }
 
     async add(_: Request, res: Response) {
-        const user = await getRepository(User).findOne({ where: { id: res.locals.user.id } })
         let creatorMember = new Member();
         let mainChannel = new Channel();
         let server = new Server();
 
-        creatorMember.user = user;
+        creatorMember.user = res.locals.user;
         mainChannel.name = "Main";
         mainChannel.server = server;
         mainChannel.type = ChannelType.TEXTUAL;
