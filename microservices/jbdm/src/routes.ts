@@ -1,5 +1,8 @@
 import { UserController } from "./controller/users/UserController";
 import { RelationController } from "./controller/users/RelationController";
+import { JoinController } from "./controller/users/JoinController";
+import { ConversationController } from "./controller/users/ConversationController";
+import { ListController } from "./controller/users/ListControllers";
 
 export const Routes = [
   {
@@ -23,6 +26,14 @@ export const Routes = [
     route: "/users/:userId",
     controller: UserController,
     action: "update",
+  },
+
+
+  {
+    method: "post",
+    route: "/users/joinServer/:inviteString",
+    controler: JoinController,
+    action: "join"
   },
 
 
@@ -90,5 +101,37 @@ export const Routes = [
     route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "remove",
+  },
+
+
+  {
+    // Create Conversation with other users
+    method: "post",
+    route: "/users/conversations",
+    controller: ConversationController,
+    action: "add",
+  },
+  {
+    // Quit Conversation
+    method: "delete",
+    route: "/users/conversations/:serverId",
+    controller: ConversationController,
+    action: "remove",
+  },
+
+
+  {
+    // Get all Conversations
+    method: "get",
+    route: "/users/conversations",
+    controller: ListController,
+    action: "conversations"
+  },
+  {
+    // Get all Servers
+    method: "get",
+    route: "/users/servers",
+    controller: ListController,
+    action: "servers"
   },
 ];
