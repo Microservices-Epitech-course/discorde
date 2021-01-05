@@ -5,13 +5,17 @@ import Link from 'next/link'
 const Container = styled.div`
   min-width: 240px;
   background-color: #2f3136;
-  padding: 0 .5rem;
+
+  label {
+    margin-left: 1rem;
+  }
 `;
 
 const Ul = styled.ul`
   list-style-type: none;
   padding-left: 0;
   width: 100%;
+  padding: 0 .5rem;
 `;
 
 const Button = styled.button`
@@ -105,9 +109,30 @@ const Space = styled.div`
   flex-grow: 1;
 `;
 
+const Header = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 1rem;
+  border-top: 2px solid #26282c;
+  border-bottom: 2px solid #26282c;
+  height: 3.4rem;
+
+  input {
+    margin: .5rem;
+    width: 100%;
+    background-color: #202225;
+    color: #72767d;
+    border-radius: 5px;
+  }
+`;
+
 export const ConversationList = ({ children }: InputProps) => {
   return (
     <Container>
+      <Header>
+        <input placeholder='Find or start a conversation' />
+      </Header>
+      <label>Direct messages</label>
       <Ul>
         {list.map((user, i) => {
           return (

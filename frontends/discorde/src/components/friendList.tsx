@@ -7,7 +7,7 @@ const Container = styled.div`
   width: 100%;
 
   label {
-    margin-left: .8rem;
+    margin-left: 2rem;
   }
 `;
 
@@ -21,6 +21,7 @@ const RowContainer = styled.li`
 
 const Ul = styled.ul`
   width: 100%;
+  padding: 0 1.5rem;
 
   ${RowContainer}:hover + ${RowContainer} {
     border-top-color: transparent;
@@ -84,13 +85,15 @@ const Header = styled.div`
   margin-bottom: 1rem;
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
+  height: 3.4rem;
 `;
 
 const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
   margin: .8rem;
-  padding: .5rem;
+  padding: .4rem;
   border-radius: 5px;
   font-weight: 600;
+  font-size: .9rem;
   color: ${({ add, selected }) => {
     if (selected || add) return '#fff';
     return '#b9bbbe';
@@ -100,7 +103,14 @@ const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
     if (selected) return '#4f545c52';
     return 'transparent';
   }};
-  font-size: .9rem;
+
+  &:hover {
+    background-color: ${({ add }) => add ? '#43b581' : '#4f545c29'};
+  }
+
+  &:first-child {
+    margin-left: 1.5rem;
+  }
 `;
 
 const list = [
