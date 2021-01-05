@@ -46,7 +46,7 @@ export class User {
   @Column({ nullable: true })
   age: number;
 
-  @Column({ nullable: true })
+  @Column({ default: "https://support.discord.com/hc/user_images/l12c7vKVRCd-XLIdDkLUDg.png" })
   image: string;
 
   @ManyToMany(type => Relation, relation => relation.users)
