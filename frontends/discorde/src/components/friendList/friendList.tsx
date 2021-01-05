@@ -224,55 +224,39 @@ export const FriendList = ({ children, allFriendList, allPendingList }: FriendLi
   const friendsLists = {
     online: {
       label: 'Online',
-      request: getFriends
     },
     all: {
       label: 'All friends',
-      request: getFriends
     },
     pending: {
       label: 'Pending',
-      request: getAllFriendRequest
     },
     blocked: {
       label: 'Blocked',
-      request: getBlocked
     },
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (tab === 'add') return true;
+  const handleTabClick = selectedTab => {
+    let list = [];
 
-      const result = await friendsLists[tab].request();
-
-      if (result?.error) {
-        setError('An error occured.');
-        setCurrentList([]);
-        return false;
-      }
-
-      const usersList = result.map(e => {
-        // TO FIX: replace actionUserId by @me
+    if (selectedTab === 'all') list = allFriendList
+    if (selectedTab === 'online') list = allFriendList.filter(e => status === 'online')
+    if (selectedTab === 'pending') {
+      const cleanPendingList = allPendingList.map(e => {
         const actionUser = e.users.filter(ee => ee.id !== currentUser?.id)[0]
+
         return {
           ...actionUser,
           request: e.type,
         }
       });
 
-      setCurrentList(tab === 'online'
-        ? usersList.filter(e => status === 'online')
-        : usersList
-      );
-      setError(null);
-    };
+      list = cleanPendingList
+    }
 
-
-    fetchData();
-  }, [tab]);
-
-  const handleTabClick = selectedTab => setTab(selectedTab);
+    setTab(selectedTab);
+    setCurrentList(list);
+  }
 
   const friendList = currentList.map((user, i) =>
     <UserRow tab={tab} user={user} key={`${user.username}${i}`} />

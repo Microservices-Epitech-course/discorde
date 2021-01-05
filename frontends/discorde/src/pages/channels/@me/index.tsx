@@ -53,7 +53,8 @@ const Me = (): JSX.Element => {
         type: SET_PENDING,
         payload: resultGetAllFriendRequest,
       });
-      // console.log(resultGetAllFriendRequest)
+      console.log(filteredFriendList)
+      console.log(resultGetAllFriendRequest)
   }, []);
 
   return (
