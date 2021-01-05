@@ -217,7 +217,6 @@ export class RelationController {
         res.status(404).send(`Unknown action ${req.params.action}`);
         return;
     }
-    relation.actionUserId = userId;
     publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
     return await this.relationRepository.save(relation);
   }
