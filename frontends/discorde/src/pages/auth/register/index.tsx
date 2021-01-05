@@ -3,9 +3,9 @@ import { NextPage } from 'next';
 import styled from 'styled-components';
 import Link from 'next/link'
 
-import { Input } from '../../../components/Input';
-import { Button } from '../../../components/Button';
-import { Error } from '../../../components/Error';
+import { Input } from '../../../components/input';
+import { Button } from '../../../components/button';
+import { Error } from '../../../components/error';
 
 import { register } from '../../../api/auth';
 
@@ -44,7 +44,7 @@ const Register: NextPage = (): JSX.Element => {
         <h2>Create an account</h2>
         <form onSubmit={handleSubmit}>
           <Input value={email} onChange={setEmail} type='email' login label='Email' />
-          <Input value={username} onChange={setUsername} login label='Username' />
+          <Input value={username} onChange={setUsername} login type='text' label='Username' />
           <Input value={password} onChange={setPassword} login type='password' label='Password' />
           <br />
           <Button type='submit'>Create account</Button>

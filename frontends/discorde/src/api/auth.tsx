@@ -27,7 +27,6 @@ export const login = async (params: LoginParams) => {
     const response = await axios.post('https://api-discorde-sven.herokuapp.com/auth', {
       ...params,
     });
-    console.log(response.data);
     localStorage.setItem('token', response.data);
     return true;
   } catch (error) {

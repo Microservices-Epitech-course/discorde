@@ -27,14 +27,6 @@ const InputContainer = styled.div<{ login: boolean }>`
   }
 `;
 
-const Label = styled.div`
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 0.7rem;
-  color: #8e9297;
-  margin-bottom: 0.6rem;
-`;
-
 interface InputProps {
   placeholder?: string,
   login: boolean,
@@ -49,7 +41,7 @@ export const Input = ({ placeholder, login, label, type, value, onChange, ...pro
 
   return (
     <Container {...props}>
-      {login && <Label>{label}</Label>}
+      {login && <label>{label}</label>}
       <InputContainer login={login}>
         <input
           value={value}

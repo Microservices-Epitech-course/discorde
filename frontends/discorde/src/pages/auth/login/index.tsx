@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import styled from 'styled-components';
 import Link from 'next/link'
+import Router from 'next/router'
 
-import { Error } from '../../../components/Error';
-import { Input } from '../../../components/Input';
-import { Button } from '../../../components/Button';
+import { Error } from '../../../components/error';
+import { Input } from '../../../components/input';
+import { Button } from '../../../components/button';
 
 import { login } from '../../../api/auth';
 
@@ -34,7 +35,10 @@ const Login: NextPage = (): JSX.Element => {
     e.preventDefault();
     const response = await login({email, password});
     if (response !== true) setError(response);
-    else setError(null);
+    else {
+      setError(null);
+      Router.push('/channels/@me');
+    };
   }
 
   return (
