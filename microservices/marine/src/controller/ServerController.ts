@@ -1,10 +1,19 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Channel, Member, Server, User, UserRole, ChannelType } from "@discorde/datamodel";
+import { Channel, Member, Server, User, UserRole, ChannelType, Role } from "@discorde/datamodel";
 
 export class ServerController {
     private serverRepository = getRepository(Server);
 
+    private async findServer(res: Response, serverId: any) {
+        try {
+            return await this.serverRepository.findOneOrFail({ where: { id: serverId } });
+        } catch (e) {
+            res.status(404).send(`Server ${serverId} doesnt exist`);
+            return null;
+        }
+    }
+    
     async all(_: Request, res: Response) {
         if (res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
@@ -26,33 +35,67 @@ export class ServerController {
             where: { id: req.params.serverId },
             relations: relations
         });
-        if (!server.hasMember(res.locals.user.id) && res.locals.user.role !== UserRole.ADMIN) {
+        if (!(await server.hasUser(res.locals.user.id)) && res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
             return;
         }
         return server;
     }
 
-    async add(_: Request, res: Response) {
+    async add(req: Request, res: Response) {
         let creatorMember = new Member();
         let mainChannel = new Channel();
         let server = new Server();
+        let everyoneRole = new Role();
 
+        const { name } = req.body;
+        if (!name) {
+            res.status(404).send(`Missing name parameter`);
+            return;
+        }
+
+        server.name = name;
         creatorMember.user = res.locals.user;
+        creatorMember.owner = true;
         mainChannel.name = "Main";
         mainChannel.server = server;
         mainChannel.type = ChannelType.TEXTUAL;
+        everyoneRole.name = "everyone";
+        everyoneRole.isEveryone = true;
         server.members = [creatorMember];
+        server.roles = [everyoneRole];
 
         await getRepository(Member).save(creatorMember)
-        await getRepository(Member).save(mainChannel)
+        await getRepository(Channel).save(mainChannel)
+        await getRepository(Role).save(everyoneRole);
         return (await this.serverRepository.save(server));
     }
 
+    async modif(req: Request, res: Response) {
+        const server = await this.findServer(res, req.params.serverId);
+        if (!server)
+            return;
+        const { name } = req.body;
+        if (!name) {
+            res.status(404).send(`Missing name parameter`);
+            return;
+        }
+
+        const member = await server.getUser(res.locals.user.id);
+        if ((!member || !(await member.hasGlobalPermission("manageServer"))) && res.locals.user.role !== UserRole.ADMIN) {
+            res.status(404).send();
+            return;
+        }
+        server.name = name;
+        return this.serverRepository.save(server);
+    }
+
     async remove(req: Request, res: Response) {
-        let server = await this.one(req, res);
-        // TODO: Check if member have enough permissions to delete server
-        if (!server.hasMember(res.locals.user.id) && res.locals.user.role !== UserRole.ADMIN) {
+        const server = await this.findServer(res, req.params.serverId);
+        if (!server)
+            return;
+        const member = await server.getUser(res.locals.user.id);
+        if ((!member || !member.owner) && res.locals.user.role !== UserRole.ADMIN) {
             res.status(404).send();
             return;
         }
