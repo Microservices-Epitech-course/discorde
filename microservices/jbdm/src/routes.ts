@@ -25,12 +25,14 @@ export const Routes = [
     action: "update",
   },
 
+
   {
     // Get all User Relations
     method: "get",
     route: "/users/:userId/relations",
     controller: RelationController,
     action: "all",
+    adminOnly: true,
   },
   {
     // Get one User Relation
@@ -38,6 +40,35 @@ export const Routes = [
     route: "/users/:userId/relations/:userTwoId",
     controller: RelationController,
     action: "one",
+    adminOnly: true,
+  },
+  {
+    // Get User friends
+    method: "get",
+    route: "/users/:userId/friends",
+    controller: RelationController,
+    action: "friends"
+  },
+  {
+    // Get User Invites Sent
+    method: "get",
+    route: "/users/:userId/invites/sent",
+    controller: RelationController,
+    action: "invitesSent"
+  },
+  {
+    // Get User Invites Received
+    method: "get",
+    route: "/users/:userId/invites/received",
+    controller: RelationController,
+    action: "invitesReceived"
+  },
+  {
+    //Get User Blocked
+    method: "get",
+    route: "/users/:userId/blocked",
+    controller: RelationController,
+    action: "blocked"
   },
   {
     // Friend Request
@@ -49,7 +80,7 @@ export const Routes = [
   {
     // Modify Relation
     method: "patch",
-    route: "/users/:userId/relations/:userTwoId",
+    route: "/users/:userId/relations/:userTwoId/:action",
     controller: RelationController,
     action: "update",
   },
