@@ -55,19 +55,23 @@ export class ServerController {
         }
 
         server.name = name;
+        await this.serverRepository.save(server);
+
         creatorMember.user = res.locals.user;
+        creatorMember.roles = [everyoneRole];
+        creatorMember.server = server;
         creatorMember.owner = true;
+
         mainChannel.name = "Main";
         mainChannel.server = server;
         mainChannel.type = ChannelType.TEXTUAL;
+    
         everyoneRole.name = "everyone";
         everyoneRole.isEveryone = true;
-        server.members = [creatorMember];
-        server.roles = [everyoneRole];
+        everyoneRole.server = server;
 
         await getRepository(Channel).save(mainChannel);
         await getRepository(Role).save(everyoneRole);
-        await this.serverRepository.save(server);
         return await getRepository(Member).save(creatorMember);
     }
 
