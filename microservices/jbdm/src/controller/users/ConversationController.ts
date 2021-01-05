@@ -1,7 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { Channel, ChannelType, Member, Role, Server, ServerType, User } from "@discorde/datamodel";
-import * as redis from "redis";
 
 export class ConversationController {
   private serverRepository = getRepository(Server);
@@ -21,16 +20,20 @@ export class ConversationController {
 
     server.name = usersId.reduce((acc, e) => acc + e, "");
     server.type = ServerType.CONVERSATION;
+    await this.serverRepository.save(server);
+
     creatorMember.user = res.locals.user;
     creatorMember.roles = [everyoneRole];
+    creatorMember.server = server;
+
     mainChannel.name = "Main";
     mainChannel.server = server;
     mainChannel.type = ChannelType.TEXTUAL;
+
     everyoneRole.name = "everyone";
     everyoneRole.isEveryone = true;
-    server.members = [creatorMember];
-    server.roles = [everyoneRole];
-
+    everyoneRole.server = server;
+    
     await getRepository(Channel).save(mainChannel)
     await getRepository(Role).save(everyoneRole);
     const filteredUserId = usersId.filter((e, i) => usersId.findIndex((e2) => e2 === e) === i);
@@ -40,11 +43,10 @@ export class ConversationController {
         const user = await this.userRepository.findOneOrFail(filteredUserId[i]);
         member.user = user;
         member.roles = [everyoneRole];
-        server.members.push(member);
+        member.server = server;
         await this.memberRepository.save(member);
       } catch (e) {}
     }
-    await this.serverRepository.save(server);
     return await this.memberRepository.save(creatorMember);
   }
 }

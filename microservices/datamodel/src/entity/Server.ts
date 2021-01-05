@@ -46,14 +46,14 @@ export class Server {
   }
 
   async hasUser(userId: number) {
-    const server = await getRepository(Server).findOne(this.id, { relations: ['members'] });
+    const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'members.user'] });
     return server.members.findIndex(member => member.user.id === userId && !member.quit) !== -1;
   }
   hasMember(memberId: number) {
     return this.members.findIndex(member => member.id === memberId && !member.quit) !== -1;
   }
   async getUser(userId: number) {
-    const server = await getRepository(Server).findOne(this.id, { relations: ['members'] });
+    const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'members.user'] });
     return server.members.find(member => member.user.id === userId && !member.quit);
   }
   async getMember(memberId: number) {
