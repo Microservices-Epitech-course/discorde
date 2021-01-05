@@ -27,9 +27,18 @@ export class UserController {
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
     const { username } = req.body;
-    const user = await this.userRepository.findOne(userId);
-    user.username = username;
-    this.publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
-    return await this.userRepository.save(user);
+    if (!username) {
+      res.status(404).send();
+      return;
+    }
+    try {
+      const user = await this.userRepository.findOneOrFail(userId);
+      user.username = username;
+      this.publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
+      return await this.userRepository.save(user);
+    } catch (e) {
+      res.status(404).send();
+      return;
+    }
   }
 }

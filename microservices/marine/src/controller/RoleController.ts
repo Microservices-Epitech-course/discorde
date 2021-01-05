@@ -85,6 +85,7 @@ export class RoleController {
     role.addReactions = req.body.addReactions || role.addReactions;
     role.mentionRoles = req.body.mentionRoles || role.mentionRoles;
     role.manageMessages = req.body.manageMessages || role.manageMessages;
+    // TODO : Prevent non admin to set admin
     role.administrator = req.body.administrator || role.administrator;
     return this.roleRepository.save(role);
   }

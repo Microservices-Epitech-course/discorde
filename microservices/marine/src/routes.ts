@@ -77,7 +77,7 @@ export const Routes = [
         // Change Member Server Roles
         method: "patch",
         route: "/servers/:serverId/members/:memberId/roles",
-        controller: RoleController,
+        controller: MemberController,
         action: "changeRole",
     },
 
@@ -169,7 +169,7 @@ export const Routes = [
 
     {
         method: "get",
-        route: "/servers/:serverId/channels/:channelId/roles/",
+        route: "/servers/:serverId/channels/:channelId/roles",
         controller: ChannelRoleController,
         action: "all",
     },

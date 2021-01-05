@@ -31,7 +31,6 @@ export class ConversationController {
     server.members = [creatorMember];
     server.roles = [everyoneRole];
 
-    await this.memberRepository.save(creatorMember)
     await getRepository(Channel).save(mainChannel)
     await getRepository(Role).save(everyoneRole);
     const filteredUserId = usersId.filter((e, i) => usersId.findIndex((e2) => e2 === e) === i);
@@ -42,9 +41,10 @@ export class ConversationController {
         member.user = user;
         member.roles = [everyoneRole];
         server.members.push(member);
-        await this.memberRepository.save(creatorMember);
+        await this.memberRepository.save(member);
       } catch (e) {}
     }
-    return (await this.serverRepository.save(server));
+    await this.serverRepository.save(server);
+    return await this.memberRepository.save(creatorMember);
   }
 }
