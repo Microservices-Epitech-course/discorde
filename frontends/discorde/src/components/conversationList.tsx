@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
+import { FiX } from 'react-icons/fi';
 
 import { ConversationSearchInput } from './input';
 
@@ -231,7 +232,9 @@ export const ConversationList = ({ children }: InputProps) => {
                 <img src={user.icon} alt="profile" />
                 <span className="username-bold">{user.username}</span>
                 <Space />
-                <Button>X</Button>
+                <Button>
+                  <FiX className='icon' />
+                </Button>
               </Row>
             // </Link>
           );

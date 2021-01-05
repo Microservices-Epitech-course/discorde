@@ -1,6 +1,6 @@
 :root {
   --primary: #7289da;
-  --error: #f04747;
+  --alert: #f04747;
   --success: #43b581;
 }
 
@@ -75,3 +75,8 @@ label {
   border-radius: 10px;
 }
 
+.icon {
+  vertical-align: middle;
+  height: 1.2rem;
+  width: auto;
+}

@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
+import { FiCheck, FiX } from 'react-icons/fi';
+import { BiMessage } from 'react-icons/bi';
 
-import { getFriends, getPendingFriends, getBlocked } from '../../api/users';
+import {
+  getFriends,
+  getOutgoingFriendRequest,
+  getBlocked,
+  getAllFriendRequest,
+  modifyFriendRequest,
+} from '../../api/users';
+import { Error } from '../text';
 import { AddFriend } from './addFriend';
 
 const Container = styled.div`
@@ -18,6 +27,10 @@ const RowContainer = styled.li`
 
   &:hover {
     border-top-color: transparent;
+
+    button {
+      background-color: #202225;
+    }
   }
 `;
 
@@ -57,14 +70,25 @@ const Row = styled.div`
   }
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ positive: boolean, negative: boolean }>`
   background-color: #2f3136;
   border-radius: 100%;
   height: 40px;
   width: 40px;
 
+  &:nth-of-type(2) {
+    margin-left: .5rem;
+  }
+
+  &:hover {
+    .icon {
+      ${({ positive }) => positive ? 'color: var(--success);' : ''}
+      ${({ negative }) => negative ? 'color: var(--alert);' : ''}
+    }
+  }
+
   &:active {
-    background-color: #4f545c3d;
+    background-color: #4f545c3d !important;
   }
 `;
 
@@ -117,42 +141,76 @@ const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
   }
 `;
 
-const list = [
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-];
+interface UserRowProps {
+  tab: string,
+  user: Object,
+};
+
+const UserRow = ({tab, user}: UserRowProps) => {
+  const handleClick = async (action) => {
+    const response = await modifyFriendRequest({ id: user.id, action });
+  }
+
+  const buttons = () => {
+    if (!user?.request) {
+      return (
+        <Button positive>
+          <BiMessage className='icon' onClick={() => {}} />
+        </Button>
+      )
+    }
+
+    if (user?.request === 'incoming') {
+      return (
+        <>
+          <Button positive>
+            <FiCheck className='icon' onClick={() => handleClick('accept')} />
+          </Button>
+          <Button negative onClick={() => handleClick('deny')}>
+            <FiX className='icon' />
+          </Button>
+        </>
+      )
+    }
+
+    return (
+      <Button negative onClick={() => handleClick('deny')}>
+        <FiX className='icon' />
+      </Button>
+    )
+  }
+
+  const description = () => {
+    if (tab === 'pending')
+      return user?.request === 'incoming'
+        ? 'Incoming Friend Request'
+        : 'Outgoing Friend Request'
+    if (tab === 'online' || tab === 'all')
+      return user.status
+  }
+
+  return (
+    <RowContainer>
+      <Row>
+        <img src={user.image} alt="profile" />
+        <Details>
+          <span className="username-bold">{user.username}</span>
+          <br />
+          <span className="status">
+            {description()}
+          </span>
+        </Details>
+        <Space />
+        {buttons()}
+      </Row>
+    </RowContainer>
+  )
+}
 
 export const FriendList = ({ children }: NoProps) => {
   const [tab, setTab] = useState('online');
   const [currentList, setCurrentList] = useState([]);
+  const [error, setError] = useState(null);
 
   const friendsLists = {
     online: {
@@ -165,7 +223,7 @@ export const FriendList = ({ children }: NoProps) => {
     },
     pending: {
       label: 'Pending',
-      request: getPendingFriends
+      request: getAllFriendRequest
     },
     blocked: {
       label: 'Blocked',
@@ -177,20 +235,28 @@ export const FriendList = ({ children }: NoProps) => {
     const fetchData = async () => {
       if (tab === 'add') return true;
 
-
       const result = await friendsLists[tab].request();
-      const pendingFriendsList = result.map(e => {
-        return e.users[0].id === e.actionUserId
-          ? e.users[1]
-          : e.users[0]
+
+      if (result?.error) {
+        setError('An error occured.');
+        setCurrentList([]);
+        return false;
+      }
+
+      const usersList = result.map(e => {
+        // TO FIX: replace actionUserId by @me
+        const actionUser = e.users.filter(ee => ee.id !== e.actionUserId)[0]
+        return {
+          ...actionUser,
+          request: e.type,
+        }
       });
-      console.log(result)
 
       setCurrentList(tab === 'online'
-        ? pendingFriendsList.filter(e => status === 'online')
-        : pendingFriendsList
+        ? usersList.filter(e => status === 'online')
+        : usersList
       );
-      console.log(pendingFriendsList);
+      setError(null);
     };
 
 
@@ -199,30 +265,9 @@ export const FriendList = ({ children }: NoProps) => {
 
   const handleTabClick = selectedTab => setTab(selectedTab);
 
-  const friendList = (
-    currentList.map((user, i) => {
-      return (
-        <RowContainer key={`${user.username}${i}`}>
-          <Row>
-            <img src={user.image} alt="profile" />
-            <Details>
-              <span className="username-bold">{user.username}</span>
-              <br />
-              <span className="status">
-                {
-                  tab === 'online' || tab === 'all'
-                    ? user.status
-                    : 'Outgoing Friend Request'
-                }
-              </span>
-            </Details>
-            <Space />
-            {/* <Button>X</Button> */}
-          </Row>
-        </RowContainer>
-      );
-    })
-  )
+  const friendList = currentList.map((user, i) =>
+    <UserRow tab={tab} user={user} key={`${user.username}${i}`} />
+  );
 
   return (
     <Container>
@@ -253,9 +298,8 @@ export const FriendList = ({ children }: NoProps) => {
         </HeaderButton>
         <HeaderButton
           selected={tab === 'add'}
-          onClick={() => handleTabClick('add')
-        }
-         add
+          onClick={() => handleTabClick('add')}
+          add
         >Add Friend</HeaderButton>
       </Header>
       {
@@ -265,6 +309,9 @@ export const FriendList = ({ children }: NoProps) => {
             <Ul>
               {friendList}
             </Ul>
+            {
+              error && <Error style={{ marginLeft: '2rem' }}>{error}</Error>
+            }
           </>
         )
       }

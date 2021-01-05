@@ -116,7 +116,7 @@ export const ServerList = ({ children }: InputProps) => {
     <Container>
       <Ul>
         <Row selected>
-          <StyledLink href="">
+          <StyledLink href="/channels/@me">
             <img src='https://ih1.redbubble.net/image.1664238575.2193/st,small,507x507-pad,600x600,f8f8f8.jpg' alt="profile" />
           </StyledLink>
         </Row>

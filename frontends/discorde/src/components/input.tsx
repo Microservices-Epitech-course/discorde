@@ -70,6 +70,8 @@ const MessageInputContainer = styled.div`
   padding: 0.9rem 0.6rem;
   border: none;
   transition: border-color 0.2s ease-in-out;
+  width: 100%;
+  text-align: left;
 
   &:focus-within {
     border-color: #7289da;
@@ -95,15 +97,13 @@ export const MessageInput = ({ placeholder, value, onChange, ...props }: Message
   const handleChange = (e) => onChange(e.target.value);
 
   return (
-    <InputContainer {...props}>
-      <MessageInputContainer>
-        <input
-          value={value}
-          placeholder={placeholder ? placeholder : ""}
-          onChange={handleChange}
-          />
-      </MessageInputContainer>
-    </InputContainer>
+    <MessageInputContainer {...props}>
+      <input
+        value={value}
+        placeholder={placeholder ? placeholder : ""}
+        onChange={handleChange}
+        />
+    </MessageInputContainer>
   );
 };
 
@@ -118,6 +118,7 @@ const StyledConversationSearchInput = styled.input`
   color: #72767d;
   border-radius: 5px;
   padding-left: .5rem;
+
 `;
 
 interface ConversationSearchInputProps {
