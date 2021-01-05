@@ -32,7 +32,7 @@ export const Routes = [
   {
     method: "post",
     route: "/users/joinServer/:inviteString",
-    controler: JoinController,
+    controller: JoinController,
     action: "join"
   },
 
