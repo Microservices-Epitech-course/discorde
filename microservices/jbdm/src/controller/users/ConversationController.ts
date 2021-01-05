@@ -33,6 +33,8 @@ export class ConversationController {
     everyoneRole.name = "everyone";
     everyoneRole.isEveryone = true;
     everyoneRole.server = server;
+
+    let name = res.locals.user.username;
     
     await getRepository(Channel).save(mainChannel)
     await getRepository(Role).save(everyoneRole);
@@ -44,9 +46,12 @@ export class ConversationController {
         member.user = user;
         member.roles = [everyoneRole];
         member.server = server;
+        name += "-" + user.username; 
         await this.memberRepository.save(member);
       } catch (e) {}
     }
+    server.name = name;
+    await this.serverRepository.save(server);
     return await this.memberRepository.save(creatorMember);
   }
 }
