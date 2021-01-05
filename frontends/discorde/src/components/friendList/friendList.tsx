@@ -152,9 +152,7 @@ const list = [
 
 export const FriendList = ({ children }: NoProps) => {
   const [tab, setTab] = useState('online');
-  const [pendingFriends, setPendingFriends] = useState([]);
-  const [allFriends, setAllFriends] = useState([]);
-  const [blocked, setBlocked] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
 
   const friendsLists = {
     online: {
@@ -179,14 +177,22 @@ export const FriendList = ({ children }: NoProps) => {
     const fetchData = async () => {
       if (tab === 'add') return true;
 
-      const result = await friendsLists[tab].request();
-      const pendingFriendsList = result.map(e => e.users[1]);
 
-      setPendingFriends(tab === 'online'
+      const result = await friendsLists[tab].request();
+      const pendingFriendsList = result.map(e => {
+        return e.users[0].id === e.actionUserId
+          ? e.users[1]
+          : e.users[0]
+      });
+      console.log(result)
+
+      setCurrentList(tab === 'online'
         ? pendingFriendsList.filter(e => status === 'online')
         : pendingFriendsList
       );
+      console.log(pendingFriendsList);
     };
+
 
     fetchData();
   }, [tab]);
@@ -194,7 +200,7 @@ export const FriendList = ({ children }: NoProps) => {
   const handleTabClick = selectedTab => setTab(selectedTab);
 
   const friendList = (
-    pendingFriends.map((user, i) => {
+    currentList.map((user, i) => {
       return (
         <RowContainer key={`${user.username}${i}`}>
           <Row>
@@ -202,7 +208,13 @@ export const FriendList = ({ children }: NoProps) => {
             <Details>
               <span className="username-bold">{user.username}</span>
               <br />
-              <span className="status">{user.status}</span>
+              <span className="status">
+                {
+                  tab === 'online' || tab === 'all'
+                    ? user.status
+                    : 'Outgoing Friend Request'
+                }
+              </span>
             </Details>
             <Space />
             {/* <Button>X</Button> */}
@@ -249,7 +261,7 @@ export const FriendList = ({ children }: NoProps) => {
       {
         tab !== 'add' && (
           <>
-            <label>{friendsLists[tab].label} - {list.length}</label>
+            <label>{friendsLists[tab].label} - {currentList.length}</label>
             <Ul>
               {friendList}
             </Ul>

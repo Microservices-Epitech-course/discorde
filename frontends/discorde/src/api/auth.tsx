@@ -31,6 +31,6 @@ export const login = async (params: LoginParams) => {
     // console.log(localStorage.getItem('token'));
     return true;
   } catch (error) {
-    return rerror.response.data;
+    return error.response.data;
   }
 };
