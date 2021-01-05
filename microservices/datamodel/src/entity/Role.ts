@@ -61,7 +61,6 @@ export class Role {
 
   // embedLinks
   // attachFiles
-  //// viewChannels
   //// manageEmojis
   //// viewAuditLog
   //// manageWebhooks

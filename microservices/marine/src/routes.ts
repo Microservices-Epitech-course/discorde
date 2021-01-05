@@ -150,19 +150,19 @@ export const Routes = [
     {
         method: "post",
         route: "/servers/:serverId/roles",
-        controler: RoleController,
+        controller: RoleController,
         action: "add",
     },
     {
         method: "patch",
         route: "/servers/:serverId/roles/:roleId",
-        controler: RoleController,
+        controller: RoleController,
         action: "modif",
     },
     {
         method: "delete",
         route: "/servers/:serverId/roles/:roleId",
-        controler: RoleController,
+        controller: RoleController,
         action: "remove",
     },
 
@@ -176,19 +176,19 @@ export const Routes = [
     {
         method: "post",
         route: "/servers/:serverId/channels/:channelId/roles/:roleId",
-        controler: ChannelRoleController,
+        controller: ChannelRoleController,
         action: "add",
     },
     {
         method: "patch",
         route: "/servers/:serverId/channels/:channelId/roles/:channelRoleId",
-        controler: ChannelRoleController,
+        controller: ChannelRoleController,
         action: "modif",
     },
     {
         method: "delete",
         route: "/servers/:serverId/channels/:channelId/roles/:channelRoleId",
-        controler: ChannelRoleController,
+        controller: ChannelRoleController,
         action: "remove",
     },
 
