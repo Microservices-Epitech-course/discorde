@@ -25,9 +25,14 @@ Most routes with an id without @me are restricted for Admin only, use @me instea
 | GET | /users | Get all users | User[] | Yes | Yes | No |
 | GET | /users/:userId | Get User (:userId) infos | User | Yes | No | Yes |
 | PATCH | /users/:userId | Change User (:userId) username | User | Yes | No | Yes |
-| GET | /users/:userId/relations | Get all User (:userId) relations | Relation[] | Yes | No | Yes |
-| GET | /users/:userId/relations/:userTwoId | Get one User (:userId) with an other User (:userTwoId) | Relation | Yes | No | Yes |
+||
+| GET | /users/:userId/relations | Get all User (:userId) relations | Relation[] | Yes | Yes | Yes |
+| GET | /users/:userId/relations/:userTwoId | Get one User (:userId) with an other User (:userTwoId) | Relation | Yes | Yes | Yes |
+| GET | /users/:userId/friends | Get one User (:userId) accepted friends | Relation[] | Yes | No | Yes |
+| GET | /users/:userId/invites/sent | Get one User (:userId) sent invites | Relation[] | Yes | No | Yes |
+| GET | /users/:userId/invites/received | Get one User (:userId) received invites | Relation[] | Yes | No | Yes |
+| GET | /users/:userId/blocked | Get one User (:userId) blocked users | Relation[] | Yes | No | Yes |
 | POST | /users/:userId/relations/:userTwoId | Create a relation from User (:userId) with an other User (:userTwoId) | Relation | Yes | No | Yes |
-| PATCH | /users/:userId/relations/:userTwoId | Update a relation from User (:userId) with an other User (:userTwoId) | Relation | Yes | No | Yes |
+| PATCH | /users/:userId/relations/:userTwoId | Update a relation from User (:userId) with an other User (:userTwoId) (accept/deny/block) | Relation | Yes | No | Yes |
 | DELETE | /users/:userId/relations/:userTwoId | Delete a relation from User (:userId) with an other User (:userTwoId) | Number (id of Relation) | Yes | No | Yes |
 |||
