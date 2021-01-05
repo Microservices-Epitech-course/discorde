@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
-npm run publish-version
+if [ "$1" != "no-publish" ]; then
+  npm run publish-version
+fi
 
 VERSION=$(cat package.json \
   | grep version \

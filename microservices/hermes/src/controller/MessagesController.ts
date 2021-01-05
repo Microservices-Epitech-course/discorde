@@ -1,4 +1,4 @@
-import { Channel, Message, UserRole } from "@discorde/datamodel";
+import { Channel, Message, publisher, UserRole } from "@discorde/datamodel";
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import * as redis from "redis";
@@ -6,7 +6,6 @@ import * as redis from "redis";
 export class MessagesController {
   private messageRepository = getRepository(Message);
   private channelRepository = getRepository(Channel);
-  private publisher = redis.createClient(process.env.REDIS_URL);
 
   async findChannel(req: Request, res: Response) {
     try {
@@ -56,7 +55,7 @@ export class MessagesController {
     });
     channel.messages.push(message);
     this.channelRepository.save(channel);
-    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: message}));
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: message}));
     return this.messageRepository.save(message);
   }
 
@@ -80,7 +79,7 @@ export class MessagesController {
     // TODO: Add media / mentions / ?
     const { content } = req.body;
     message.content = content;
-    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: message}));
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: message}));
     return this.messageRepository.save(message);
   }
 
@@ -101,7 +100,7 @@ export class MessagesController {
         return;
       }
     }
-    this.publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageDelete", data: messageId}));
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageDelete", data: messageId}));
     return this.messageRepository.remove(message);
   }
 }

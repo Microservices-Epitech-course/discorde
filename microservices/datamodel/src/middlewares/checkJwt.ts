@@ -11,7 +11,7 @@ const checkJwt = async (req: Request, res: Response, next: NextFunction) => {
     const jwtPayload = <any>jwt.verify(token, jwtSecret);
     res.locals.jwtPayload = jwtPayload;
     const { userId, username } = jwtPayload;
-    const newToken = jwt.sign({userId, username}, jwtSecret, { expiresIn: "1h" });
+    const newToken = jwt.sign({userId, username}, jwtSecret, { expiresIn: "7d" });
     res.setHeader("token", newToken);
     res.locals.user = await getRepository(User).findOne(userId);
     next();

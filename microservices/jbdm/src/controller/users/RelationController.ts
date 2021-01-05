@@ -1,11 +1,10 @@
 import { getRepository, Not } from "typeorm";
 import { Request, Response } from "express";
-import { Relation, RelationStatus, User, UserRole } from "@discorde/datamodel";
+import { publisher, Relation, RelationStatus, User, UserRole } from "@discorde/datamodel";
 import * as redis from "redis";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
-  private publisher = redis.createClient(process.env.REDIS_URL);
 
   private async getRelation(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
@@ -34,7 +33,7 @@ export class RelationController {
       relation.status = status;
       relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId]);
 
-      this.publisher.publish(`user:${userId2}`, JSON.stringify({ action: "relationAdd", data: relation }));
+      publisher.publish(`user:${userId2}`, JSON.stringify({ action: "relationAdd", data: relation }));
       return (await this.relationRepository.save(relation));
     } catch (e) {
       return null;
@@ -170,7 +169,6 @@ export class RelationController {
       relations: ['users']
     });
 
-    console.log(existing);
     if (existing)
       return existing;
     const relation = await this.createRelation(userId, userTwo.id, RelationStatus.PENDING)
@@ -220,7 +218,7 @@ export class RelationController {
         return;
     }
     relation.actionUserId = userId;
-    this.publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
+    publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
     return await this.relationRepository.save(relation);
   }
 
@@ -236,7 +234,7 @@ export class RelationController {
       res.status(404).send("Relation not found");
       return;
     }
-    this.publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
+    publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
     await this.relationRepository.remove(relation);
     return relation.id;
   }
