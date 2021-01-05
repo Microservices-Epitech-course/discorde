@@ -177,6 +177,8 @@ export const FriendList = ({ children }: NoProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (tab === 'add') return true;
+
       const result = await friendsLists[tab].request();
       const pendingFriendsList = result.map(e => e.users[1]);
 
