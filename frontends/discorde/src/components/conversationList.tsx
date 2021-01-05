@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
+
+import { ConversationSearchInput } from './input';
 
 const Container = styled.div`
   min-width: 240px;
   background-color: #2f3136;
+  overflow-y: auto;
 
   label {
     margin-left: 1rem;
@@ -31,7 +34,7 @@ const Button = styled.button`
 `;
 
 
-const Row = styled.div`
+const Row = styled.li`
   display: flex;
   align-items: center;
   height: 3.2rem;;
@@ -103,6 +106,96 @@ const list = [
     icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
     status: "online"
   },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
+  {
+    username: "tomat",
+    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
+    status: "online"
+  },
 ];
 
 const Space = styled.div`
@@ -115,22 +208,19 @@ const Header = styled.div`
   margin-bottom: 1rem;
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
+  background-color: #2f3136;
   height: 3.4rem;
-
-  input {
-    margin: .5rem;
-    width: 100%;
-    background-color: #202225;
-    color: #72767d;
-    border-radius: 5px;
-  }
+  position: sticky;
+  top: 0;
 `;
 
 export const ConversationList = ({ children }: InputProps) => {
+  const [search, setSearch] = useState('');
+
   return (
     <Container>
       <Header>
-        <input placeholder='Find or start a conversation' />
+        <ConversationSearchInput value={search} onChange={setSearch} placeholder='Find or start a conversation' />
       </Header>
       <label>Direct messages</label>
       <Ul>

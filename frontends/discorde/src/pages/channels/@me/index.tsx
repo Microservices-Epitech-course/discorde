@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { FriendList } from '../../../components/friendList';
+import { FriendList } from '../../../components/friendList/friendList';
 import { ConversationList } from '../../../components/conversationList';
 import { ServerList } from '../../../components/serverList';
 

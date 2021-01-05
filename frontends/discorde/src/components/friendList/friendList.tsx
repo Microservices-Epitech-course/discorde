@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 
-import { getAllUsers } from '../api/users';
+import { getFriends, getPendingFriends, getBlocked } from '../../api/users';
+import { AddFriend } from './addFriend';
 
 const Container = styled.div`
   width: 100%;
+  overflow-y: auto;
 
   label {
     margin-left: 2rem;
@@ -86,6 +88,8 @@ const Header = styled.div`
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
   height: 3.4rem;
+  position: sticky;
+  top: 0;
 `;
 
 const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
@@ -148,37 +152,111 @@ const list = [
 
 export const FriendList = ({ children }: NoProps) => {
   const [tab, setTab] = useState('online');
+  const [pendingFriends, setPendingFriends] = useState([]);
+  const [allFriends, setAllFriends] = useState([]);
+  const [blocked, setBlocked] = useState([]);
+
+  const friendsLists = {
+    online: {
+      label: 'Online',
+      request: getFriends
+    },
+    all: {
+      label: 'All friends',
+      request: getFriends
+    },
+    pending: {
+      label: 'Pending',
+      request: getPendingFriends
+    },
+    blocked: {
+      label: 'Blocked',
+      request: getBlocked
+    },
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await friendsLists[tab].request();
+      const pendingFriendsList = result.map(e => e.users[1]);
+
+      setPendingFriends(tab === 'online'
+        ? pendingFriendsList.filter(e => status === 'online')
+        : pendingFriendsList
+      );
+    };
+
+    fetchData();
+  }, [tab]);
 
   const handleTabClick = selectedTab => setTab(selectedTab);
+
+  const friendList = (
+    pendingFriends.map((user, i) => {
+      return (
+        <RowContainer key={`${user.username}${i}`}>
+          <Row>
+            <img src={user.image} alt="profile" />
+            <Details>
+              <span className="username-bold">{user.username}</span>
+              <br />
+              <span className="status">{user.status}</span>
+            </Details>
+            <Space />
+            {/* <Button>X</Button> */}
+          </Row>
+        </RowContainer>
+      );
+    })
+  )
 
   return (
     <Container>
       <Header>
-        <HeaderButton selected={tab === 'online'} onClick={() => handleTabClick('online')}>Online</HeaderButton>
-        <HeaderButton selected={tab === 'all'} onClick={() => handleTabClick('all')}>All</HeaderButton>
-        <HeaderButton selected={tab === 'pending'} onClick={() => handleTabClick('pending')}>Pending</HeaderButton>
-        <HeaderButton selected={tab === 'blocked'} onClick={() => handleTabClick('blocked')}>Blocked</HeaderButton>
-        <HeaderButton selected={tab === 'add'} onClick={() => handleTabClick('add')} add>Add Friend</HeaderButton>
+        <HeaderButton
+          selected={tab === 'online'}
+          onClick={() => handleTabClick('online')}
+        >
+          Online
+        </HeaderButton>
+        <HeaderButton
+          selected={tab === 'all'}
+          onClick={() => handleTabClick('all')}
+        >
+          All
+        </HeaderButton>
+        <HeaderButton
+          selected={tab === 'pending'}
+          onClick={() => handleTabClick('pending')}
+        >
+          Pending
+        </HeaderButton>
+        <HeaderButton
+          selected={tab === 'blocked'}
+          onClick={() => handleTabClick('blocked')}
+        >
+          Blocked
+        </HeaderButton>
+        <HeaderButton
+          selected={tab === 'add'}
+          onClick={() => handleTabClick('add')
+        }
+         add
+        >Add Friend</HeaderButton>
       </Header>
-      <label>Online - {list.length}</label>
-      <Ul>
-        {list.map((user, i) => {
-          return (
-            <RowContainer key={`${user.username}${i}`}>
-              <Row>
-                <img src={user.icon} alt="profile" />
-                <Details>
-                  <span className="username-bold">{user.username}</span>
-                  <br />
-                  <span className="status">{user.status}</span>
-                </Details>
-                <Space />
-                <Button>X</Button>
-              </Row>
-            </RowContainer>
-          );
-        })}
-      </Ul>
+      {
+        tab !== 'add' && (
+          <>
+            <label>{friendsLists[tab].label} - {list.length}</label>
+            <Ul>
+              {friendList}
+            </Ul>
+          </>
+        )
+      }
+      {
+        tab === 'add' && <AddFriend />
+      }
     </Container>
   );
 };

@@ -1,6 +1,7 @@
 :root {
   --primary: #7289da;
   --error: #f04747;
+  --success: #43b581;
 }
 
 html,
@@ -49,6 +50,7 @@ button:focus {
 ul {
   list-style-type: none;
   padding-left: 0;
+  cursor: pointer;
 }
 
 label {
@@ -63,3 +65,13 @@ label {
 * {
   box-sizing: border-box;
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 10px;
+}
+

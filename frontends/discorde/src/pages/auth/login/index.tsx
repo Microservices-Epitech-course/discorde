@@ -4,8 +4,8 @@ import styled from 'styled-components';
 import Link from 'next/link'
 import Router from 'next/router'
 
-import { Error } from '../../../components/error';
-import { Input } from '../../../components/input';
+import { Error } from '../../../components/text';
+import { LoginInput } from '../../../components/input';
 import { Button } from '../../../components/button';
 
 import { login } from '../../../api/auth';
@@ -33,12 +33,13 @@ const Login: NextPage = (): JSX.Element => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await login({email, password});
+    const response = await login({ email, password });
     if (response !== true) setError(response);
     else {
       setError(null);
       Router.push('/channels/@me');
     };
+    console.log(localStorage.getItem('token'))
   }
 
   return (
@@ -47,8 +48,8 @@ const Login: NextPage = (): JSX.Element => {
         <h2>Hello, welcome to Discorde!</h2>
         Time to log in.
         <form onSubmit={handleSubmit}>
-          <Input value={email} onChange={setEmail} login type='email' label='Email' />
-          <Input value={password} onChange={setPassword} login type='password' label='Password' />
+          <LoginInput value={email} onChange={setEmail} login type='email' label='Email' />
+          <LoginInput value={password} onChange={setPassword} login type='password' label='Password' />
           <br />
           <Button type='submit'>Log in</Button>
           {

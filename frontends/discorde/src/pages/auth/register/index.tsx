@@ -3,9 +3,9 @@ import { NextPage } from 'next';
 import styled from 'styled-components';
 import Link from 'next/link'
 
-import { Input } from '../../../components/input';
+import { LoginInput } from '../../../components/input';
 import { Button } from '../../../components/button';
-import { Error } from '../../../components/error';
+import { Error } from '../../../components/text';
 
 import { register } from '../../../api/auth';
 
@@ -33,7 +33,7 @@ const Register: NextPage = (): JSX.Element => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await register({email, username, password});
+    const response = await register({ email, username, password });
     if (response !== true) setError(response);
     else setError(null);
   }
@@ -43,9 +43,9 @@ const Register: NextPage = (): JSX.Element => {
       <Container>
         <h2>Create an account</h2>
         <form onSubmit={handleSubmit}>
-          <Input value={email} onChange={setEmail} type='email' login label='Email' />
-          <Input value={username} onChange={setUsername} login type='text' label='Username' />
-          <Input value={password} onChange={setPassword} login type='password' label='Password' />
+          <LoginInput value={email} onChange={setEmail} type='email' label='Email' />
+          <LoginInput value={username} onChange={setUsername} type='text' label='Username' />
+          <LoginInput value={password} onChange={setPassword} type='password' label='Password' />
           <br />
           <Button type='submit'>Create account</Button>
           {

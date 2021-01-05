@@ -5,6 +5,8 @@ import Link from 'next/link'
 const Container = styled.div`
   background-color: #202225;
   padding: 0 .2rem;
+  overflow-y: auto
+  min-width: 72px;
 `;
 
 const Ul = styled.ul`
@@ -26,7 +28,7 @@ const Button = styled.button`
 `;
 
 
-const Row = styled.div`
+const Row = styled.div<{ selected: boolean }>`
   display: flex;
   align-items: center;
   height: 3.2rem;
@@ -37,7 +39,7 @@ const Row = styled.div`
   img {
     height: 50px;
     width: 50px;
-    border-radius: 100%;
+    border-radius: ${({ selected }) => selected ? '38%' : '100%'};
     transition: border-radius 0.2s ease;
   }
 
@@ -45,7 +47,7 @@ const Row = styled.div`
     cursor: pointer;
 
     img {
-      border-radius: 40%;
+      border-radius: 38%;
     }
   }
 `;
@@ -99,15 +101,29 @@ const Space = styled.div`
   flex-grow: 1;
 `;
 
+const Separator = styled.div`
+  height: 2px;
+  width: 32px;
+  border-radius: 1px;
+  background-color: #ffffff0f;
+  margin: .2rem auto;
+`;
+
 export const ServerList = ({ children }: InputProps) => {
   const [allUsers, setAllUsers] = useState([]);
 
   return (
     <Container>
       <Ul>
+        <Row selected>
+          <StyledLink href="">
+            <img src='https://ih1.redbubble.net/image.1664238575.2193/st,small,507x507-pad,600x600,f8f8f8.jpg' alt="profile" />
+          </StyledLink>
+        </Row>
+        <Separator />
         {list.map((user, i) => {
           return (
-            <Row key={`${user.username}${i}`}>
+            <Row selected={false} key={`${user.username}${i}`}>
               <StyledLink href="">
                 <img src={user.icon} alt="profile" />
               </StyledLink>

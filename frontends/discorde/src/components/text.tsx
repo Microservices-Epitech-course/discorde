@@ -20,3 +20,15 @@ export const Error = ({ children, ...props }: ErrorProps) => {
     </StyledError>
   );
 };
+
+const StyledSucess = styled(StyledError)`
+  color: var(--success);
+`;
+
+export const Success = ({ children, ...props }: ErrorProps) => {
+  return (
+    <StyledSucess {...props}>
+      {children}
+    </StyledSucess>
+  );
+};

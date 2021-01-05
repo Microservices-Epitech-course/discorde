@@ -28,6 +28,7 @@ export const login = async (params: LoginParams) => {
       ...params,
     });
     localStorage.setItem('token', response.data);
+    // console.log(localStorage.getItem('token'));
     return true;
   } catch (error) {
     return rerror.response.data;
