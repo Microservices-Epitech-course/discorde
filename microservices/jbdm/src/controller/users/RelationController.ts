@@ -44,7 +44,7 @@ export class RelationController {
 
   async all(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -57,7 +57,7 @@ export class RelationController {
   async one(req: Request, res: Response) {
     const relation = await this.getRelation(req, res);
     if (!relation) {
-      res.status(404).send();
+      res.status(404).send("Relation not found");
       return null;
     }
     return relation;
@@ -65,7 +65,7 @@ export class RelationController {
 
   async friends(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -80,7 +80,7 @@ export class RelationController {
 
   async invitesSent(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -95,7 +95,7 @@ export class RelationController {
 
   async invitesReceived(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -110,7 +110,7 @@ export class RelationController {
 
   async blocked(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -126,24 +126,63 @@ export class RelationController {
 
   async add(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
+    if (userId === req.params.userTwoId) {
+      res.status(403).send("Cant create Relation to self");
+      return;
+    }
     const existing = await this.getRelation(req, res);
 
     if (existing)
       return existing;
     const relation = await this.createRelation(userId, req.params.userTwoId, RelationStatus.PENDING)
     if (!relation)
-      res.status(404).send();
+      res.status(403).send("Relation creation failed");
+    else
+      return relation;
+  }
+
+  async addUsername(req: Request, res: Response) {
+    if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
+      res.status(401).send();
+      return;
+    }
+    const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
+
+    const userTwo = await getRepository(User).findOne({where: { username: req.params.username }});
+
+    if (!userTwo) {
+      res.status(404).send(`User ${req.params.username} not found`);
+      return;
+    }
+    if (userId === userTwo.id) {
+      res.status(403).send("Cant create Relation to self");
+      return;
+    }
+    const existing = await this.relationRepository.findOne({
+      where: {
+        userOneId: Math.min(Number(userId), userTwo.id),
+        userTwoId: Math.max(Number(userId), userTwo.id),
+      },
+      relations: ['users']
+    });
+
+    console.log(existing);
+    if (existing)
+      return existing;
+    const relation = await this.createRelation(userId, userTwo.id, RelationStatus.PENDING)
+    if (!relation)
+      res.status(403).send("Relation creation failed");
     else
       return relation;
   }
 
   async update(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     let relation = await this.getRelation(req, res);
@@ -162,7 +201,7 @@ export class RelationController {
         if (!relation)
           res.status(404).send(`Relation doesnt exist or action ${req.params.action} is invalid`);
         else
-          res.status(404).send(`Cant accept or refuse own relation`);
+          res.status(403).send(`Cant accept or refuse own relation`);
         return;
       }
     }
@@ -187,14 +226,14 @@ export class RelationController {
 
   async remove(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
+      res.status(401).send();
       return;
     }
     let relation = await this.one(req, res);
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
 
     if (!relation) {
-      res.status(404).send();
+      res.status(404).send("Relation not found");
       return;
     }
     this.publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));

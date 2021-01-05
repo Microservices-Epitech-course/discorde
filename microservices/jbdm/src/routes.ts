@@ -89,6 +89,13 @@ export const Routes = [
     action: "add",
   },
   {
+    // Friend Request via Username
+    method: "post",
+    route: "/users/:userId/relations/username/:username",
+    controller: RelationController,
+    action: "addUsername",
+  },
+  {
     // Modify Relation
     method: "patch",
     route: "/users/:userId/relations/:userTwoId/:action",
