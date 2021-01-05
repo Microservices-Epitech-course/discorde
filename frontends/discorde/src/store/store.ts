@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { createStore, applyMiddleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { ActionTypes, SET_ME } from './actions';
+import { ActionTypes, SET_ME, SET_FRIENDS, SET_PENDING } from './actions';
 import * as DataModel from './types';
 
 export interface ReduxState {
@@ -30,6 +30,16 @@ const reducer = (state = initialState, action: ActionTypes) => {
       return {
         ...state,
         me: action.payload,
+      };
+    case SET_FRIENDS:
+      return {
+        ...state,
+        friends: action.payload,
+      };
+    case SET_PENDING:
+      return {
+        ...state,
+        invites: action.payload,
       };
     default:
       return state;

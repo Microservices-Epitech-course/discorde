@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styled from "styled-components";
+import styled from 'styled-components';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { BiMessage } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
+import { ReduxState } from 'store/store';
 
 import {
   getFriends,
@@ -207,11 +209,18 @@ const UserRow = ({tab, user}: UserRowProps) => {
   )
 }
 
-export const FriendList = ({ children }: NoProps) => {
+interface FriendListProps {
+  allFriendList: array;
+  allPendingList: array;
+};
+
+export const FriendList = ({ children, allFriendList, allPendingList }: FriendListProps) => {
   const [tab, setTab] = useState('online');
   const [currentList, setCurrentList] = useState([]);
   const [error, setError] = useState(null);
+  const currentUser = useSelector((state: ReduxState) => state.me);
 
+  // console.log(allFriendList)
   const friendsLists = {
     online: {
       label: 'Online',
@@ -245,7 +254,7 @@ export const FriendList = ({ children }: NoProps) => {
 
       const usersList = result.map(e => {
         // TO FIX: replace actionUserId by @me
-        const actionUser = e.users.filter(ee => ee.id !== e.actionUserId)[0]
+        const actionUser = e.users.filter(ee => ee.id !== currentUser?.id)[0]
         return {
           ...actionUser,
           request: e.type,

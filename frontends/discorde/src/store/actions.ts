@@ -1,7 +1,8 @@
-import { User } from './types';
+import { User, Relation } from './types';
 
 export const SET_ME = 'SET_ME';
 export const SET_FRIENDS = 'SET_FRIENDS';
+export const SET_PENDING = 'SET_PENDING';
 
 interface SetMeAction {
   type: typeof SET_ME;
@@ -12,11 +13,8 @@ interface SetFriendsAction {
   payload: User[];
 }
 interface SetPendingsAction {
-  type: typeof SET_FRIENDS;
-  payload: {
-    incoming: User[];
-    outgoin: User[];
-  };
+  type: typeof SET_PENDING;
+  payload: Relation[];
 }
 
 export type ActionTypes = SetMeAction | SetFriendsAction | SetPendingsAction;

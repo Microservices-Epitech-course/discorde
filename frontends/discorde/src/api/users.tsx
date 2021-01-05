@@ -22,6 +22,7 @@ export const getFriends = async () => {
       'https://api-discorde-jbdm.herokuapp.com/users/@me/friends',
       { headers: { "authorization": localStorage.getItem('token') }},
     );
+
     return response.data;
   } catch (error) {
     return error.response.data;

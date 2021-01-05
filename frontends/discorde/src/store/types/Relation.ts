@@ -7,6 +7,11 @@ export enum RelationStatus {
   BLOCKED = 'blocked',
 }
 
+export enum RequestType {
+  INCOMING = 'incoming',
+  ONGOING = 'ongoing',
+}
+
 export interface Relation {
   id: number;
   userOneId: number;
@@ -14,6 +19,7 @@ export interface Relation {
   actionUserId: number;
   status: RelationStatus;
   users: User[];
+  type?: RequestType;
 
   createdAt: Date;
   updatedAt: Date;

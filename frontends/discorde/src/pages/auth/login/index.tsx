@@ -38,18 +38,20 @@ const Login: NextPage = (): JSX.Element => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await login({ email, password });
+
     if (response !== true) {
       setError(response);
     } else {
       setError(null);
       const me = await getUser({id: "@me"});
+
       if (me?.error) {
         setError(me)
       } else {
         dispatch({
           type: SET_ME,
           payload: me
-        });    
+        });
       }
       Router.push('/channels/@me');
     };
