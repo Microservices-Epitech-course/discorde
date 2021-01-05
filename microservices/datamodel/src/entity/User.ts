@@ -85,7 +85,7 @@ export class User {
     return jwt.sign(
       { userId: this.id, username: this.username },
       jwtSecret,
-      { expiresIn: "1h" },
+      { expiresIn: "7d" },
     );
   }
 }

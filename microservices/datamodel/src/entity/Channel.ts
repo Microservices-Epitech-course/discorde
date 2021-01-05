@@ -1,6 +1,6 @@
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
 import { Server, ChannelRoleSettings, Message } from ".";
-import { publisher } from "./redis";
+import { publisher } from "../config/redis";
 
 export enum ChannelType {
   TEXTUAL = "textual",

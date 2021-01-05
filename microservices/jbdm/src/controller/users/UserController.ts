@@ -1,11 +1,9 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { User, UserRole } from "@discorde/datamodel";
-import * as redis from "redis";
+import { publisher, User, UserRole } from "@discorde/datamodel";
 
 export class UserController {
   private userRepository = getRepository(User);
-  private publisher = redis.createClient(process.env.REDIS_URL);
 
   async all() {
     return this.userRepository.find({ relations: ['relations', 'members'] });
@@ -34,7 +32,7 @@ export class UserController {
     try {
       const user = await this.userRepository.findOneOrFail(userId);
       user.username = username;
-      this.publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
+      publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
       return await this.userRepository.save(user);
     } catch (e) {
       res.status(404).send();
