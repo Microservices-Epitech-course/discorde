@@ -31,7 +31,7 @@ export const Routes = [
 
   {
     method: "post",
-    route: "/users/joinServer/:inviteString",
+    route: "/users/join/:inviteString",
     controller: JoinController,
     action: "join"
   },
@@ -110,13 +110,6 @@ export const Routes = [
     route: "/users/conversations",
     controller: ConversationController,
     action: "add",
-  },
-  {
-    // Quit Conversation
-    method: "delete",
-    route: "/users/conversations/:serverId",
-    controller: ConversationController,
-    action: "remove",
   },
 
 

@@ -65,10 +65,10 @@ export class ServerController {
         server.members = [creatorMember];
         server.roles = [everyoneRole];
 
-        await getRepository(Member).save(creatorMember)
-        await getRepository(Channel).save(mainChannel)
+        await getRepository(Channel).save(mainChannel);
         await getRepository(Role).save(everyoneRole);
-        return (await this.serverRepository.save(server));
+        await this.serverRepository.save(server);
+        return await getRepository(Member).save(creatorMember);
     }
 
     async modif(req: Request, res: Response) {
