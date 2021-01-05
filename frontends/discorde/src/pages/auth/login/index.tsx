@@ -9,6 +9,9 @@ import { LoginInput } from '../../../components/input';
 import { Button } from '../../../components/button';
 
 import { login } from '../../../api/auth';
+import { getUser } from 'api/users';
+import { SET_ME } from 'store/actions';
+import { useDispatch } from 'react-redux';
 
 const Container = styled.div`
   width: 50vw;
@@ -30,16 +33,26 @@ const Login: NextPage = (): JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await login({ email, password });
-    if (response !== true) setError(response);
-    else {
+    if (response !== true) {
+      setError(response);
+    } else {
       setError(null);
+      const me = await getUser({id: "@me"});
+      if (me?.error) {
+        setError(me)
+      } else {
+        dispatch({
+          type: SET_ME,
+          payload: me
+        });    
+      }
       Router.push('/channels/@me');
     };
-    console.log(localStorage.getItem('token'))
   }
 
   return (

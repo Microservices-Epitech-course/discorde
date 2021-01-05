@@ -10,9 +10,9 @@ export const getUser = async (params: GetUserParams) => {
       `https://api-discorde-jbdm.herokuapp.com/users/${params.id}`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
-    return true;
+    return response.data;
   } catch (error) {
-    return error.response;
+    return error.response.data;
   }
 }
 
