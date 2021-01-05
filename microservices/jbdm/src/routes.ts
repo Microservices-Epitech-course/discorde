@@ -123,14 +123,14 @@ export const Routes = [
   {
     // Get all Conversations
     method: "get",
-    route: "/users/conversations",
+    route: "/users/:userId/conversations",
     controller: ListController,
     action: "conversations"
   },
   {
     // Get all Servers
     method: "get",
-    route: "/users/servers",
+    route: "/users/:userId/servers",
     controller: ListController,
     action: "servers"
   },

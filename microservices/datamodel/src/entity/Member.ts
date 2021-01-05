@@ -35,7 +35,7 @@ export class Member {
 
   @BeforeRemove()
   async deleteListener() {
-    const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server']});
+    const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server', 'server.members']});
 
     await getRepository(Message).remove(member.messages);
     await getRepository(Reaction).remove(member.reactions);
