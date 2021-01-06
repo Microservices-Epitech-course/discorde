@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
 import { FiX } from 'react-icons/fi';
-import { Server } from 'store/types/Server';
 import { useSelector } from 'react-redux';
 
 import { ConversationSearchInput } from './input';
+import { ReduxState } from 'store';
 
 const Container = styled.div`
   min-width: 240px;
@@ -83,20 +83,10 @@ const Header = styled.div`
   top: 0;
 `;
 
-type ConversationListProps = {
-  allConversations: array;
-};
-
-export const ConversationList = ({ children, allConversations }: ConversationListProps) => {
+export const ConversationList = () => {
+  const conversationList = useSelector((state: ReduxState) => state.conversations);
   const me = useSelector((state: ReduxState) => state.me);
   const [search, setSearch] = useState('');
-  const [conversationList, setConversationList] = useState([]);
-
-  useEffect(() => {
-    console.log(allConversations)
-    const filteredList = allConversations.map(e => e.server.members.filter(u => u.user.id !== me.id)[0]);
-    setConversationList(filteredList);
-  }, [allConversations]);
 
   return (
     <Container>
@@ -105,12 +95,13 @@ export const ConversationList = ({ children, allConversations }: ConversationLis
       </Header>
       <label>Direct messages</label>
       <Ul>
-        {conversationList.map((member, i) => {
+        {conversationList.map((server, i) => {
           return (
-            <Link key={`${member.user.username}${i}`} href={`/channels/@me/${member.user.id}`}>
+            <Link key={i} href={`/channels/@me/${server.id}`}>
               <Row>
-                <img src={member.user.image} alt="profile" />
-                <span className="username-bold">{member.user.username}</span>
+                {/*TODO GET IMAGE*/}
+                <img src={me.image} alt="profile" />
+                <span className="username-bold">{server.name}</span>
                 <Space />
                 <Button>
                   <FiX className='icon' />

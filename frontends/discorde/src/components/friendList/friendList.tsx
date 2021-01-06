@@ -11,6 +11,7 @@ import { Error } from '../text';
 import { AddFriend } from './addFriend';
 import { User } from 'store/types';
 import { createConversation } from 'api/conversations';
+import { getUserFromId, getUsersFromIds } from 'store/utils';
 
 const Container = styled.div`
   width: 100%;
@@ -220,12 +221,9 @@ const UserRow = ({tab, user}: UserRowProps) => {
   )
 }
 
-interface FriendListProps {
-  allFriendList: Array<User>;
-  allPendingList: Array<User & {request: string; relationId: number}>;
-};
-
-export const FriendList = ({ allFriendList, allPendingList }: FriendListProps) => {
+export const FriendList = () => {
+  const allFriendList = useSelector((state: ReduxState) => getUsersFromIds(state, state.friends));
+  const allPendingList = useSelector((state: ReduxState) => state.invites.map((e) => ({...getUserFromId(state, e.userId), ...e})));
   const [tab, setTab] = useState('online');
   const [currentList, setCurrentList] = useState([]);
   const [error, setError] = useState(null);

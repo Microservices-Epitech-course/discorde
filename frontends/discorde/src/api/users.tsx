@@ -23,6 +23,7 @@ export const getUser = async (dispatch: Dispatch<any>, params: GetUserParams) =>
 
     return {success: true, data: response.data};
   } catch (error) {
+    console.error(error);
     return {success: true, data: error.response};
   }
 }
@@ -46,6 +47,7 @@ export const getFriends = async (dispatch: Dispatch<any>, me: User) => {
 
     return {success: true, data: response.data};
   } catch (error) {
+    console.error(error);
     return {success: false, data: error.response};
   }
 }
@@ -69,14 +71,14 @@ export const getAllFriendRequest = async (dispatch: Dispatch<any>, me: User) => 
       requestIncoming
     ]);
 
-    const outgoingUsers = responseIncoming.data.map((e: Relation) => (
+    const outgoingUsers = responseOutgoing.data.map((e: Relation) => (
       {
         user: e.users.find((e2) => e2.id !== me.id),
         type: RequestType.OUTGOING,
         relationId: e.id
       }
     ));
-    const incomingUsers = responseOutgoing.data.map((e: Relation) => (
+    const incomingUsers = responseIncoming.data.map((e: Relation) => (
       {
         user: e.users.find((e2) => e2.id !== me.id),
         type: RequestType.INCOMING,
@@ -96,6 +98,7 @@ export const getAllFriendRequest = async (dispatch: Dispatch<any>, me: User) => 
 
     return {success: true, data: pendings};
   } catch (error) {
+    console.error(error);
     return {success: false, data: error.response};
   }
 }
@@ -120,6 +123,7 @@ export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, par
       });  
       return {success: true, data: response.data};
     } catch (error) {
+      console.error(error);
       return {success: false, data: error.response};
     }
   } else {
@@ -146,6 +150,7 @@ export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, par
       }
       return {success: true, data: response.data};
     } catch (error) {
+      console.error(error);
       return {success: false, data: error.response};
     }
   }
@@ -160,6 +165,7 @@ export const getBlocked = async () => {
 
     return {success: true, data: response.data};
   } catch (error) {
+    console.error(error);
     return {success: false, data: error.response.data};
   }
 }
@@ -193,6 +199,7 @@ export const addFriend = async (dispatch: Dispatch<any>, params: AddfriendParams
 
     return {success: true, data: response};
   } catch (error) {
+    console.error(error);
     return { success: false, data: error.response.data };
   }
 }

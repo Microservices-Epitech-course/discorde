@@ -32,7 +32,7 @@ export function setPendings(state: ReduxState, action: SetPendingsAction) {
 export function addPendings(state: ReduxState, action: AddPendingsAction) {
   return {
     ...state,
-    invites: concatOrReplace(state.invites, action.payload, "id")
+    invites: concatOrReplace(state.invites, action.payload, "relationId")
   };
 }
 export function delPendings(state: ReduxState, action: DelPendingsAction) {

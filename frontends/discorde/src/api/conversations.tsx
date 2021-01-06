@@ -2,6 +2,7 @@ import axios from 'axios';
 import { Dispatch } from 'redux';
 import { SET_CONVERSATION } from 'store/actions/conversation';
 import { SET_SERVER } from 'store/actions/server';
+import { ServerType } from 'store/types';
 import * as Servers from './servers';
 
 interface GetServersParams {
@@ -14,8 +15,8 @@ export const getServersAndConversations = async (dispatch: Dispatch<any>) => {
       `${Servers.jbdm}/users/@me/conversations`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
-    const allServers = response.data.filter(e => e.server.type === 'server');
-    const allConversations = response.data.filter(e => e.server.type === 'conversation');
+    const allServers = response.data.filter(e => e.type === ServerType.SERVER);
+    const allConversations = response.data.filter(e => e.type === ServerType.CONVERSATION);
 
     dispatch({
       type: SET_SERVER,
@@ -28,7 +29,8 @@ export const getServersAndConversations = async (dispatch: Dispatch<any>) => {
 
     return response.data;
   } catch (error) {
-     return { success: false, data: error.data };
+    console.error(error);
+    return { success: false, data: error.data };
   }
 }
 
@@ -45,6 +47,7 @@ export const createConversation = async (params: CreateConversationParams) => {
     );
     return { success: true, data: response };
   } catch (error) {
+    console.error(error);
     return { success: false, data: error.response.data };
   }
 }
