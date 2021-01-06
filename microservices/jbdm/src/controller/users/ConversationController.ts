@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Channel, ChannelType, Member, Role, Server, ServerType, User } from "@discorde/datamodel";
+import { Channel, ChannelType, Member, Role, Server, ServerType, User, UserRole } from "@discorde/datamodel";
 
 export class ConversationController {
   private serverRepository = getRepository(Server);
@@ -8,17 +8,39 @@ export class ConversationController {
   private memberRepository = getRepository(Member);
 
   async add(req: Request, res: Response) {
-    // TODO : Remove if same ids and check that creator is inside
     const { usersId } = req.body;
     if (!usersId) {
-      res.status(404).send("Missing usersId parameter");
+      res.status(403).send("Missing usersId parameter");
       return;
     }
+    if (res.locals.user.role !== UserRole.ADMIN && !usersId.includes(res.locals.user.id)) {
+      res.status(401).send("Cant create conversation without self");
+    }
+
+    const sortedIds = usersId.sort();
+
+    const userMembers = await this.memberRepository.find({
+      where: {
+        user: {
+          id: res.locals.user.id
+        },
+      },
+      relations: ["server", "server.members", "server.members.user"]
+    });
+
+    const exist = userMembers.find((userMember) => {
+      const ids = userMember.server.members.map((member) => member.user.id).sort();
+      return ids.reduce((acc, e, i) => acc + (sortedIds[i] === e ? 1 : 0), 0) === ids.length;
+    });
+
+    if (exist)
+      return exist;
+
     let mainChannel = new Channel();
     let server = new Server();
     let everyoneRole = new Role();
 
-    server.name = usersId.reduce((acc, e) => acc + e, "");
+    server.name = sortedIds.reduce((acc, e) => acc + e, "");
     server.type = ServerType.CONVERSATION;
     await this.serverRepository.save(server);
 
@@ -34,7 +56,7 @@ export class ConversationController {
     await getRepository(Role).save(everyoneRole);
 
     const names = [];
-    const filteredUserId = usersId.filter((e, i) => usersId.findIndex((e2) => e2 === e) === i);
+    const filteredUserId = sortedIds.filter((e, i) => sortedIds.findIndex((e2) => e2 === e) === i);
     for (let i in filteredUserId) {
       try {
         const member = new Member();

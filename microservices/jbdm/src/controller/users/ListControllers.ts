@@ -7,7 +7,7 @@ export class ListController {
 
   async conversations(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(401).send();
+      res.status(401).send("Cant get someone else conversations");
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
@@ -19,15 +19,14 @@ export class ListController {
         },
         quit: false,
       },
-      relations: ["server"]
+      relations: ["server", "server.members", "server.members.user"]
     });
-    console.log(members);
     return members.filter((e) => e.server.type === ServerType.CONVERSATION).map((e) => e.server);
   }
 
   async servers(req: Request, res: Response) {
     if (req.params.userId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(401).send();
+      res.status(401).send("Cant get someone else servers");
       return;
     }
     const userId = req.params.userId === "@me" ? res.locals.user.id : req.params.userId;
