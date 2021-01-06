@@ -8,12 +8,12 @@ export class ConversationController {
   private memberRepository = getRepository(Member);
 
   async add(req: Request, res: Response) {
+    // TODO : Remove if same ids and check that creator is inside
     const { usersId } = req.body;
     if (!usersId) {
       res.status(404).send("Missing usersId parameter");
       return;
     }
-    let creatorMember = new Member();
     let mainChannel = new Channel();
     let server = new Server();
     let everyoneRole = new Role();
@@ -21,10 +21,6 @@ export class ConversationController {
     server.name = usersId.reduce((acc, e) => acc + e, "");
     server.type = ServerType.CONVERSATION;
     await this.serverRepository.save(server);
-
-    creatorMember.user = res.locals.user;
-    creatorMember.roles = [everyoneRole];
-    creatorMember.server = server;
 
     mainChannel.name = "Main";
     mainChannel.server = server;
@@ -51,7 +47,6 @@ export class ConversationController {
       } catch (e) {}
     }
     server.name = name;
-    await this.serverRepository.save(server);
-    return await this.memberRepository.save(creatorMember);
+    return await this.serverRepository.save(server);
   }
 }

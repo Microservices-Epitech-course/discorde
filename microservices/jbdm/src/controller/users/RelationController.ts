@@ -1,7 +1,6 @@
 import { getRepository, Not } from "typeorm";
 import { Request, Response } from "express";
 import { publisher, Relation, RelationStatus, User, UserRole } from "@discorde/datamodel";
-import * as redis from "redis";
 
 export class RelationController {
   private relationRepository = getRepository(Relation);
@@ -33,8 +32,9 @@ export class RelationController {
       relation.status = status;
       relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId]);
 
+      await this.relationRepository.save(relation);
       publisher.publish(`user:${userId2}`, JSON.stringify({ action: "relationAdd", data: relation }));
-      return (await this.relationRepository.save(relation));
+      return relation;
     } catch (e) {
       return null;
     }
