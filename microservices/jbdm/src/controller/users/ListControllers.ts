@@ -19,10 +19,10 @@ export class ListController {
         },
         quit: false,
       },
-      relations: ["server", "server.channels", "server.members", "server.members.user"]
+      relations: ["server"]
     });
     console.log(members);
-    return members.filter((e) => e.server.type === ServerType.CONVERSATION);
+    return members.filter((e) => e.server.type === ServerType.CONVERSATION).map((e) => e.server);
   }
 
   async servers(req: Request, res: Response) {
@@ -39,8 +39,8 @@ export class ListController {
         },
         quit: false,
       },
-      relations: ["server", "server.channels", "server.members", "server.members.user"]
+      relations: ["server"]
     });
-    return members.filter((e) => e.server.type === ServerType.SERVER);
+    return members.filter((e) => e.server.type === ServerType.SERVER).map((e) => e.server);
   }
 }
