@@ -169,8 +169,19 @@ export class RelationController {
       relations: ['users']
     });
 
-    if (existing)
-      return existing;
+    if (existing) {
+      if (existing.status === RelationStatus.ACCEPTED)
+        return res.status(403).send("Already Friend");
+      else if (existing.status === RelationStatus.PENDING)
+        return res.status(403).send("Friend Request already sent");
+      else if (existing.status === RelationStatus.BLOCKED)
+        return res.status(403).send("Cant request this Friend");
+      else if (existing.status === RelationStatus.DECLINED) {
+        existing.status = RelationStatus.PENDING
+        publisher.publish(`user:${userTwo.id}`, JSON.stringify({ action: "relationAdd", data: existing }));
+        return await this.relationRepository.save(existing);
+      }
+    }
     const relation = await this.createRelation(userId, userTwo.id, RelationStatus.PENDING)
     if (!relation)
       res.status(403).send("Relation creation failed");
