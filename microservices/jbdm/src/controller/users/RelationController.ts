@@ -217,7 +217,7 @@ export class RelationController {
         res.status(404).send(`Unknown action ${req.params.action}`);
         return;
     }
-    publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
+    publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
     return await this.relationRepository.save(relation);
   }
 
@@ -233,8 +233,9 @@ export class RelationController {
       res.status(404).send("Relation not found");
       return;
     }
-    publisher.publish(`user:${userId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
+    publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
+    const relId = relation.id;
     await this.relationRepository.remove(relation);
-    return relation.id;
+    return {id: relId};
   }
 }
