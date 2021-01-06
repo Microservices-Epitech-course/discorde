@@ -143,7 +143,7 @@ export const ConversationSearchInput = ({ placeholder, value, onChange, ...props
 ** Add Friend Input
 */
 
-const AddFriendInputContainer = styled(InputContainer)`
+const ButtonInputContainer = styled(InputContainer)`
   background-color: #0000001a;
   border-radius: 5px;
   padding: 0.9rem 0.6rem;
@@ -172,18 +172,19 @@ const AddFriendInputContainer = styled(InputContainer)`
   }
 `;
 
-interface AddFriendInputProps {
+interface ButtonInputProps {
   placeholder?: string,
   label?: string,
   type?: string,
   value: string,
+  buttonText: string,
   onChange: Function,
   onSubmit: Function,
 };
 
-export const AddFriendInput = ({ placeholder, label, type, value, onSubmit, onChange, ...props }: AddFriendInputProps) => {
+export const ButtonInput = ({ placeholder, label, type, value, buttonText, onSubmit, onChange, ...props }: ButtonInputProps) => {
   return (
-    <AddFriendInputContainer {...props}>
+    <ButtonInputContainer {...props}>
       <form onSubmit={onSubmit}>
         <input
           value={value}
@@ -195,9 +196,9 @@ export const AddFriendInput = ({ placeholder, label, type, value, onSubmit, onCh
           disabled={value === ''}
           type='submit'
         >
-          Send Friend Request
+          {buttonText}
         </Button>
       </form>
-    </AddFriendInputContainer>
+    </ButtonInputContainer>
   );
 };

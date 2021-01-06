@@ -168,8 +168,8 @@ const UserRow = ({tab, user}: UserRowProps) => {
   const buttons = () => {
     if (!user?.request) {
       return (
-        <Button positive>
-          <BiMessage className='icon' onClick={handleClickMessage} />
+        <Button positive onClick={handleClickMessage}>
+          <BiMessage className='icon' />
         </Button>
       )
     }

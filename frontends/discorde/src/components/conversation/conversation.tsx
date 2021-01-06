@@ -23,6 +23,10 @@ const Content = styled.div`
   width: 100%;
   padding-top: 0;
   flex-grow: 1;
+
+  form {
+    margin: 1rem;
+  }
 `;
 
 const Header = styled.div`
