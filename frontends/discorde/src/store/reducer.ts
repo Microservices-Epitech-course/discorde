@@ -3,12 +3,16 @@ import * as Friends from './actions/friends';
 import * as Users from './actions/users';
 import * as WS from './actions/ws';
 import * as Pending from './actions/pending';
+import * as Server from './actions/server';
+import * as Conversation from './actions/conversation';
 
 export type ActionTypes = 
   WS.Actions |
   Users.Actions |
   Friends.Actions |
-  Pending.Actions;
+  Pending.Actions |
+  Server.Actions |
+  Conversation.Actions;
 
 interface Dispatch {
   action: string,
@@ -19,7 +23,9 @@ const allDispatches: Array<Dispatch> = [
   WS.dispatches,
   Users.dispatches,
   Friends.dispatches,
-  Pending.dispatches
+  Pending.dispatches,
+  Server.dispatches,
+  Conversation.dispatches,
 ].flat();
 
 export function reducer(state: ReduxState, action: ActionTypes) {

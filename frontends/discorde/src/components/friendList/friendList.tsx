@@ -10,8 +10,6 @@ import { modifyFriendRequest } from '../../api/users';
 import { Error } from '../text';
 import { AddFriend } from './addFriend';
 import { User } from 'store/types';
-import { DEL_PENDING } from 'store/actions/pending';
-import { ADD_FRIENDS } from 'store/actions/friends';
 import { createConversation } from 'api/conversations';
 
 const Container = styled.div`
@@ -155,19 +153,7 @@ const UserRow = ({tab, user}: UserRowProps) => {
   const me = useSelector((state: ReduxState) => state.me);
 
   const handleClickInvite = async (action) => {
-    const response = await modifyFriendRequest({ id: user.id.toString(), action });
-    
-    dispatch({
-      type: DEL_PENDING,
-      payload: user.relationId
-    });
-    if (response.success && action === "accept") {
-      const actionUser = response.data.users.filter(ee => ee.id !== me?.id)[0]
-      dispatch({
-        type: ADD_FRIENDS,
-        payload: actionUser
-      });
-    }
+    await modifyFriendRequest(dispatch, me, { id: user.id.toString(), action, relationId: user.relationId });
   }
 
   const handleClickMessage = async () => {

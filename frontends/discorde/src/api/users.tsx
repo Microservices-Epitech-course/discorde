@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
-import { SET_FRIENDS } from 'store/actions/friends';
-import { ADD_PENDING, SET_PENDING } from 'store/actions/pending';
+import { ADD_FRIENDS, SET_FRIENDS } from 'store/actions/friends';
+import { ADD_PENDING, DEL_PENDING, SET_PENDING } from 'store/actions/pending';
 import { ADD_USER, MULTI_ADD_USER } from 'store/actions/users';
 import { Relation, RequestType, User } from 'store/types';
 import * as Servers from './servers';
@@ -103,9 +103,10 @@ export const getAllFriendRequest = async (dispatch: Dispatch<any>, me: User) => 
 interface ModifyFriendRequestParams {
   id: string,
   action: string,
+  relationId: number
 };
 
-export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => {
+export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, params: ModifyFriendRequestParams) => {
   if (params.action === 'deny') {
     try {
       const response = await axios.delete(
@@ -113,6 +114,10 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
         { headers: { "authorization": localStorage.getItem('token') }},
       );
 
+      dispatch({
+        type: DEL_PENDING,
+        payload: params.relationId
+      });  
       return {success: true, data: response.data};
     } catch (error) {
       return {success: false, data: error.response};
@@ -124,6 +129,21 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
         {},
         { headers: { "authorization": localStorage.getItem('token') }},
       );
+      if (params.action === "accept") {
+        const actionUser = response.data.users.find((e) => e.id !== me.id);
+        dispatch({
+          type: DEL_PENDING,
+          payload: params.relationId
+        });  
+        dispatch({
+          type: ADD_USER,
+          payload: actionUser,
+        });
+        dispatch({
+          type: ADD_FRIENDS,
+          payload: actionUser.id
+        });
+      }
       return {success: true, data: response.data};
     } catch (error) {
       return {success: false, data: error.response};
@@ -159,16 +179,16 @@ export const addFriend = async (dispatch: Dispatch<any>, params: AddfriendParams
     const actionUser = response.data.users.find(e => e.id !== me?.id);
 
     dispatch({
+      type: ADD_USER,
+      payload: actionUser,
+    });
+    dispatch({
       type: ADD_PENDING,
       payload: ({
         userId: actionUser.id,
         relationId: response.data.id,
         request: RequestType.OUTGOING
       })
-    });
-    dispatch({
-      type: ADD_USER,
-      payload: actionUser,
     });
 
     return {success: true, data: response};

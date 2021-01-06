@@ -31,19 +31,7 @@ const Me = (): JSX.Element => {
   const load = async () => {
     await getFriends(dispatch, me);
     await getAllFriendRequest(dispatch, me);
-    const resultGetServersAndConversations = await getServersAndConversations();
-    const allServers = resultGetServersAndConversations.filter(e => e.server.type === 'server');
-    const allConversations = resultGetServersAndConversations.filter(e => e.server.type === 'conversation');
-
-    dispatch({
-      type: SET_SERVER,
-      payload: allServers
-    });
-    dispatch({
-      type: SET_CONVERSATION,
-      payload: allConversations
-    });
-    console.log(allServers, allConversations)
+    await getServersAndConversations(dispatch);
   }
   useEffect(() => {
     load();
