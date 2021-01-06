@@ -23,7 +23,6 @@ export const getUser = async (dispatch: Dispatch<any>, params: GetUserParams) =>
 
     return {success: true, data: response.data};
   } catch (error) {
-    console.error(error);
     return {success: true, data: error.response};
   }
 }
@@ -47,7 +46,6 @@ export const getFriends = async (dispatch: Dispatch<any>, me: User) => {
 
     return {success: true, data: response.data};
   } catch (error) {
-    console.error(error);
     return {success: false, data: error.response};
   }
 }
@@ -120,7 +118,7 @@ export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, par
       dispatch({
         type: DEL_PENDING,
         payload: params.relationId
-      });  
+      });
       return {success: true, data: response.data};
     } catch (error) {
       console.error(error);
@@ -138,7 +136,7 @@ export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, par
         dispatch({
           type: DEL_PENDING,
           payload: params.relationId
-        });  
+        });
         dispatch({
           type: ADD_USER,
           payload: actionUser,

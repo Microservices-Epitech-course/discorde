@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
 
-import { AddFriendInput } from '../input';
+import { ButtonInput } from '../input';
 import { Error, Success } from '../text';
 
 import { addFriend } from '../../api/users';
@@ -55,11 +55,12 @@ export const AddFriend = () => {
           ? <Success>Success! Your friend request to {username} was sent.</Success>
           : <span>You can add a friend with their username. It's cAsE sEnSitIvE!</span>
       }
-      <AddFriendInput
+      <ButtonInput
         onSubmit={handleSubmit}
         placeholder='Enter a Username'
         value={username}
         onChange={handleChange}
+        buttonText='Send Friend Request'
       />
       {
         error && <Error>{error}</Error>
