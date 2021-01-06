@@ -225,7 +225,6 @@ export const FriendList = () => {
   const allFriendList = useSelector((state: ReduxState) => getUsersFromIds(state, state.friends));
   const allPendingList = useSelector((state: ReduxState) => state.invites.map((e) => ({...getUserFromId(state, e.userId), ...e})));
   const [tab, setTab] = useState('online');
-  const [currentList, setCurrentList] = useState([]);
   const [error, setError] = useState(null);
 
   const friendsLists = {
@@ -236,19 +235,13 @@ export const FriendList = () => {
   };
 
   const handleTabClick = selectedTab => {
-    let list = [];
-
-    if (selectedTab === 'all') list = allFriendList;
-    if (selectedTab === 'online') list = allFriendList.filter(e => status === 'online');
-    if (selectedTab === 'pending') list = allPendingList;
-
     setTab(selectedTab);
-    setCurrentList(list);
   }
 
-  useEffect(() => {
-    handleTabClick(tab);
-  }, [allFriendList, allPendingList]);
+  let currentList = [];
+  if (tab === 'all') currentList = allFriendList;
+  if (tab === 'online') currentList = allFriendList.filter(e => status === 'online');
+  if (tab === 'pending') currentList = allPendingList;
 
   const friendList = currentList.map((user, i) =>
     <UserRow tab={tab} user={user} key={`${user.username}${i}`} />
