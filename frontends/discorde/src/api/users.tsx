@@ -81,25 +81,22 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
         { headers: { "authorization": localStorage.getItem('token') }},
       );
 
-      return true;
+      return {success: true, data: response.data};
     } catch (error) {
-      return error.response;
+      return {success: false, data: error.response};
     }
-  }
-  else {
+  } else {
     try {
       const response = await axios.patch(
         `https://api-discorde-jbdm.herokuapp.com/users/@me/relations/${params.id}/${params.action}`,
         {},
         { headers: { "authorization": localStorage.getItem('token') }},
       );
-      return true;
+      return {success: true, data: response.data};
     } catch (error) {
-      return error.response;
+      return {success: false, data: error.response};
     }
   }
-
-
 }
 
 export const getBlocked = async () => {
@@ -126,8 +123,8 @@ export const addFriend = async (params: AddfriendParams) => {
       {},
       { headers: { "authorization": localStorage.getItem('token') }},
     );
-    return true;
+    return {success: true, data: response};
   } catch (error) {
-    return error.response.data;
+    return {success: false, data: error.response.data};
   }
 }

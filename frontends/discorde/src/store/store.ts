@@ -1,16 +1,14 @@
 import { useMemo } from 'react';
 import { createStore, applyMiddleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { ActionTypes, SET_ME, SET_FRIENDS, SET_PENDING } from './actions';
+import * as Actions from './actions';
+import { ActionTypes } from './actions';
 import * as DataModel from './types';
 
 export interface ReduxState {
   me: DataModel.User | null;
   friends: DataModel.User[];
-  invites: {
-    incoming: DataModel.User[];
-    outgoing: DataModel.User[];
-  };
+  invites: DataModel.Relation[];
 }
 
 let store: Store<ReduxState, ActionTypes> | undefined;
@@ -18,28 +16,47 @@ let store: Store<ReduxState, ActionTypes> | undefined;
 const initialState: ReduxState = {
   me: null,
   friends: [],
-  invites: {
-    incoming: [],
-    outgoing: [],
-  },
+  invites: [],
 };
 
 const reducer = (state = initialState, action: ActionTypes) => {
   switch (action.type) {
-    case SET_ME:
+    case Actions.SET_ME:
       return {
         ...state,
         me: action.payload,
       };
-    case SET_FRIENDS:
+
+    case Actions.SET_FRIENDS:
       return {
         ...state,
-        friends: action.payload,
+        friends: action.payload.sort((a, b) => a.username.localeCompare(b.username)),
       };
-    case SET_PENDING:
+    case Actions.ADD_FRIENDS:
+      return {
+        ...state,
+        friends: state.friends.concat(action.payload).sort((a, b) => a.username.localeCompare(b.username)),
+      };
+    case Actions.DEL_FRIENDS:
+      return {
+        ...state,
+        friends: state.friends.filter(e => e.id !== action.id),
+      };
+
+    case Actions.SET_PENDING:
       return {
         ...state,
         invites: action.payload,
+      };
+    case Actions.ADD_PENDING:
+      return {
+        ...state,
+        invites: state.invites.concat(action.payload)
+      };
+    case Actions.DEL_PENDING:
+      return {
+        ...state,
+        invites: state.invites.filter(e => e.id !== action.id)
       };
     default:
       return state;

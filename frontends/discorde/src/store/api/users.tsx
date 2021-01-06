@@ -1,9 +1,9 @@
-import { getUser } from "api";
+import * as Api from "api";
 import { Dispatch } from "redux";
 import * as Actions from "store/actions";
 
 export const getMe = async(dispatch: Dispatch<any>, onError?: (any) => void, onSuccess?: (any) => void) => {
-  const me = await getUser({id: "@me"});
+  const me = await Api.getUser({id: "@me"});
   
   if (me?.error) {
     if (onError)

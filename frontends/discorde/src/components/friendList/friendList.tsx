@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { BiMessage } from 'react-icons/bi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store/store';
 
 import {
-  getFriends,
-  getOutgoingFriendRequest,
-  getBlocked,
-  getAllFriendRequest,
   modifyFriendRequest,
 } from '../../api/users';
 import { Error } from '../text';
 import { AddFriend } from './addFriend';
+import { ADD_FRIENDS, DEL_PENDING } from 'store/actions';
+import { User } from 'store/types';
 
 const Container = styled.div`
   width: 100%;
@@ -145,12 +143,29 @@ const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
 
 interface UserRowProps {
   tab: string,
-  user: Object,
+  user: User & {request: string},
 };
 
 const UserRow = ({tab, user}: UserRowProps) => {
+  const dispatch = useDispatch();
+  const me = useSelector((state: ReduxState) => state.me);
+
   const handleClick = async (action) => {
-    const response = await modifyFriendRequest({ id: user.id, action });
+    const response = await modifyFriendRequest({ id: user.id.toString(), action });
+    
+    if (response.success) {
+      dispatch({
+        type: DEL_PENDING,
+        id: response.data.id
+      });
+      if (action === "accept") {
+        const actionUser = response.data.users.filter(ee => ee.id !== me?.id)[0]
+        dispatch({
+          type: ADD_FRIENDS,
+          payload: actionUser
+        });
+      }
+    }
   }
 
   const buttons = () => {
@@ -257,6 +272,10 @@ export const FriendList = ({ children, allFriendList, allPendingList }: FriendLi
     setTab(selectedTab);
     setCurrentList(list);
   }
+
+  useEffect(() => {
+    handleTabClick(tab);
+  }, [allFriendList, allPendingList]);
 
   const friendList = currentList.map((user, i) =>
     <UserRow tab={tab} user={user} key={`${user.username}${i}`} />

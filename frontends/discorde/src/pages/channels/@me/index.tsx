@@ -20,41 +20,31 @@ const Flex = styled.div`
 
 const Me = (): JSX.Element => {
   const me = useSelector((state: ReduxState) => state.me);
-  const [friendList, setFriendList] = useState([]);
-  const [pendingList, setPendingList] = useState([]);
+  const friendList = useSelector((state: ReduxState) => state.friends);
+  const pendingList = useSelector((state: ReduxState) => state.invites)
   const dispatch = useDispatch();
 
-  useEffect(async () => {
-      const resultGetFriends = await getFriends();
-      const resultGetAllFriendRequest = await getAllFriendRequest();
+  const load = async () => {
+    const resultGetFriends = await getFriends();
+    const resultGetAllFriendRequest = await getAllFriendRequest();
 
-      if (resultGetFriends?.error) {
-        setFriendList([]);
-        return false;
-      }
-      if (resultGetAllFriendRequest?.error) {
-        setPendingList([]);
-        return false;
-      }
+    const filteredFriendList = resultGetFriends.map(e => {
+      const actionUser = e.users.filter(ee => ee.id !== me?.id)[0]
+      return actionUser
+    });
 
-      const filteredFriendList = resultGetFriends.map(e => {
-        const actionUser = e.users.filter(ee => ee.id !== me?.id)[0]
-        return actionUser
-      });
+    dispatch({
+      type: SET_FRIENDS,
+      payload: filteredFriendList,
+    });
+    dispatch({
+      type: SET_PENDING,
+      payload: resultGetAllFriendRequest,
+    });
+  }
 
-      setFriendList(filteredFriendList);
-      setPendingList(resultGetAllFriendRequest);
-
-      dispatch({
-        type: SET_FRIENDS,
-        payload: filteredFriendList,
-      });
-      dispatch({
-        type: SET_PENDING,
-        payload: resultGetAllFriendRequest,
-      });
-      console.log(filteredFriendList)
-      console.log(resultGetAllFriendRequest)
+  useEffect(() => {
+    load();
   }, []);
 
   return (

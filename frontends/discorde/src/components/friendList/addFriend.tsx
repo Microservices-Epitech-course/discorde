@@ -5,6 +5,9 @@ import { AddFriendInput } from '../input';
 import { Error, Success } from '../text';
 
 import { addFriend } from '../../api/users';
+import { useDispatch } from 'react-redux';
+import { ADD_PENDING } from 'store/actions';
+import { Relation, RequestType } from 'store/types';
 
 const Container = styled.div`
   padding: 0 2rem;
@@ -20,18 +23,26 @@ const Container = styled.div`
   }
 `;
 
-export const AddFriend = ({}: NoProps) => {
+export const AddFriend = () => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await addFriend({ username });
-    if (response !== true) setError(response);
-    else {
+    if (!response.success) {
+      setError(response.data);
+    } else {
       setError(null);
       setSuccess(true);
+      const newPending = response.data.data as Relation;
+      newPending.type = RequestType.ONGOING;
+      dispatch({
+        type: ADD_PENDING,
+        payload: newPending
+      })
     };
   }
 
