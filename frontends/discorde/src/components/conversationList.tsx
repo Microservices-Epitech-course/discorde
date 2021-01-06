@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
 import { FiX } from 'react-icons/fi';
+import { Server } from 'store/types/Server';
+import { useSelector } from 'react-redux';
 
 import { ConversationSearchInput } from './input';
 
@@ -26,12 +28,6 @@ const Button = styled.button`
   padding: .5rem;
   display: none;
   background-color: transparent;
-
-  a:hover {
-  }
-
-  &:active {
-  }
 `;
 
 const Row = styled.li`
@@ -71,133 +67,6 @@ const Label = styled.label`
   color: #b9bbbe;
 `
 
-type InputProps = {
-  children?: React.ReactNode;
-};
-
-const list = [
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-  {
-    username: "tomat",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg",
-    status: "online"
-  },
-];
-
 const Space = styled.div`
   flex-grow: 1;
 `;
@@ -214,8 +83,20 @@ const Header = styled.div`
   top: 0;
 `;
 
-export const ConversationList = ({ children }: InputProps) => {
+type ConversationListProps = {
+  allConversations: array;
+};
+
+export const ConversationList = ({ children, allConversations }: ConversationListProps) => {
+  const me = useSelector((state: ReduxState) => state.me);
   const [search, setSearch] = useState('');
+  const [conversationList, setConversationList] = useState([]);
+
+  useEffect(() => {
+    console.log(allConversations)
+    const filteredList = allConversations.map(e => e.server.members.filter(u => u.user.id !== me.id)[0]);
+    setConversationList(filteredList);
+  }, [allConversations]);
 
   return (
     <Container>
@@ -224,18 +105,18 @@ export const ConversationList = ({ children }: InputProps) => {
       </Header>
       <label>Direct messages</label>
       <Ul>
-        {list.map((user, i) => {
+        {conversationList.map((member, i) => {
           return (
-            // <Link href="/channels/@me/">
-              <Row key={`${user.username}${i}`}>
-                <img src={user.icon} alt="profile" />
-                <span className="username-bold">{user.username}</span>
+            <Link key={`${member.user.username}${i}`} href={`/channels/@me/${member.user.id}`}>
+              <Row>
+                <img src={member.user.image} alt="profile" />
+                <span className="username-bold">{member.user.username}</span>
                 <Space />
                 <Button>
                   <FiX className='icon' />
                 </Button>
               </Row>
-            // </Link>
+            </Link>
           );
         })}
       </Ul>

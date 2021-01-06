@@ -245,18 +245,10 @@ export const FriendList = ({ allFriendList, allPendingList }: FriendListProps) =
   const [error, setError] = useState(null);
 
   const friendsLists = {
-    online: {
-      label: 'Online',
-    },
-    all: {
-      label: 'All friends',
-    },
-    pending: {
-      label: 'Pending',
-    },
-    blocked: {
-      label: 'Blocked',
-    },
+    online: 'Online',
+    all: 'All friends',
+    pending: 'Pending',
+    blocked: 'Blocked',
   };
 
   const handleTabClick = selectedTab => {
@@ -314,7 +306,7 @@ export const FriendList = ({ allFriendList, allPendingList }: FriendListProps) =
       {
         tab !== 'add' && (
           <>
-            <label>{friendsLists[tab].label} - {currentList.length}</label>
+            <label>{friendsLists[tab]} - {currentList.length}</label>
             <Ul>
               {friendList}
             </Ul>

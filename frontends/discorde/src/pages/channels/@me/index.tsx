@@ -20,6 +20,7 @@ const Flex = styled.div`
 `;
 
 const Me = (): JSX.Element => {
+  const state = useSelector((state: ReduxState) => state);
   const me = useSelector((state: ReduxState) => state.me);
   const conversationList = useSelector((state: ReduxState) => state.conversations);
   const serverList = useSelector((state: ReduxState) => state.servers);
@@ -44,15 +45,15 @@ const Me = (): JSX.Element => {
     });
     console.log(allServers, allConversations)
   }
-
   useEffect(() => {
     load();
+    console.log(state)
   }, []);
 
   return (
     <Flex>
       <ServerList />
-      <ConversationList />
+      <ConversationList allConversations={conversationList} />
       <FriendList
         allFriendList={friendList}
         allPendingList={pendingList}

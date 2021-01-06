@@ -66,7 +66,7 @@ export const Conversation = ({ id }: ConversationProps): JSX.Element => {
 
     if (message === '') return false
 
-    console.log(message);
+    // console.log(message);
     setMessage('');
   }
 
