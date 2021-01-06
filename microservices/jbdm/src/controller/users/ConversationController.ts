@@ -30,10 +30,10 @@ export class ConversationController {
     everyoneRole.isEveryone = true;
     everyoneRole.server = server;
 
-    let name = res.locals.user.username;
-    
     await getRepository(Channel).save(mainChannel)
     await getRepository(Role).save(everyoneRole);
+
+    const names = [];
     const filteredUserId = usersId.filter((e, i) => usersId.findIndex((e2) => e2 === e) === i);
     for (let i in filteredUserId) {
       try {
@@ -42,11 +42,11 @@ export class ConversationController {
         member.user = user;
         member.roles = [everyoneRole];
         member.server = server;
-        name += "-" + user.username; 
+        names.push(user.username);
         await this.memberRepository.save(member);
       } catch (e) {}
     }
-    server.name = name;
+    server.name = names.join('-');
     return await this.serverRepository.save(server);
   }
 }
