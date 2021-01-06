@@ -21,7 +21,8 @@ function Loader({Component, pageProps}) {
         localStorage.removeItem("token");
         Router.push('/');
       }, () => {
-        Router.push(initialPath === '/' ? 'channels/@me' : initialPath);
+        if (initialPath === '/')
+          Router.push('/channels/@me');
       });
     }
     setLoaded(true);
