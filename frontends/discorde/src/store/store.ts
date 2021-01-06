@@ -46,8 +46,8 @@ const reducer = (state = initialState, action: ActionTypes) => {
   }
 };
 
-function initStore(preloadedState = initialState) {
-  return createStore(reducer, preloadedState, composeWithDevTools(applyMiddleware()));
+function initStore(preloadedState = initialState): Store<ReduxState, ActionTypes> {
+  return createStore(reducer, preloadedState, composeWithDevTools(applyMiddleware())) as Store<ReduxState, ActionTypes>;
 }
 
 export const initializeStore = (preloadedState: ReduxState): Store<ReduxState, ActionTypes> => {

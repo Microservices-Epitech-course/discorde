@@ -1,29 +1,41 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { ReduxState, useStore } from '../store/store';
+import { Provider, useDispatch } from 'react-redux';
+
 import 'styles/globals.css';
+
+import { useStore } from '../store/store';
 import { getMe } from 'store/api/users';
 
-function Logger({Component, pageProps}) {
+function Loader({Component, pageProps}) {
   const dispatch = useDispatch();
-  const user = useSelector((state: ReduxState) => state.me);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
+  const load = async () => {
+    const initialPath = Router.asPath;
     if (localStorage.getItem("token")) {
-      getMe(dispatch, () => {
+      await getMe(dispatch, () => {
         localStorage.removeItem("token");
         Router.push('/');
+      }, () => {
+        Router.push(initialPath === '/' ? 'channels/@me' : initialPath);
       });
     }
+    setLoaded(true);
+  }
+
+  useEffect(() => {
+    load();
   }, []);
 
   return (
     <>
-      <Component {...pageProps}/>
+      {loaded && (
+        <Component {...pageProps}/>
+      )}
     </>
   )
 }
@@ -40,7 +52,7 @@ export default function App(props) {
       </Head>
 
       <Provider store={store}>
-        <Logger {...props}/>
+        <Loader {...props}/>
       </Provider>
     </>
   );
