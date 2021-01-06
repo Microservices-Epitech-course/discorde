@@ -9,8 +9,7 @@ import { LoginInput } from '../../../components/input';
 import { Button } from '../../../components/button';
 
 import { login } from '../../../api/auth';
-import { getUser } from 'api/users';
-import { SET_ME } from 'store/actions';
+import { getMe } from 'store/api/users';
 import { useDispatch } from 'react-redux';
 
 const Container = styled.div`
@@ -40,19 +39,10 @@ const Login: NextPage = (): JSX.Element => {
     const response = await login({ email, password });
 
     if (response !== true) {
-      setError(response);
+      setError("Invalid Email or Password");
     } else {
       setError(null);
-      const me = await getUser({id: "@me"});
-
-      if (me?.error) {
-        setError(me)
-      } else {
-        dispatch({
-          type: SET_ME,
-          payload: me
-        });
-      }
+      await getMe(dispatch, setError);
       Router.push('/channels/@me');
     };
   }

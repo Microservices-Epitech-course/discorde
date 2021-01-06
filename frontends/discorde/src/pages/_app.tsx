@@ -1,13 +1,35 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
-import { Provider } from 'react-redux';
-import { useStore } from '../store/store';
+import Router from 'next/router';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { ReduxState, useStore } from '../store/store';
 import 'styles/globals.css';
+import { getMe } from 'store/api/users';
 
-export default function App({ Component, pageProps }) {
-  const store = useStore(pageProps.initialReduxState);
+function Logger({Component, pageProps}) {
+  const dispatch = useDispatch();
+  const user = useSelector((state: ReduxState) => state.me);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      getMe(dispatch, () => {
+        localStorage.removeItem("token");
+        Router.push('/');
+      });
+    }
+  }, []);
+
+  return (
+    <>
+      <Component {...pageProps}/>
+    </>
+  )
+}
+
+export default function App(props) {
+  const store = useStore(props.pageProps.initialReduxState);
 
   return (
     <>
@@ -18,7 +40,7 @@ export default function App({ Component, pageProps }) {
       </Head>
 
       <Provider store={store}>
-        <Component {...pageProps} />
+        <Logger {...props}/>
       </Provider>
     </>
   );
