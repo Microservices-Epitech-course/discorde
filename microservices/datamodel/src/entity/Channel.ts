@@ -36,7 +36,7 @@ export class Channel {
   async deleteListener() {
     const channel = await getRepository(Channel).findOne(this.id, { relations: ['channelRoleSettings', 'messages'] });
 
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({ action: "delete", data: {} }));
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({ action: "channelDelete", data: channel.id }));
     await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
     await getRepository(Message).remove(channel.messages);
   }

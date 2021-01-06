@@ -25,6 +25,6 @@ createConnection({
   }
 })
   .then(async (connection) => {
-    configServer(Number(process.env.PORT) || 3000, Routes, connection, "Hermes");
+    configServer(Number(process.env.PORT) || 3007, Routes, connection, "Hermes");
   })
   .catch((error) => console.log(error));
