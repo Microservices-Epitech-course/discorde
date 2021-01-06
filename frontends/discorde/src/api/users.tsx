@@ -173,6 +173,6 @@ export const addFriend = async (dispatch: Dispatch<any>, params: AddfriendParams
 
     return {success: true, data: response};
   } catch (error) {
-    return {success: false, data: error.response.data};
+    return { success: false, data: error.response.data };
   }
 }

@@ -11,6 +11,8 @@ export interface ReduxState {
   friends: number[];
   invites: DataModel.Pending[];
   users: DataModel.User[];
+  servers: DataModel.Server[];
+  conversations: DataModel.Server[];
 }
 
 let store: Store<ReduxState, ActionTypes> | undefined;
@@ -21,6 +23,8 @@ const initialState: ReduxState = {
   friends: [],
   invites: [],
   users: [],
+  servers: [],
+  conversations: [],
 };
 
 const reducer = (state = initialState, action: ActionTypes) => {

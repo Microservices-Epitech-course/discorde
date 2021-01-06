@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import Router from 'next/router';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { BiMessage } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store';
 
-import {
-  modifyFriendRequest,
-} from '../../api/users';
+import { modifyFriendRequest } from '../../api/users';
 import { Error } from '../text';
 import { AddFriend } from './addFriend';
 import { User } from 'store/types';
 import { DEL_PENDING } from 'store/actions/pending';
 import { ADD_FRIENDS } from 'store/actions/friends';
+import { createConversation } from 'api/conversations';
 
 const Container = styled.div`
   width: 100%;
@@ -154,7 +154,7 @@ const UserRow = ({tab, user}: UserRowProps) => {
   const dispatch = useDispatch();
   const me = useSelector((state: ReduxState) => state.me);
 
-  const handleClick = async (action) => {
+  const handleClickInvite = async (action) => {
     const response = await modifyFriendRequest({ id: user.id.toString(), action });
     
     dispatch({
@@ -170,11 +170,19 @@ const UserRow = ({tab, user}: UserRowProps) => {
     }
   }
 
+  const handleClickMessage = async () => {
+    const response = await createConversation({ usersId: [me.id, user.id] });
+
+    if (response.success) {
+      Router.push(`/channels/@me/${user.id}`);
+    }
+  }
+
   const buttons = () => {
     if (!user?.request) {
       return (
         <Button positive>
-          <BiMessage className='icon' onClick={() => {}} />
+          <BiMessage className='icon' onClick={handleClickMessage} />
         </Button>
       )
     }
@@ -183,9 +191,9 @@ const UserRow = ({tab, user}: UserRowProps) => {
       return (
         <>
           <Button positive>
-            <FiCheck className='icon' onClick={() => handleClick('accept')} />
+            <FiCheck className='icon' onClick={() => handleClickInvite('accept')} />
           </Button>
-          <Button negative onClick={() => handleClick('deny')}>
+          <Button negative onClick={() => handleClickInvite('deny')}>
             <FiX className='icon' />
           </Button>
         </>
@@ -193,7 +201,7 @@ const UserRow = ({tab, user}: UserRowProps) => {
     }
 
     return (
-      <Button negative onClick={() => handleClick('deny')}>
+      <Button negative onClick={() => handleClickInvite('deny')}>
         <FiX className='icon' />
       </Button>
     )

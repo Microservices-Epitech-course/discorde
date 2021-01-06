@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { HiAtSymbol } from 'react-icons/hi';
 
+import { getUser } from 'api/users';
 import { MessageInput } from '../input';
-import { getUser } from '../../api/users';
-import { getServers } from '../../api/conversations';
+import { Message } from './message';
 
 const Container = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 1.4rem 1rem;
+  padding-top: 0;
   flex-grow: 1;
 `;
 
@@ -40,6 +40,9 @@ const Header = styled.div`
 
 const MessagesContainer = styled.div`
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 interface ConversationProps {
@@ -50,15 +53,13 @@ export const Conversation = ({ id }: ConversationProps): JSX.Element => {
   const [message, setMessage] = useState('');
   const [user, setUser] = useState({});
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const result = await getServers(id);
-      console.log(result);
-      setUser(user);
-    }
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     setUser(user);
+  //   }
 
-    fetchUser();
-  }, []);
+  //   fetchUser();
+  // }, []);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -69,6 +70,18 @@ export const Conversation = ({ id }: ConversationProps): JSX.Element => {
     setMessage('');
   }
 
+  const fakeMessage = {
+    id: 35,
+    author: {
+      user: {
+        username: 'Tati',
+        image: 'https://ih1.redbubble.net/image.1664238575.2193/st,small,507x507-pad,600x600,f8f8f8.jpg',
+      }
+    },
+    content: 'tomat de chips',
+    createdAt: new Date('January 6, 2021 14:15:30'),
+  }
+
   return (
     <Container>
       <Header>
@@ -77,9 +90,12 @@ export const Conversation = ({ id }: ConversationProps): JSX.Element => {
       </Header>
       <Content>
         <MessagesContainer>
-          <div>tomat</div>
-          <div>tomat</div>
-          <div>tomat</div>
+          <Message first info={fakeMessage} />
+          <Message info={fakeMessage} />
+          <Message info={fakeMessage} />
+          <Message first info={fakeMessage} />
+          <Message info={fakeMessage} />
+          <Message info={fakeMessage} />
         </MessagesContainer>
         <form onSubmit={handleSubmit}>
           <MessageInput

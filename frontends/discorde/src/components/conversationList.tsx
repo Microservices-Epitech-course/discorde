@@ -34,7 +34,6 @@ const Button = styled.button`
   }
 `;
 
-
 const Row = styled.li`
   display: flex;
   align-items: center;
