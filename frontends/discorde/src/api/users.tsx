@@ -1,37 +1,58 @@
-const axios = require('axios');
+import axios from 'axios';
+import { Dispatch } from 'react';
+import { SET_FRIENDS } from 'store/actions/friends';
+import { ADD_PENDING, SET_PENDING } from 'store/actions/pending';
+import { ADD_USER, MULTI_ADD_USER } from 'store/actions/users';
+import { Relation, RequestType, User } from 'store/types';
+import * as Servers from './servers';
 
-interface GetUserParams {
+export interface GetUserParams {
   id: string,
 };
 
-export const getUser = async (params: GetUserParams) => {
+export const getUser = async (dispatch: Dispatch<any>, params: GetUserParams) => {
   try {
     const response = await axios.get(
-      `https://api-discorde-jbdm.herokuapp.com/users/${params.id}`,
+      `${Servers.jbdm}/users/${params.id}`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
-    return response.data;
+    dispatch({
+      type: ADD_USER,
+      payload: response.data
+    });
+
+    return {success: true, data: response.data};
   } catch (error) {
-    return error.response.data;
+    return {success: true, data: error.response};
   }
 }
 
-export const getFriends = async () => {
+export const getFriends = async (dispatch: Dispatch<any>, me: User) => {
   try {
     const response = await axios.get(
-      'https://api-discorde-jbdm.herokuapp.com/users/@me/friends',
+      `${Servers.jbdm}/users/@me/friends`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
 
-    return response.data;
+    const friends: Array<User> = response.data.map((e: Relation) => e.users.find((e2) => e2.id !== me.id));
+    dispatch({
+      type: SET_FRIENDS,
+      payload: friends.map((e) => e.id),
+    });
+    dispatch({
+      type: MULTI_ADD_USER,
+      payload: friends,
+    })
+
+    return {success: true, data: response.data};
   } catch (error) {
-    return error.response.data;
+    return {success: false, data: error.response};
   }
 }
 
-export const getAllFriendRequest = async () => {
-  const getOutgoing = 'https://api-discorde-jbdm.herokuapp.com/users/@me/invites/sent';
-  const getIncoming = 'https://api-discorde-jbdm.herokuapp.com/users/@me/invites/received';
+export const getAllFriendRequest = async (dispatch: Dispatch<any>, me: User) => {
+  const getOutgoing = `${Servers.jbdm}/users/@me/invites/sent`;
+  const getIncoming = `${Servers.jbdm}/users/@me/invites/received`;
 
   const requestOutgoing = axios.get(
     getOutgoing,
@@ -47,24 +68,35 @@ export const getAllFriendRequest = async () => {
       requestOutgoing,
       requestIncoming
     ]);
-    let usersList = [];
 
-    const pushRequests = (array, type) => {
-      array.map(e => {
-        usersList.push({
-          ...e,
-          type,
-        });
-      });
-    }
+    const outgoingUsers = responseIncoming.data.map((e: Relation) => (
+      {
+        user: e.users.find((e2) => e2.id !== me.id),
+        type: RequestType.OUTGOING,
+        relationId: e.id
+      }
+    ));
+    const incomingUsers = responseOutgoing.data.map((e: Relation) => (
+      {
+        user: e.users.find((e2) => e2.id !== me.id),
+        type: RequestType.INCOMING,
+        relationId: e.id
+      }
+    ));
+    const pendings = outgoingUsers.concat(incomingUsers);
 
-    pushRequests(responseIncoming.data, 'incoming');
-    pushRequests(responseOutgoing.data, 'outgoing');
+    dispatch({
+      type: MULTI_ADD_USER,
+      payload: pendings.map((e) => e.user)
+    });
+    dispatch({
+      type: SET_PENDING,
+      payload: pendings.map((e) => ({userId: e.user.id, request: e.type, relationId: e.relationId}))
+    });
 
-
-    return usersList;
+    return {success: true, data: pendings};
   } catch (error) {
-    return error.response.data;
+    return {success: false, data: error.response};
   }
 }
 
@@ -77,7 +109,7 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
   if (params.action === 'deny') {
     try {
       const response = await axios.delete(
-        `https://api-discorde-jbdm.herokuapp.com/users/@me/relations/${params.id}`,
+        `${Servers.jbdm}/users/@me/relations/${params.id}`,
         { headers: { "authorization": localStorage.getItem('token') }},
       );
 
@@ -88,7 +120,7 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
   } else {
     try {
       const response = await axios.patch(
-        `https://api-discorde-jbdm.herokuapp.com/users/@me/relations/${params.id}/${params.action}`,
+        `${Servers.jbdm}/users/@me/relations/${params.id}/${params.action}`,
         {},
         { headers: { "authorization": localStorage.getItem('token') }},
       );
@@ -102,13 +134,13 @@ export const modifyFriendRequest = async (params: ModifyFriendRequestParams) => 
 export const getBlocked = async () => {
   try {
     const response = await axios.get(
-      'https://api-discorde-jbdm.herokuapp.com/users/@me/blocked',
+      `${Servers.jbdm}/users/@me/blocked`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
 
-    return response.data;
+    return {success: true, data: response.data};
   } catch (error) {
-    return error.response.data;
+    return {success: false, data: error.response.data};
   }
 }
 
@@ -116,13 +148,29 @@ interface AddfriendParams {
   username: string,
 };
 
-export const addFriend = async (params: AddfriendParams) => {
+export const addFriend = async (dispatch: Dispatch<any>, params: AddfriendParams, me: User) => {
   try {
     const response = await axios.post(
-      `https://api-discorde-jbdm.herokuapp.com/users/@me/relations/username/${params.username}`,
+      `${Servers.jbdm}/users/@me/relations/username/${params.username}`,
       {},
       { headers: { "authorization": localStorage.getItem('token') }},
     );
+
+    const actionUser = response.data.users.find(e => e.id !== me?.id);
+
+    dispatch({
+      type: ADD_PENDING,
+      payload: ({
+        userId: actionUser.id,
+        relationId: response.data.id,
+        request: RequestType.OUTGOING
+      })
+    });
+    dispatch({
+      type: ADD_USER,
+      payload: actionUser,
+    });
+
     return {success: true, data: response};
   } catch (error) {
     return {success: false, data: error.response.data};

@@ -3,21 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Router from 'next/router';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 
 import 'styles/globals.css';
 
-import { useStore } from '../store/store';
+import { ReduxState, useStore } from '../store';
 import { getMe } from 'store/api/users';
 
 function Loader({Component, pageProps}) {
   const dispatch = useDispatch();
+  const ws = useSelector((state: ReduxState) => state.ws);
   const [loaded, setLoaded] = useState(false);
 
   const load = async () => {
     const initialPath = Router.asPath;
     if (localStorage.getItem("token")) {
-      await getMe(dispatch, () => {
+      await getMe(dispatch, ws, () => {
         localStorage.removeItem("token");
         Router.push('/');
       }, () => {

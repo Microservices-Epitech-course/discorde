@@ -3,15 +3,16 @@ import styled from 'styled-components';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { BiMessage } from 'react-icons/bi';
 import { useDispatch, useSelector } from 'react-redux';
-import { ReduxState } from 'store/store';
+import { ReduxState } from 'store';
 
 import {
   modifyFriendRequest,
 } from '../../api/users';
 import { Error } from '../text';
 import { AddFriend } from './addFriend';
-import { ADD_FRIENDS, DEL_PENDING } from 'store/actions';
 import { User } from 'store/types';
+import { DEL_PENDING } from 'store/actions/pending';
+import { ADD_FRIENDS } from 'store/actions/friends';
 
 const Container = styled.div`
   width: 100%;
@@ -143,7 +144,10 @@ const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
 
 interface UserRowProps {
   tab: string,
-  user: User & {request: string},
+  user: User & {
+    request?: string;
+    relationId?: number;
+  },
 };
 
 const UserRow = ({tab, user}: UserRowProps) => {
@@ -153,18 +157,16 @@ const UserRow = ({tab, user}: UserRowProps) => {
   const handleClick = async (action) => {
     const response = await modifyFriendRequest({ id: user.id.toString(), action });
     
-    if (response.success) {
+    dispatch({
+      type: DEL_PENDING,
+      payload: user.relationId
+    });
+    if (response.success && action === "accept") {
+      const actionUser = response.data.users.filter(ee => ee.id !== me?.id)[0]
       dispatch({
-        type: DEL_PENDING,
-        id: response.data.id
+        type: ADD_FRIENDS,
+        payload: actionUser
       });
-      if (action === "accept") {
-        const actionUser = response.data.users.filter(ee => ee.id !== me?.id)[0]
-        dispatch({
-          type: ADD_FRIENDS,
-          payload: actionUser
-        });
-      }
     }
   }
 
@@ -225,17 +227,15 @@ const UserRow = ({tab, user}: UserRowProps) => {
 }
 
 interface FriendListProps {
-  allFriendList: array;
-  allPendingList: array;
+  allFriendList: Array<User>;
+  allPendingList: Array<User & {request: string; relationId: number}>;
 };
 
-export const FriendList = ({ children, allFriendList, allPendingList }: FriendListProps) => {
+export const FriendList = ({ allFriendList, allPendingList }: FriendListProps) => {
   const [tab, setTab] = useState('online');
   const [currentList, setCurrentList] = useState([]);
   const [error, setError] = useState(null);
-  const currentUser = useSelector((state: ReduxState) => state.me);
 
-  // console.log(allFriendList)
   const friendsLists = {
     online: {
       label: 'Online',
@@ -254,20 +254,9 @@ export const FriendList = ({ children, allFriendList, allPendingList }: FriendLi
   const handleTabClick = selectedTab => {
     let list = [];
 
-    if (selectedTab === 'all') list = allFriendList
-    if (selectedTab === 'online') list = allFriendList.filter(e => status === 'online')
-    if (selectedTab === 'pending') {
-      const cleanPendingList = allPendingList.map(e => {
-        const actionUser = e.users.filter(ee => ee.id !== currentUser?.id)[0]
-
-        return {
-          ...actionUser,
-          request: e.type,
-        }
-      });
-
-      list = cleanPendingList
-    }
+    if (selectedTab === 'all') list = allFriendList;
+    if (selectedTab === 'online') list = allFriendList.filter(e => status === 'online');
+    if (selectedTab === 'pending') list = allPendingList;
 
     setTab(selectedTab);
     setCurrentList(list);

@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+import * as Servers from './servers';
 
 interface RegisterParams {
   email: string,
@@ -8,7 +9,7 @@ interface RegisterParams {
 
 export const register = async (params: RegisterParams) => {
   try {
-    const response = await axios.post('https://api-discorde-sven.herokuapp.com/register', {
+    const response = await axios.post(`${Servers.sven}/register`, {
       ...params,
     });
     return true;
@@ -24,11 +25,10 @@ interface LoginParams {
 
 export const login = async (params: LoginParams) => {
   try {
-    const response = await axios.post('https://api-discorde-sven.herokuapp.com/auth', {
+    const response = await axios.post(`${Servers.sven}/auth`, {
       ...params,
     });
     localStorage.setItem('token', response.data);
-    // console.log(localStorage.getItem('token'));
     return true;
   } catch (error) {
     return error.response.data;

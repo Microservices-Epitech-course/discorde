@@ -1,66 +1,30 @@
 import { useMemo } from 'react';
 import { createStore, applyMiddleware, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import * as Actions from './actions';
-import { ActionTypes } from './actions';
+import * as Actions from './reducer';
+import { ActionTypes } from './reducer';
 import * as DataModel from './types';
 
 export interface ReduxState {
   me: DataModel.User | null;
-  friends: DataModel.User[];
-  invites: DataModel.Relation[];
+  ws: WebSocket | null;
+  friends: number[];
+  invites: DataModel.Pending[];
+  users: DataModel.User[];
 }
 
 let store: Store<ReduxState, ActionTypes> | undefined;
 
 const initialState: ReduxState = {
   me: null,
+  ws: null,
   friends: [],
   invites: [],
+  users: [],
 };
 
 const reducer = (state = initialState, action: ActionTypes) => {
-  switch (action.type) {
-    case Actions.SET_ME:
-      return {
-        ...state,
-        me: action.payload,
-      };
-
-    case Actions.SET_FRIENDS:
-      return {
-        ...state,
-        friends: action.payload.sort((a, b) => a.username.localeCompare(b.username)),
-      };
-    case Actions.ADD_FRIENDS:
-      return {
-        ...state,
-        friends: state.friends.concat(action.payload).sort((a, b) => a.username.localeCompare(b.username)),
-      };
-    case Actions.DEL_FRIENDS:
-      return {
-        ...state,
-        friends: state.friends.filter(e => e.id !== action.id),
-      };
-
-    case Actions.SET_PENDING:
-      return {
-        ...state,
-        invites: action.payload,
-      };
-    case Actions.ADD_PENDING:
-      return {
-        ...state,
-        invites: state.invites.concat(action.payload)
-      };
-    case Actions.DEL_PENDING:
-      return {
-        ...state,
-        invites: state.invites.filter(e => e.id !== action.id)
-      };
-    default:
-      return state;
-  }
+  return Actions.reducer(state, action);
 };
 
 function initStore(preloadedState = initialState): Store<ReduxState, ActionTypes> {

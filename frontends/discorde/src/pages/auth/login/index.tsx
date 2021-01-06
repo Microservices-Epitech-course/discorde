@@ -10,7 +10,8 @@ import { Button } from '../../../components/button';
 
 import { login } from '../../../api/auth';
 import { getMe } from 'store/api/users';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { ReduxState } from 'store';
 
 const Container = styled.div`
   width: 50vw;
@@ -33,6 +34,7 @@ const Login: NextPage = (): JSX.Element => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const ws = useSelector((state: ReduxState) => state.ws);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +44,7 @@ const Login: NextPage = (): JSX.Element => {
       setError("Invalid Email or Password");
     } else {
       setError(null);
-      await getMe(dispatch, setError);
+      await getMe(dispatch, ws, setError);
       Router.push('/channels/@me');
     };
   }

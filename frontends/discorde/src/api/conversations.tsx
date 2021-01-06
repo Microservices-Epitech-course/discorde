@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+import * as Servers from './servers';
 
 interface GetServersParams {
   id: string,
@@ -7,7 +8,7 @@ interface GetServersParams {
 export const getServers = async (params: GetServersParams) => {
   try {
     const response = await axios.get(
-      `https://api-discorde-jbdm.herokuapps.com/users/@me/conversations`,
+      `${Servers.jbdm}/users/@me/conversations`,
       { headers: { "authorization": localStorage.getItem('token') }},
     );
     return true;

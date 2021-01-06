@@ -9,7 +9,13 @@ export enum RelationStatus {
 
 export enum RequestType {
   INCOMING = 'incoming',
-  ONGOING = 'ongoing',
+  OUTGOING = 'outgoing',
+}
+
+export interface Pending {
+  userId: number;
+  relationId: number;
+  request: string;
 }
 
 export interface Relation {
