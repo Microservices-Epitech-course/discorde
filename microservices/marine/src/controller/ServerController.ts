@@ -19,7 +19,7 @@ export class ServerController {
             res.status(404).send();
             return;
         }
-        let relations = ['members', 'channels', 'roles'];
+        let relations = ["members", "members.user", "channels", "roles", "roles.members"];
         if (res.locals.user.role === UserRole.ADMIN) {
             relations.push('invitations');
         }
@@ -27,7 +27,7 @@ export class ServerController {
     }
 
     async one(req: Request, res: Response) {
-        let relations = ['members', 'channels', 'roles'];
+        let relations = ["members", "members.user", "channels", "roles", "roles.members"];
         if (res.locals.user.role === UserRole.ADMIN) {
             relations.push('invitations');
         }
@@ -72,7 +72,12 @@ export class ServerController {
 
         await getRepository(Channel).save(mainChannel);
         await getRepository(Role).save(everyoneRole);
-        return await getRepository(Member).save(creatorMember);
+        await getRepository(Member).save(creatorMember);
+        const serverSend = await this.serverRepository.findOne(
+            server.id, {
+              relations: ["members", "members.user", "channels", "roles", "roles.members"]
+            });
+        return serverSend;
     }
 
     async modif(req: Request, res: Response) {

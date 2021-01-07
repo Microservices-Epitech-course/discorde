@@ -54,9 +54,12 @@ export class MessagesController {
       media: null,
     });
     channel.messages.push(message);
-    this.channelRepository.save(channel);
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: message}));
-    return this.messageRepository.save(message);
+    await this.channelRepository.save(channel);
+    await this.messageRepository.save(message);
+
+    const sendMessage = await this.messageRepository.findOne(message.id, { relations: ["author"]});
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: sendMessage}));
+    return sendMessage;
   }
 
   async patch(req: Request, res: Response) {
@@ -79,8 +82,11 @@ export class MessagesController {
     // TODO: Add media / mentions / ?
     const { content } = req.body;
     message.content = content;
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: message}));
-    return this.messageRepository.save(message);
+    await this.messageRepository.save(message);
+
+    const sendMessage = await this.messageRepository.findOne(message.id, { relations: ["author"]});
+    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: sendMessage}));
+    return sendMessage;
   }
 
   async delete(req: Request, res: Response) {

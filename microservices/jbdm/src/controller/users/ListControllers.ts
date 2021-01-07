@@ -19,9 +19,19 @@ export class ListController {
         },
         quit: false,
       },
-      relations: ["server", "server.members", "server.members.user"]
+      relations: ["server", "server.members", "server.members.user", "server.channels", "server.roles", "server.roles.members"]
     });
-    return members.filter((e) => e.server.type === ServerType.CONVERSATION).map((e) => e.server);
+    const filtered = members.filter((e) => e.server.type === ServerType.CONVERSATION);
+    const servers = await Promise.all(filtered
+      .map(async (member) => {
+        const filteredChannels = await Promise.all(member.server.channels.filter(async (c) => {
+          await member.hasChannelPermission("viewChannels", c.id);
+        }));
+        member.server.channels = filteredChannels;
+        return member.server;
+      })
+    );
+    return servers;
   }
 
   async servers(req: Request, res: Response) {
@@ -38,8 +48,18 @@ export class ListController {
         },
         quit: false,
       },
-      relations: ["server"]
+      relations: ["server", "server.members", "server.members.user", "server.channels", "server.roles", "server.roles.members"]
     });
-    return members.filter((e) => e.server.type === ServerType.SERVER).map((e) => e.server);
+    const filtered = members.filter((e) => e.server.type === ServerType.SERVER)
+    const servers = await Promise.all(filtered
+      .map(async (member) => {
+        const filteredChannels = await Promise.all(member.server.channels.filter(async (c) => {
+          await member.hasChannelPermission("viewChannels", c.id);
+        }));
+        member.server.channels = filteredChannels;
+        return member.server;
+      })
+    );
+    return servers;
   }
 }

@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Channel, ChannelType, Member, Role, Server, ServerType, User, UserRole } from "@discorde/datamodel";
+import { Channel, ChannelType, Member, publisher, Role, Server, ServerType, User, UserRole } from "@discorde/datamodel";
 
 export class ConversationController {
   private serverRepository = getRepository(Server);
@@ -19,14 +19,14 @@ export class ConversationController {
 
     const sortedIds = usersId.sort();
 
-    const userMembers = await this.memberRepository.find({
+    const userMembers = (await this.memberRepository.find({
       where: {
         user: {
           id: res.locals.user.id
         },
       },
       relations: ["server", "server.members", "server.members.user"]
-    });
+    })).filter((e) => e.server.type === ServerType.CONVERSATION);
 
     const exist = userMembers.find((userMember) => {
       const ids = userMember.server.members.map((member) => member.user.id).sort();
@@ -34,7 +34,7 @@ export class ConversationController {
     });
 
     if (exist)
-      return exist;
+      return exist.server;
 
     let mainChannel = new Channel();
     let server = new Server();
@@ -56,6 +56,7 @@ export class ConversationController {
     await getRepository(Role).save(everyoneRole);
 
     const names = [];
+    const users = [];
     const filteredUserId = sortedIds.filter((e, i) => sortedIds.findIndex((e2) => e2 === e) === i);
     for (let i in filteredUserId) {
       try {
@@ -65,10 +66,17 @@ export class ConversationController {
         member.roles = [everyoneRole];
         member.server = server;
         names.push(user.username);
+        users.push(user.id);
         await this.memberRepository.save(member);
       } catch (e) {}
     }
     server.name = names.join('-');
-    return await this.serverRepository.save(server);
+    await this.serverRepository.save(server);
+    const serverSend = await this.serverRepository.findOne(
+      server.id, {
+        relations: ["members", "members.user", "channels", "roles", "roles.members"]
+      });
+    users.map((e) => publisher.publish(`user:${e}`, JSON.stringify({action: "conversationAdd", data: serverSend})))
+    return serverSend;
   }
 }
