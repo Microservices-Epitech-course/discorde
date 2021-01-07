@@ -65,7 +65,7 @@ export class Member {
   }
   async hasChannelPermission(permission: string, channelId: number) {
     const globalPerm = await this.hasGlobalPermission(permission);
-    const member = await getRepository(Member).findOne(channelId, { relations: ['roles', 'roles.channelRoleSettings', 'roles.channelRoleSettings.channel']});
+    const member = await getRepository(Member).findOne(this.id, { relations: ['roles', 'roles.channelRoleSettings', 'roles.channelRoleSettings.channel']});
 
     if (await member.isAdmin())
       return true;

@@ -32,7 +32,7 @@ export class RoleController {
       res.status(404).send();
       return;
     }
-    return this.roleRepository.find({ where: { server: {id: req.params.serverId }}});
+    return this.roleRepository.find({ where: { server: {id: req.params.serverId }}, relations: ['members']});
   }
 
   async add(req: Request, res: Response) {

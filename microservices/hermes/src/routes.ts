@@ -13,7 +13,7 @@ export const Routes = [
     method: "post",
     route: "/channels/:id/messages",
     controller: MessagesController,
-    action: "send",
+    action: "post",
   },
   {
     // Modify Message

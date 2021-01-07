@@ -39,19 +39,27 @@ export class AccountController {
     try {
       const user = await (async () => {
         if (email)
-          return this.userRepository.findOneOrFail({where: { email }});
+          return await this.userRepository
+            .createQueryBuilder("user")
+            .where("user.email = :email", { email })
+            .addSelect('user.password')
+            .getOneOrFail();
         else
-          return this.userRepository.findOneOrFail({where: { username }});
+          return await this.userRepository
+            .createQueryBuilder("user")
+            .where("user.username = :username", { username })
+            .addSelect('user.password')
+            .getOneOrFail();
       })();
       if (!user.checkPassword(password)) {
-        res.status(401).send();
+        res.status(401).send("Wrong password or email");
         return;
       }
-
       const token = user.getJWTToken();
       res.send(token);
     } catch (e) {
-      res.status(401).send();
+      console.log(e);
+      res.status(500).send();
     }
   }
 }
