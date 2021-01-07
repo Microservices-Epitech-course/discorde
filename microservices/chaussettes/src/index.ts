@@ -13,11 +13,7 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-interface ExtWebSocket extends WebSocket {
-  isAlive: boolean;
-}
-
-wss.on('connection', (ws: ExtWebSocket) => {
+wss.on('connection', (ws: WebSocket & { isAlive: boolean }) => {
   try {
     ws.isAlive = true;
     const subscriber = redis.createClient(process.env.REDIS_URL);
@@ -50,7 +46,7 @@ wss.on('connection', (ws: ExtWebSocket) => {
 });
 
 const interval = setInterval(() => {
-  wss.clients.forEach((ws: ExtWebSocket) => {
+  wss.clients.forEach((ws: WebSocket & { isAlive : boolean }) => {
     if (ws.isAlive === false) {
       console.log('terminate');
       return ws.terminate();
