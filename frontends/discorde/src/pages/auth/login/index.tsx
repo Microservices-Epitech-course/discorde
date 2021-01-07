@@ -44,8 +44,10 @@ const Login: NextPage = (): JSX.Element => {
       setError("Invalid Email or Password");
     } else {
       setError(null);
-      await getMe(dispatch, ws, setError);
-      Router.push('/channels/@me');
+      const meResponse = await getMe(dispatch, ws);
+      if (!meResponse.success) {
+        setError(meResponse.data);
+      }
     };
   }
 

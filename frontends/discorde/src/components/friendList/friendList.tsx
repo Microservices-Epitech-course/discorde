@@ -158,7 +158,7 @@ const UserRow = ({tab, user}: UserRowProps) => {
   }
 
   const handleClickMessage = async () => {
-    const response = await createConversation({ usersId: [me.id, user.id] });
+    const response = await createConversation(dispatch, me, { usersId: [me.id, user.id] });
 
     if (response.success) {
       Router.push(`/channels/@me/${user.id}`);

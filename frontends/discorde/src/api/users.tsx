@@ -4,7 +4,7 @@ import { ADD_FRIENDS, SET_FRIENDS } from 'store/actions/friends';
 import { ADD_PENDING, DEL_PENDING, SET_PENDING } from 'store/actions/pending';
 import { ADD_USER, MULTI_ADD_USER } from 'store/actions/users';
 import { Relation, RequestType, User } from 'store/types';
-import * as Servers from './servers';
+import * as Servers from './apis';
 
 export interface GetUserParams {
   id: string,
@@ -24,7 +24,7 @@ export const getUser = async (dispatch: Dispatch<any>, params: GetUserParams) =>
     return {success: true, data: response.data};
   } catch (error) {
     console.error(error);
-    return {success: true, data: error.response};
+    return {success: false, data: error.response};
   }
 }
 

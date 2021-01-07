@@ -1,15 +1,46 @@
-// export const chaussettes = "ws://localhost:3006";
-// export const hermes = "http://localhost:3007";
-// export const jbdm = "http://localhost:3001";
-// export const kamoulox = "http://localhost:3002";
-// export const marine = "http://localhost:3003";
-// export const sven = "http://localhost:3004";
-// export const yahoo = "http://localhost:3005";
+import axios from 'axios';
+import { Dispatch } from 'redux';
+import { ADD_MESSAGE, MULTI_ADD_MESSAGE } from 'store/actions/messages';
+import * as Servers from './apis';
 
-export const chaussettes = "wss://api-discorde-chaussettes.herokuapp.com";
-export const hermes = "https://api-discorde-hermes.herokuapp.com";
-export const jbdm = "https://api-discorde-jbdm.herokuapp.com";
-export const kamoulox = "https://api-discorde-kamoulox.herokuapp.com";
-export const marine = "https://api-discorde-marine.herokuapp.com";
-export const sven = "https://api-discorde-sven.herokuapp.com";
-export const yahoo = "https://api-discorde-yahoo.herokuapp.com";
+export const loadMessages = async (dispatch: Dispatch<any>, channelId: number) => {
+  try {
+    const response = await axios.get(
+      `${Servers.hermes}/channels/${channelId}/messages`,
+      { headers: { authorization: localStorage.getItem("token") }}
+    );
+
+    dispatch({
+      type: MULTI_ADD_MESSAGE,
+      payload: {
+        data: response.data,
+        channelId: channelId
+      }
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: error.data };
+  }
+}
+export const sendMessages = async (dispatch: Dispatch<any>, content: string, channelId: number) => {
+  try {
+    const response = await axios.post(
+      `${Servers.hermes}/channels/${channelId}/messages`,
+      { content },
+      { headers: { authorization: localStorage.getItem("token") }}
+    );
+
+    dispatch({
+      type: ADD_MESSAGE,
+      payload: {
+        data: response.data,
+        channelId: channelId
+      }
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: error.data };
+  }
+}

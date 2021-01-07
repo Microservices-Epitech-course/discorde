@@ -7,3 +7,6 @@ export function getUsersFromIds(state: ReduxState, ids: Array<number>): Array<Us
 export function getUserFromId(state: ReduxState, id: number): User {
   return state.users.find((e) => e.id === id);
 }
+export function getNotMe(users: User[], me: User): User {
+  return users.find((e) => e.id !== me.id);
+}

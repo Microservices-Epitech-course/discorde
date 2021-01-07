@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { HiAtSymbol } from 'react-icons/hi';
 
-import { getUser } from 'api/users';
 import { MessageInput } from '../input';
 import { Message } from './message';
+import { useDispatch, useSelector } from 'react-redux';
+import { ReduxState } from 'store';
+import { getNotMe, getUserFromId, getUsersFromIds } from 'store/utils';
+import { Server } from 'store/types';
+import { sendMessages } from 'api/servers';
 
 const Container = styled.div`
   display: flex;
@@ -45,57 +49,57 @@ const MessagesContainer = styled.div`
   width: 100%;
 `;
 
+const Name = styled.span`
+  margin-left: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+`;
+
 interface ConversationProps {
-  id: string,
+  id: number,
+  conversation: Server,
 };
 
-export const Conversation = ({ id }: ConversationProps): JSX.Element => {
+export const Conversation = ({ id, conversation }: ConversationProps): JSX.Element => {
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState({});
-
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     setUser(user);
-  //   }
-
-  //   fetchUser();
-  // }, []);
+  const user = useSelector((state: ReduxState) => getNotMe(getUsersFromIds(state, conversation.members.map((e) => e.userId)), state.me));
+  const memberUsers = useSelector((state: ReduxState) => {
+    const authors = conversation.channels[0].messages?.map((e) => e.authorId);
+    const members = conversation.members.filter((mem) => authors?.includes(mem.id));
+    return members.map((mem) => ({...mem, user: getUserFromId(state, mem.userId)}));
+  })
+  const dispatch = useDispatch();
 
   const handleSubmit = e => {
     e.preventDefault();
-
     if (message === '') return false
-
-    // console.log(message);
+    sendMessages(dispatch, message, conversation.channels[0].id);
     setMessage('');
-  }
-
-  const fakeMessage = {
-    id: 35,
-    author: {
-      user: {
-        username: 'Tati',
-        image: 'https://ih1.redbubble.net/image.1664238575.2193/st,small,507x507-pad,600x600,f8f8f8.jpg',
-      }
-    },
-    content: 'tomat de chips',
-    createdAt: new Date('January 6, 2021 14:15:30'),
   }
 
   return (
     <Container>
       <Header>
         <HiAtSymbol className='icon' />
-        {user.username}
+        <Name>
+          {user.username}
+        </Name>
       </Header>
       <Content>
         <MessagesContainer>
-          <Message first info={fakeMessage} />
-          <Message info={fakeMessage} />
-          <Message info={fakeMessage} />
-          <Message first info={fakeMessage} />
-          <Message info={fakeMessage} />
-          <Message info={fakeMessage} />
+          {
+            conversation.channels[0].messages?.map((message, i) => {
+              const isFirst = i === 0 || conversation.channels[0].messages[i - 1].authorId !== message.authorId
+              if (isFirst) {
+                const member = memberUsers.find((e) => e.id === message.authorId);
+                message.author = member;
+              }
+              return (
+                <Message key={i} first={isFirst} info={message} />
+              );
+            })
+          }
         </MessagesContainer>
         <form onSubmit={handleSubmit}>
           <MessageInput

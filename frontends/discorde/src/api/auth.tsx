@@ -1,5 +1,5 @@
 import axios from 'axios';
-import * as Servers from './servers';
+import * as Servers from './apis';
 
 interface RegisterParams {
   email: string,
@@ -31,6 +31,6 @@ export const login = async (params: LoginParams) => {
     localStorage.setItem('token', response.data);
     return true;
   } catch (error) {
-    return error.response.data;
+    return error.response;
   }
 };
