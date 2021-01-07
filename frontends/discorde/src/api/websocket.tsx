@@ -9,17 +9,33 @@ import { RequestType, User } from "store/types";
 import * as Servers from './apis';
 
 let subscriptions = [];
+let waiting_subscriptions = [];
 
 export function subscribe(ws: WebSocket, channel: string, id: number | string) {
-  if (!subscriptions.includes(`${channel}:${id}`)) {
-    ws.send(`subscribe ${channel}:${id}`);
-    subscriptions.push(`${channel}:${id}`)
+  const channelName = `${channel}:${id}`;
+  if (!ws) {
+    waiting_subscriptions.push(channelName);
+    return;
+  }
+  if (!subscriptions.includes(channelName)) {
+    ws.send(`subscribe ${channelName}`);
+    subscriptions.push(channelName)
+  }
+  if (waiting_subscriptions.length !== 0) {
+    waiting_subscriptions.forEach((channelName2) => {
+      if (!subscriptions.includes(channelName2)) {
+        ws.send(`subscribe ${channelName2}`);
+        subscriptions.push(channelName2);
+      }
+    })
+    waiting_subscriptions = [];
   }
 }
 export function unsubscribe(ws: WebSocket, channel: string, id: number | string) {
-  if (subscriptions.includes(`${channel}:${id}`))
-    ws.send(`unsubscribe ${channel}:${id}`);
-    subscriptions.filter(e => e === `${channel}:${id}`);
+  const channelName = `${channel}:${id}`;
+  if (subscriptions.includes(channelName))
+    ws.send(`unsubscribe ${channelName}`);
+    subscriptions.filter(e => e === channelName);
 }
 
 export function createWebsocket(dispatch: Dispatch<any>, me: User, stateWs: WebSocket) {

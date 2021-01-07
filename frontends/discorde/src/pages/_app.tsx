@@ -44,7 +44,8 @@ function Loader({Component, pageProps}) {
   useEffect(() => {
     load();
     return () => {
-      ws.close();
+      if (ws)
+        ws.close();
     }
   }, []);
 
