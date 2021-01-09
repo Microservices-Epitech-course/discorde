@@ -17,7 +17,6 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta name="Description" content="Discorde: the french communication app!" />
-          {this.props.styleTags}
         </Head>
         <body>
           <Main />

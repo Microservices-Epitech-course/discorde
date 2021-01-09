@@ -179,7 +179,7 @@ interface ButtonInputProps {
   value: string,
   buttonText: string,
   onChange: Function,
-  onSubmit: Function,
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
 };
 
 export const ButtonInput = ({ placeholder, label, type, value, buttonText, onSubmit, onChange, ...props }: ButtonInputProps) => {

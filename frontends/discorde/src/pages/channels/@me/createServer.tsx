@@ -9,7 +9,7 @@ import { createServer } from 'api/servers';
 import { ConversationList } from 'components/conversationList';
 import { ServerList } from 'components/serverList';
 import { ButtonInput } from 'components/input';
-import { Error } from 'components/text';
+import { Error, Success } from 'components/text';
 
 const Flex = styled.div`
   display: flex;
@@ -37,6 +37,7 @@ const Container = styled.div`
 const Me = (): JSX.Element => {
   const [serverName, setServerName] = useState('');
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const me = useSelector((state: ReduxState) => state.me);
   const serverList = useSelector((state: ReduxState) => state.servers);
   const dispatch = useDispatch();
@@ -52,7 +53,10 @@ const Me = (): JSX.Element => {
       setSuccess(true);
     };
   }
-
+  const handleChange = e => {
+    if (success === true) setSuccess(false);
+    setServerName(e);
+  }
 
   return (
     <Flex>
@@ -60,12 +64,16 @@ const Me = (): JSX.Element => {
       <ConversationList />
       <Container>
         <label>Create a server</label>
-        <span>Your server is where you and your friends hang out. Make yours and start talking.</span>
+        {
+          success
+            ? <Success>Success! The server {serverName} is created.</Success>
+            : <span>Your server is where you and your friends hang out. Make yours and start talking.</span>
+        }
         <ButtonInput
           onSubmit={handleSubmit}
           placeholder='Enter a server name'
           value={serverName}
-          onChange={(e) => setServerName(e)}
+          onChange={handleChange}
           buttonText='Create a server'
         />
         {

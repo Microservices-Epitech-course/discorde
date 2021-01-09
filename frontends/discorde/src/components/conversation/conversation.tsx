@@ -37,6 +37,7 @@ const Header = styled.div`
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
   height: 3.4rem;
+  min-height: 3.4rem;
   position: sticky;
   top: 0;
   padding-left: 1rem;
@@ -94,7 +95,7 @@ export const Conversation = ({ id, conversation }: ConversationProps): JSX.Eleme
         <MessagesContainer>
           {
             conversation.channels[0].messages?.map((message, i) => {
-              const isFirst = i === 0 || conversation.channels[0].messages[i - 1].authorId !== message.authorId
+              const isFirst = i === 0 || conversation.channels[0].messages[i - 1].authorId !== message.authorId;
               if (isFirst) {
                 const member = memberUsers.find((e) => e.id === message.authorId);
                 message.author = member;

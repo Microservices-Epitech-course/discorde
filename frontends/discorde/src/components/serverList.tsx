@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Link from 'next/link'
 import { useSelector } from 'react-redux';
 import { BiPlus } from 'react-icons/bi';
+import { ReduxState } from 'store';
 
 const Container = styled.div`
   background-color: #202225;
@@ -131,7 +132,7 @@ const Separator = styled.div`
 `;
 
 export const ServerList = ({ children }: InputProps) => {
-  const serverList = useSelector((state: ReduxState) => state.server);
+  const serverList = useSelector((state: ReduxState) => state.servers);
   const [allUsers, setAllUsers] = useState([]);
 
   return (

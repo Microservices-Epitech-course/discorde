@@ -10,7 +10,8 @@ const StyledError = styled.p`
 `;
 
 interface ErrorProps {
-  children: React.node,
+  children: React.ReactNode,
+  style?: React.CSSProperties,
 };
 
 export const Error = ({ children, ...props }: ErrorProps) => {

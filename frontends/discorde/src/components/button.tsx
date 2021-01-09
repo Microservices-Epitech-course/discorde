@@ -24,9 +24,9 @@ const StyledButton = styled.button<{ disabled: boolean }>`
 
 
 interface ButtonProps {
-  children: React.node,
+  children: React.ReactNode,
   onClick?: Function,
-  type?: submit,
+  type?: any,
   disabled?: boolean,
 };
 
