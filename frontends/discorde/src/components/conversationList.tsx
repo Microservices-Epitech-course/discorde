@@ -9,16 +9,6 @@ import { ReduxState } from 'store';
 import { getNotMe, getUsersFromIds } from 'store/utils';
 import LeftList from './leftList';
 
-const Container = styled.div`
-  min-width: 240px;
-  background-color: #2f3136;
-  overflow-y: auto;
-
-  label {
-    margin-left: 1rem;
-  }
-`;
-
 const Ul = styled.ul`
   list-style-type: none;
   padding-left: 0;
@@ -65,24 +55,8 @@ const Row = styled.li`
   }
 `;
 
-const Label = styled.label`
-  color: #b9bbbe;
-`
-
 const Space = styled.div`
   flex-grow: 1;
-`;
-
-const Header = styled.div`
-  display: flex;
-  width: 100%;
-  margin-bottom: 1rem;
-  border-top: 2px solid #26282c;
-  border-bottom: 2px solid #26282c;
-  background-color: #2f3136;
-  height: 3.4rem;
-  position: sticky;
-  top: 0;
 `;
 
 export const ConversationList = () => {
@@ -111,8 +85,7 @@ export const ConversationList = () => {
       <>
       <label style={{marginTop: "1rem"}}>Direct messages</label>
       <Ul>
-        {/* {conversationList.map((server, i) => { */}
-        {Array(20).fill(undefined).map(() => conversationList[0]).map((server, i) => {
+        {conversationList.map((server, i) => {
           return (
             <Link key={i} href={`/channels/@me/${server.id}`}>
               <Row>
