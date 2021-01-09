@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { HiAtSymbol } from 'react-icons/hi';
 
 import { MessageInput } from '../input';
 import { Message } from './message';
-import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store';
 import { getNotMe, getUserFromId, getUsersFromIds } from 'store/utils';
 import { Server } from 'store/types';

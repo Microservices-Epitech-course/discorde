@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
 import { FiX } from 'react-icons/fi';
@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { ConversationSearchInput } from './input';
 import { ReduxState } from 'store';
 import { getNotMe, getUsersFromIds } from 'store/utils';
+import LeftList from './leftList';
 
 const Container = styled.div`
   min-width: 240px;
@@ -102,13 +103,16 @@ export const ConversationList = () => {
   const [search, setSearch] = useState('');
 
   return (
-    <Container>
-      <Header>
+    <LeftList
+      header={(
         <ConversationSearchInput value={search} onChange={setSearch} placeholder='Find or start a conversation' />
-      </Header>
-      <label>Direct messages</label>
+      )}
+    >
+      <>
+      <label style={{marginTop: "1rem"}}>Direct messages</label>
       <Ul>
-        {conversationList.map((server, i) => {
+        {/* {conversationList.map((server, i) => { */}
+        {Array(20).fill(undefined).map(() => conversationList[0]).map((server, i) => {
           return (
             <Link key={i} href={`/channels/@me/${server.id}`}>
               <Row>
@@ -124,6 +128,7 @@ export const ConversationList = () => {
           );
         })}
       </Ul>
-    </Container>
+      </>
+    </LeftList>
   );
 };
