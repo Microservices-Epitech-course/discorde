@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store';
 
 import { modifyFriendRequest } from '../../api/users';
-import { Error } from '../text';
 import { AddFriend } from './addFriend';
 import { User } from 'store/types';
 import { createConversation } from 'api/conversations';
@@ -96,10 +95,6 @@ const Details = styled.div`
   text-align: left;
   margin-left: .8rem;
 `;
-
-const Label = styled.label`
-  color: #b9bbbe;
-`
 
 const Space = styled.div`
   flex-grow: 1;
@@ -226,7 +221,6 @@ export const FriendList = () => {
   const allFriendList = useSelector((state: ReduxState) => getUsersFromIds(state, state.friends));
   const allPendingList = useSelector((state: ReduxState) => state.invites.map((e) => ({...getUserFromId(state, e.userId), ...e})));
   const [tab, setTab] = useState('online');
-  const [error, setError] = useState(null);
 
   const friendsLists = {
     online: 'Online',
@@ -288,9 +282,6 @@ export const FriendList = () => {
             <Ul>
               {friendList}
             </Ul>
-            {
-              error && <Error style={{ marginLeft: '2rem' }}>{error}</Error>
-            }
           </>
         )
       }

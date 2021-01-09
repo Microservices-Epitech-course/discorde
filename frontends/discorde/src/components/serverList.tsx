@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Link from 'next/link'
 import { useSelector } from 'react-redux';
@@ -18,28 +19,16 @@ const Ul = styled.ul`
   width: 100%;
 `;
 
-const Button = styled.button`
-  padding: .5rem;
-  display: none;
-  background-color: transparent;
-
-  a:hover {
-  }
-
-  &:active {
-  }
-`;
-
-const ServerIcon = styled.div<{ selected: boolean }>`
-  background-color: #36393f;
+const ServerIcon = styled.div<{ selected: boolean, add?: boolean }>`
+  background-color: ${({ selected }) => selected ? '#7289da' : '#36393f'};
   height: 50px;
   width: 50px;
   border-radius: ${({ selected }) => selected ? '38%' : '100%'};
-  transition: border-radius 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-radius 0.2s ease;
+  transition: border-radius 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  color: ${({ add }) => add ? 'var(--success)' : '#fff'};
 
   img {
     height: 50px;
@@ -50,6 +39,15 @@ const ServerIcon = styled.div<{ selected: boolean }>`
 
   .icon {
     height: 1.5rem;
+  }
+
+  &:hover {
+    background-color: ${({ add }) => add ? 'var(--success)' : '#7289da'};
+    color: #fff;
+  }
+
+  &:active {
+    transform: translateY(.15rem);
   }
 `;
 
@@ -74,53 +72,8 @@ const Row = styled.div`
   }
 `;
 
-const Label = styled.label`
-  color: #b9bbbe;
-`;
-
 const StyledLink = styled(Link)`
   padding: 1rem;
-`;
-
-type InputProps = {
-  children?: React.ReactNode;
-};
-
-const list = [
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-  {
-    username: 'tomat',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Tomato_je.jpg',
-    status: 'online'
-  },
-];
-
-const Space = styled.div`
-  flex-grow: 1;
 `;
 
 const Separator = styled.div`
@@ -131,27 +84,39 @@ const Separator = styled.div`
   margin: .2rem auto;
 `;
 
-export const ServerList = ({ children }: InputProps) => {
+interface ServerListProps {
+  createServerSelected?: boolean;
+  meSelected?: boolean;
+};
+
+export const ServerList = ({ createServerSelected, meSelected }: ServerListProps) => {
+  const router = useRouter();
+  const { serverId, id } = router.query;
+  const me = useSelector((state: ReduxState) => state.me);
   const serverList = useSelector((state: ReduxState) => state.servers);
-  const [allUsers, setAllUsers] = useState([]);
+
+  const getAcronym = name => {
+    const acronymArray = name.split(' ').map(word => word[0]);
+    return acronymArray.join('');
+  }
 
   return (
     <Container>
       <Ul>
         <Row>
           <StyledLink href='/channels/@me'>
-            <ServerIcon selected>
-              <img src='https://ih1.redbubble.net/image.1664238575.2193/st,small,507x507-pad,600x600,f8f8f8.jpg' alt='profile' />
+            <ServerIcon selected={meSelected}>
+              <img src={me.image} alt='profile' />
             </ServerIcon>
           </StyledLink>
         </Row>
         <Separator />
-        {list.map((user, i) => {
+        {serverList.map((server, i) => {
           return (
-            <Row key={`${user.username}${i}`}>
-              <StyledLink href=''>
-                <ServerIcon selected={false}>
-                  <img src={user.icon} alt='profile' />
+            <Row key={`${server.name}${i}`}>
+              <StyledLink href={`/channels/${server.id}/${server.channels[0].id}`}>
+                <ServerIcon selected={server.id.toString() === serverId}>
+                  {getAcronym(server.name)}
                 </ServerIcon>
               </StyledLink>
             </Row>
@@ -159,7 +124,7 @@ export const ServerList = ({ children }: InputProps) => {
         })}
         <Row>
           <Link href='/channels/@me/createServer'>
-            <ServerIcon selected={false}>
+            <ServerIcon add selected={createServerSelected}>
               <BiPlus className='icon' />
             </ServerIcon>
           </Link>

@@ -38,8 +38,6 @@ const Me = (): JSX.Element => {
   const [serverName, setServerName] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const me = useSelector((state: ReduxState) => state.me);
-  const serverList = useSelector((state: ReduxState) => state.servers);
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
@@ -60,7 +58,7 @@ const Me = (): JSX.Element => {
 
   return (
     <Flex>
-      <ServerList />
+      <ServerList createServerSelected={true} />
       <ConversationList />
       <Container>
         <label>Create a server</label>

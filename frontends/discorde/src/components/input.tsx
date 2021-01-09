@@ -179,10 +179,23 @@ interface ButtonInputProps {
   value: string,
   buttonText: string,
   onChange: Function,
+  allowEmpty?: boolean,
+  readOnly?: boolean,
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void,
 };
 
-export const ButtonInput = ({ placeholder, label, type, value, buttonText, onSubmit, onChange, ...props }: ButtonInputProps) => {
+export const ButtonInput = ({
+  placeholder,
+  allowEmpty,
+  readOnly,
+  label,
+  type,
+  value,
+  buttonText,
+  onChange,
+  onSubmit,
+  ...props
+}: ButtonInputProps) => {
   return (
     <ButtonInputContainer {...props}>
       <form onSubmit={onSubmit}>
@@ -191,9 +204,10 @@ export const ButtonInput = ({ placeholder, label, type, value, buttonText, onSub
           type={type}
           placeholder={placeholder ? placeholder : ""}
           onChange={e => onChange(e.target.value)}
+          readOnly={readOnly}
         />
         <Button
-          disabled={value === ''}
+          disabled={value === '' && !allowEmpty}
           type='submit'
         >
           {buttonText}

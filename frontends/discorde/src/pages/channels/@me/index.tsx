@@ -13,7 +13,7 @@ const Flex = styled.div`
 const Me = (): JSX.Element => {
   return (
     <Flex>
-      <ServerList />
+      <ServerList meSelected={true} />
       <ConversationList />
       <FriendList />
     </Flex>
