@@ -1,3 +1,5 @@
+import { Server } from "store/types";
+
 export const concatOrReplace = <T>(array: T[], item: T, discrimField: string) => {
   const existing = array.findIndex((e) => e[discrimField] === item[discrimField]);
   if (existing !== -1) {
@@ -22,4 +24,26 @@ export const maybeConcatId = (array: Array<number>, id: number) => {
     array.push(id);
   }
   return Array.from(array);
+}
+
+export const removeDuplicates = <T>(array: T[], discrimField?: string) => {
+  return array.filter((e, i) => array.findIndex((e2) => {
+    if (discrimField)
+      return e2[discrimField] === e[discrimField]
+    else
+      return e2 === e;
+  }) === i);
+}
+
+export function cleanServer(server: Server) {
+  return {
+    ...server,
+    members: server.members.map((mem) => {
+      if (mem.user) {
+        mem.userId = mem.user.id;
+        delete mem.user;
+      }
+      return mem;
+    })
+  }
 }

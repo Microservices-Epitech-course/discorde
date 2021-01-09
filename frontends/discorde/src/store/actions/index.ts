@@ -4,3 +4,4 @@ export * as Users from './users';
 export * as WS from './ws';
 export * as Conversation from './conversation';
 export * as Server from './server';
+export * as Message from './messages';

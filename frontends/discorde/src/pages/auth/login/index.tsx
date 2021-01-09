@@ -44,8 +44,10 @@ const Login: NextPage = (): JSX.Element => {
       setError("Invalid Email or Password");
     } else {
       setError(null);
-      await getMe(dispatch, ws, setError);
-      Router.push('/channels/@me');
+      const meResponse = await getMe(dispatch, ws);
+      if (!meResponse.success) {
+        setError(meResponse.data);
+      }
     };
   }
 
@@ -55,8 +57,8 @@ const Login: NextPage = (): JSX.Element => {
         <h2>Hello, welcome to Discorde!</h2>
         Time to log in.
         <form onSubmit={handleSubmit}>
-          <LoginInput value={email} onChange={setEmail} login type='email' label='Email' />
-          <LoginInput value={password} onChange={setPassword} login type='password' label='Password' />
+          <LoginInput value={email} onChange={setEmail} type='email' label='Email' />
+          <LoginInput value={password} onChange={setPassword} type='password' label='Password' />
           <br />
           <Button type='submit'>Log in</Button>
           {

@@ -70,7 +70,7 @@ const Row = styled.div`
   }
 `;
 
-const Button = styled.button<{ positive: boolean, negative: boolean }>`
+const Button = styled.button<{ positive?: boolean, negative?: boolean }>`
   background-color: #2f3136;
   border-radius: 100%;
   height: 40px;
@@ -112,11 +112,12 @@ const Header = styled.div`
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
   height: 3.4rem;
+  min-height: 3.4rem;
   position: sticky;
   top: 0;
 `;
 
-const HeaderButton = styled.button<{ selected: boolean, add: boolean }>`
+const HeaderButton = styled.button<{ selected?: boolean, add?: boolean }>`
   margin: .8rem;
   padding: .4rem;
   border-radius: 5px;
@@ -158,7 +159,7 @@ const UserRow = ({tab, user}: UserRowProps) => {
   }
 
   const handleClickMessage = async () => {
-    const response = await createConversation({ usersId: [me.id, user.id] });
+    const response = await createConversation(dispatch, me, { usersId: [me.id, user.id] });
 
     if (response.success) {
       Router.push(`/channels/@me/${user.id}`);

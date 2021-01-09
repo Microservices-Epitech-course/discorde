@@ -55,11 +55,12 @@ interface MessageProps {
 };
 
 export const Message = ({ first, info }: MessageProps): JSX.Element => {
-  const day = info.createdAt.getDate();
-  const month = info.createdAt.getMonth();
-  const year = info.createdAt.getFullYear();
-  const hour = info.createdAt.getHours();
-  const minute = info.createdAt.getMinutes();
+  const createdAt = new Date(info.createdAt);
+  const day = createdAt.getDate();
+  const month = createdAt.getMonth();
+  const year = createdAt.getFullYear();
+  const hour = createdAt.getHours();
+  const minute = createdAt.getMinutes();
 
 
   const dateString = () => {

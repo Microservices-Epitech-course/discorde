@@ -2,7 +2,8 @@ import { User, Role, Server, Message, Reaction } from '.';
 
 export interface Member {
   id: number;
-  user: User;
+  user?: User;
+  userId?: number;
   roles: Role[];
   server: Server;
   messages: Message[];

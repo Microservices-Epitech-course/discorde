@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 
 import { ConversationSearchInput } from './input';
 import { ReduxState } from 'store';
+import { getNotMe, getUsersFromIds } from 'store/utils';
 
 const Container = styled.div`
   min-width: 240px;
@@ -84,8 +85,20 @@ const Header = styled.div`
 `;
 
 export const ConversationList = () => {
-  const conversationList = useSelector((state: ReduxState) => state.conversations);
   const me = useSelector((state: ReduxState) => state.me);
+  const conversationList = useSelector((state: ReduxState) => (
+    state.conversations.map((conv) => {
+      return ({
+      ...conv,
+      name: conv.members.length === 2 ?
+        getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).username :
+        conv.name,
+      image: conv.members.length === 2 ?
+        getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).image :
+        undefined
+    })
+  })
+  ));
   const [search, setSearch] = useState('');
 
   return (
@@ -100,7 +113,7 @@ export const ConversationList = () => {
             <Link key={i} href={`/channels/@me/${server.id}`}>
               <Row>
                 {/*TODO GET IMAGE*/}
-                <img src={me.image} alt="profile" />
+                <img src={server.image} alt="profile" />
                 <span className="username-bold">{server.name}</span>
                 <Space />
                 <Button>

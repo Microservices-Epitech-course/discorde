@@ -9,33 +9,54 @@ import 'styles/globals.css';
 
 import { ReduxState, useStore } from '../store';
 import { getMe } from 'store/api/users';
+import { getAllFriendRequest, getFriends, getServersAndConversations } from 'api';
+
+enum Loading {
+  NOT_LOADED = 0,
+  ME_LOADED = 1,
+  LOADED = 2,
+  ALL_LOADED = 3,
+}
 
 function Loader({Component, pageProps}) {
   const dispatch = useDispatch();
   const ws = useSelector((state: ReduxState) => state.ws);
-  const [loaded, setLoaded] = useState(false);
+  const me = useSelector((state: ReduxState) => state.me);
+  const [loaded, setLoaded] = useState(Loading.NOT_LOADED);
 
   const load = async () => {
-    const initialPath = Router.asPath;
     if (localStorage.getItem("token")) {
-      await getMe(dispatch, ws, () => {
-        localStorage.removeItem("token");
-        Router.push('/');
-      }, () => {
-        if (initialPath === '/')
-          Router.push('/channels/@me');
-      });
+      await getMe(dispatch, ws);
+      setLoaded(Loading.ME_LOADED);
+    } else {
+      localStorage.removeItem("token");
+      Router.push('/');
+      setLoaded(Loading.LOADED);
     }
-    setLoaded(true);
+  }
+  const loadAssets = async () => {
+    await getFriends(dispatch, me);
+    await getAllFriendRequest(dispatch, me);
+    await getServersAndConversations(dispatch);
+    setLoaded(Loading.ALL_LOADED)
   }
 
   useEffect(() => {
     load();
+    return () => {
+      if (ws)
+        ws.close();
+    }
   }, []);
+
+  useEffect(() => {
+    if (loaded <= Loading.LOADED && me && ws)
+      loadAssets();
+  }, [loaded, ws, me]);
 
   return (
     <>
-      {loaded && (
+      {loaded >= Loading.LOADED && (
         <Component {...pageProps}/>
       )}
     </>

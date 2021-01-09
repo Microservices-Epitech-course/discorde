@@ -2,7 +2,8 @@ import { Member, Channel, Reaction } from '.';
 
 export interface Message {
   id: number;
-  author: Member;
+  author?: Member;
+  authorId?: number;
   channel: Channel;
   content: string;
   media: string;
