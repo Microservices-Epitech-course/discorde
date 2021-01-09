@@ -33,7 +33,6 @@ const Header = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  margin-bottom: 1rem;
   border-top: 2px solid #26282c;
   border-bottom: 2px solid #26282c;
   height: 3.4rem;
@@ -48,9 +47,11 @@ const Header = styled.div`
 `;
 
 const MessagesContainer = styled.div`
+  height: 0;
+  overflow: auto;
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   width: 100%;
 `;
 
@@ -83,6 +84,8 @@ export const Conversation = ({ id, conversation }: ConversationProps): JSX.Eleme
     setMessage('');
   }
 
+  const messages = conversation.channels[0].messages?.slice().reverse();
+
   return (
     <Container>
       <Header>
@@ -94,12 +97,10 @@ export const Conversation = ({ id, conversation }: ConversationProps): JSX.Eleme
       <Content>
         <MessagesContainer>
           {
-            conversation.channels[0].messages?.map((message, i) => {
-              const isFirst = i === 0 || conversation.channels[0].messages[i - 1].authorId !== message.authorId;
-              if (isFirst) {
-                const member = memberUsers.find((e) => e.id === message.authorId);
-                message.author = member;
-              }
+            messages?.map((message, i) => {
+              const isFirst = i === messages.length - 1 || messages[i + 1].authorId !== message.authorId;
+              const member = memberUsers.find((e) => e.id === message.authorId);
+              message.author = member;
               return (
                 <Message key={i} first={isFirst} info={message} />
               );
@@ -108,6 +109,7 @@ export const Conversation = ({ id, conversation }: ConversationProps): JSX.Eleme
         </MessagesContainer>
         <form onSubmit={handleSubmit}>
           <MessageInput
+            placeholder={conversation.members.length === 2 ? `Message @${user.username}` : `Message ${conversation.name}`}
             value={message}
             onChange={setMessage}
           />

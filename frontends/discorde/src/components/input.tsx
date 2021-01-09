@@ -66,8 +66,8 @@ export const LoginInput = ({ placeholder, label, type, value, onChange, ...props
 
 const MessageInputContainer = styled.div`
   background-color: #40434b;
-  border-radius: 10px;
-  padding: 0.9rem 0.6rem;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
   border: none;
   transition: border-color 0.2s ease-in-out;
   width: 100%;
@@ -78,6 +78,7 @@ const MessageInputContainer = styled.div`
   }
 
   input {
+    font-size: 1rem;
     width: 100%;
     color: #dcddde;
 
