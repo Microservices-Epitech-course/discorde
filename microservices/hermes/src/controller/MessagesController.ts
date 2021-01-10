@@ -29,7 +29,12 @@ export class MessagesController {
   }
 
   async get(req: Request, res: Response) {
-    const {channel } = await this.findChannel(req, res);
+    const result = await this.findChannel(req, res);
+
+    if (result === null)
+      return;
+
+    const { channel } = result;
 
     if (!channel)
       return;

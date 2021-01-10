@@ -93,15 +93,18 @@ export class Role {
 
   @AfterUpdate()
   async updateListener() {
+    const roleTmp = await getRepository(Role).findOne(this.id, {relations: ['server']});
     const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleUpdate", data: role}));
+
+    publisher.publish(`server:${roleTmp.server.id}`, JSON.stringify({ action: "roleUpdate", data: role}));
   }
 
   @BeforeRemove()
   async deleteListener() {
+    const roleTmp = await getRepository(Role).findOne(this.id, {relations: ['server']});
     const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
 
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleDelete", data: this.id}));
+    publisher.publish(`server:${roleTmp.server.id}`, JSON.stringify({ action: "roleDelete", data: this.id}));
     await getRepository(ChannelRoleSettings).remove(role.channelRoleSettings);
   }
 }

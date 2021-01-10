@@ -53,7 +53,7 @@ export class Server {
   async deleteListener() {
     const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'channels', 'roles', 'invitations'] });
 
-    publisher.publish(`server:${this.id}`, JSON.stringify({action: "serverDelete", data: this.id}));
+    publisher.publish(`server:${this.id}`, JSON.stringify({action: `${this.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: this.id}));
     await getRepository(Member).remove(server.members);
     await getRepository(Channel).remove(server.channels);
     await getRepository(Role).remove(server.roles);

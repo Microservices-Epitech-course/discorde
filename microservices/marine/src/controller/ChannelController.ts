@@ -81,13 +81,13 @@ export class ChannelController {
         if (!server)
             return;
         if (!(await server.hasUser(res.locals.user.id)) && res.locals.user.role !== UserRole.ADMIN) {
-            res.status(404).send();
+            res.status(403).send("Cant create as someone else");
             return;
         }
         if (res.locals.user.role !== UserRole.ADMIN) {
             const callerMember = await server.getUser(res.locals.user.id);
             if (!(await callerMember.hasGlobalPermission("manageChannels"))) {
-                res.status(404).send();
+                res.status(403).send("Cant create channels");
                 return;
             }
         }

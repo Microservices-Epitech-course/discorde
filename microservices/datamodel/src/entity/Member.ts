@@ -43,14 +43,17 @@ export class Member {
     delete member.server;
     delete member.messages;
     delete member.reactions;
-    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: "serverAdd", data: server }))
+    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${this.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Add`, data: server }))
     publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
   }
 
   @AfterUpdate()
   async updateListener() {
+    const memberTmp = await getRepository(Member).findOne(this.id, { relations: ['server']});
     const member = await getRepository(Member).findOne(this.id, { relations: ['user']});
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberUpdate", data: member }))
+    publisher.publish(`server:${memberTmp.server.id}`, JSON.stringify({ action: "memberUpdate", data: member }))
+    if (this.quit === true)
+      publisher.publish(`user:${member.user.id}`, JSON.stringify({ action: `${memberTmp.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: memberTmp.server.id}));
   }
 
   @BeforeRemove()
@@ -58,7 +61,7 @@ export class Member {
     const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server', 'server.members']});
 
     publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberDelete", data: this.id}));
-    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: "serverDelete", data: this.server.id}));
+    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${member.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: member.server.id}));
     await getRepository(Message).remove(member.messages);
     await getRepository(Reaction).remove(member.reactions);
     if (member.server.type === ServerType.CONVERSATION && member.server.members.length === 1)

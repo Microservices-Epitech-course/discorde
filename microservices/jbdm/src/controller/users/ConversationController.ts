@@ -36,7 +36,7 @@ export class ConversationController {
     if (exist) {
       exist.quit = false;
       await getRepository(Member).save(exist);
-      const existSend = await this.memberRepository.findOne(exist.id, { relations: ["user"] });
+      publisher.publish(`user:${res.locals.user.id}`, JSON.stringify({action: "conversationAdd", data: exist.server}));
       return exist.server;
     }
 

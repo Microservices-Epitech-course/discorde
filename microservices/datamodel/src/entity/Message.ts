@@ -39,15 +39,17 @@ export class Message {
 
   @AfterUpdate()
   async updateListener() {
+    const messageTmp = await getRepository(Message).findOne(this.id, { relations: ['channel']});
     const message = await getRepository(Message).findOne(this.id, { relations: ['author', 'reactions']});
-    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageUpdate", data: message }));
+    publisher.publish(`channel:${messageTmp.channel.id}`, JSON.stringify({ action: "messageUpdate", data: message }));
   }
 
   @BeforeRemove()
   async deleteListener() {
+    const messageTmp = await getRepository(Message).findOne(this.id, { relations: ['channel']});
     const message = await getRepository(Message).findOne(this.id, {relations: ['reactions']});
 
-    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageDelete", data: this.id }));
+    publisher.publish(`channel:${messageTmp.channel.id}`, JSON.stringify({ action: "messageDelete", data: this.id }));
     await getRepository(Reaction).remove(message.reactions);
   }
 }

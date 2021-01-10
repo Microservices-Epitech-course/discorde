@@ -25,14 +25,15 @@ export class Reaction {
 
   @AfterUpdate()
   async updateListener() {
+    const reactionTmp = await getRepository(Reaction).findOne(this.id, { relations: ["message", "message.channel"]});
     const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
-    publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionUpdate", data: reaction}));
+    publisher.publish(`channel:${reactionTmp.message.channel.id}`, JSON.stringify({ action: "reactionUpdate", data: reaction}));
   }
 
   @AfterInsert()
   async deleteListener() {
-    const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
-    publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionDelete", data: this.id}));
+    const reactionTmp = await getRepository(Reaction).findOne(this.id, { relations: ["message", "message.channel"]});
+    publisher.publish(`channel:${reactionTmp.message.channel.id}`, JSON.stringify({ action: "reactionDelete", data: this.id}));
   }
 
   @CreateDateColumn()
