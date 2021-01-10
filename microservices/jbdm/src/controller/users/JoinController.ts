@@ -23,7 +23,7 @@ export class JoinController {
       res.status(404).send("Expired invitation");
     }
     const server = invitation.server;
-    const existingMember = await server.getUser(res.locals.user.id);
+    const existingMember = await server.getUser(res.locals.user.id, true);
     if (existingMember) {
       if (!existingMember.quit) {
         res.status(404).send(`Already Member of Server ${server.name}`);

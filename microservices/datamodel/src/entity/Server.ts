@@ -38,7 +38,7 @@ export class Server {
   @AfterInsert()
   async insertListener() {
     const server = {...this};
-    server.members.forEach((e) => {
+    this.members.forEach((e) => {
       publisher.publish(`user:${e.user.id}`, JSON.stringify({action: `${this.type === ServerType.SERVER ? "server" : "conversation"}Add`, data: server}));
     });
   }
@@ -60,21 +60,21 @@ export class Server {
     await getRepository(Invitation).remove(server.invitations);
   }
 
-  async hasUser(userId: number) {
+  async hasUser(userId: number, force?: boolean) {
     const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'members.user'] });
-    return server.members.findIndex(member => member.user.id === userId && !member.quit) !== -1;
+    return server.members.findIndex(member => member.user.id === userId && (force || !member.quit)) !== -1;
   }
-  async hasMember(memberId: number) {
+  async hasMember(memberId: number, force?: boolean) {
     const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'members.user'] });
-    return server.members.findIndex(member => member.id === memberId && !member.quit) !== -1;
+    return server.members.findIndex(member => member.id === memberId && (force || !member.quit)) !== -1;
   }
-  async getUser(userId: number) {
+  async getUser(userId: number, force?: boolean) { 
     const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'members.user'] });
-    return server.members.find(member => member.user.id === userId && !member.quit);
+    return server.members.find(member => member.user.id === userId && (force || !member.quit));
   }
-  async getMember(memberId: number) {
+  async getMember(memberId: number, force?: boolean) {
     const server = await getRepository(Server).findOne(this.id, { relations: ['members'] });
-    return server.members.find(member => member.id === memberId && !member.quit);
+    return server.members.find(member => member.id === memberId && (force || !member.quit));
   }
   async getEveryoneRole() {
     const server = await getRepository(Server).findOne(this.id, { relations: ['roles'] });

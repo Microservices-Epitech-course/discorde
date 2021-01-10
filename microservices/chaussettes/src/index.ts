@@ -31,6 +31,9 @@ wss.on('connection', (ws: WebSocket & { isAlive: boolean }) => {
     subscriber.on("message", (channel, message) => {
       ws.send(JSON.stringify({channel: channel, message: message}));
     })
+    subscriber.on("error", (err) => {
+      console.error(err);
+    })
     ws.on('close', () => {
       subscriber.unsubscribe();
       subscriber.quit();

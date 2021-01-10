@@ -103,7 +103,7 @@ export class MemberController {
         if (!server)
             return;
         const userId = Number(req.params.memberId === "@me" ? res.locals.user.id : req.params.memberId);
-        if (!(await server[req.params.memberId === "@me" ? "hasUser" : "hasMember"](userId))) {
+        if (!(await server[req.params.memberId === "@me" ? "hasUser" : "hasMember"](userId, true))) {
             res.status(404).send("User not found on server");
             return;
         }
