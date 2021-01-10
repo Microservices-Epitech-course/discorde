@@ -36,11 +36,7 @@ const Page: React.FC<Props> = ({ title, protectedResources, children }: Props) =
       .push('/login')
       .then(() => {})
       .catch((err) => console.error(err));
-    return (
-      <Msg>
-        Something went wrong...
-      </Msg>
-    );
+    return <Msg>Something went wrong...</Msg>;
   }
 
   if (protectedResources && user.role !== 'admin') {

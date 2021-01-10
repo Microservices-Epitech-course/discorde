@@ -12,7 +12,7 @@ const UsersSelector: React.FC = () => {
   useEffect(() => {
     jbdm
       .get('/users')
-      .then(({ status, data }) => {
+      .then(({ data }) => {
         setUsers(data);
       })
       .catch((err) => {

@@ -3,13 +3,21 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Container, NavigationButton } from './style';
 
-const Drawer = () => {
+const Drawer = (): JSX.Element => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   return (
     <Container open={open}>
-      <div id="burgerMenu" onClick={(): void => setOpen(!open)}>
+      <div
+        tabIndex={0}
+        role="button"
+        id="burgerMenu"
+        onKeyPress={({ key }) => {
+          if (key === 'Enter') setOpen(!open);
+        }}
+        onClick={(): void => setOpen(!open)}
+      >
         <span id="label">Close Menu</span>
         <img alt={open ? 'close' : 'open'} src={open ? 'menu.svg' : 'menu.svg'} />
       </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { User } from 'utils/api';
 
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import { Container, UserInteraction } from './style';
 
 type Props = {
@@ -31,7 +31,14 @@ const Header: React.FC<Props> = ({ user, title }: Props) => {
       <UserInteraction>
         {user.username}
         <img id={user.id === -1 ? '' : 'avatar'} alt="avatar" src={user.image} />
-        <div onClick={handleLogout}>
+        <div
+          tabIndex={0}
+          role="button"
+          onKeyPress={({ key }) => {
+            if (key === 'Enter') handleLogout();
+          }}
+          onClick={handleLogout}
+        >
           <img id="logout" alt="logout" src="/exit.svg" />
         </div>
       </UserInteraction>
