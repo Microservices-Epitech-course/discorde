@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import { ADD_CHANNEL } from 'store/actions/channels';
 import { ADD_MESSAGE, MULTI_ADD_MESSAGE } from 'store/actions/messages';
 import { ADD_SERVER } from 'store/actions/server';
+import { Invitation } from 'store/types';
 import * as Servers from './apis';
 
 export const loadMessages = async (dispatch: Dispatch<any>, channelId: number) => {
@@ -89,6 +90,26 @@ export const createChannel = async (dispatch: Dispatch<any>, params: CreateChann
         serverId: params.serverId,
       }
     });
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: error.data };
+  }
+}
+
+interface CreateInvitationParams {
+  serverId: number,
+  expirationDate?: Date,
+}
+export const createInvitation = async (dispatch: Dispatch<any>, params: CreateInvitationParams) => {
+  try {
+    const response = await axios.post(
+      `${Servers.marine}/servers/${params.serverId}/invitations`,
+      { expirationDate: params.expirationDate ? params.expirationDate.getTime() : Date.now() + 2 * 24 * 60 * 60 * 1000 },
+      { headers: { "authorization": localStorage.getItem("token") }}
+    );
+
+    const invitation: Invitation = response.data;
+    return { success: false, data: invitation };
   } catch (error) {
     console.error(error);
     return { success: false, data: error.data };
