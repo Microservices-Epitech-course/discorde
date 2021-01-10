@@ -10,6 +10,7 @@ const Drawer = () => {
   return (
     <Container open={open}>
       <div id="burgerMenu" onClick={(): void => setOpen(!open)}>
+        <span id="label">Close Menu</span>
         <img alt={open ? 'close' : 'open'} src={open ? 'menu.svg' : 'menu.svg'} />
       </div>
       <Link href="/users">

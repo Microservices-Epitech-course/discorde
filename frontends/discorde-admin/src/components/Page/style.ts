@@ -11,6 +11,12 @@ export const RowContainer = styled.div`
   flex-grow: 1;
   display: flex;
   align-items: stretch;
+  #content {
+    height: calc(100vh - 85px - 2rem);
+    margin: 1rem;
+    background-color: var(--secondary-light);
+    overflow-y: auto;
+  }
 `;
 
 export const Msg = styled.div`

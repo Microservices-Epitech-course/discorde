@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div<{ invert?: boolean }>`
   padding: 16px;
+  height: 85px;
   display: flex;
   align-items: center;
   gap: 1rem;
