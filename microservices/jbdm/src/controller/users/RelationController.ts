@@ -33,7 +33,6 @@ export class RelationController {
       relation.users = await getRepository(User).findByIds([relation.userOneId, relation.userTwoId]);
 
       await this.relationRepository.save(relation);
-      publisher.publish(`user:${userId2}`, JSON.stringify({ action: "relationAdd", data: relation }));
       return relation;
     } catch (e) {
       return null;
@@ -178,7 +177,6 @@ export class RelationController {
         return res.status(403).send("Cant request this Friend");
       else if (existing.status === RelationStatus.DECLINED) {
         existing.status = RelationStatus.PENDING
-        publisher.publish(`user:${userTwo.id}`, JSON.stringify({ action: "relationAdd", data: existing }));
         return await this.relationRepository.save(existing);
       }
     }
@@ -228,7 +226,6 @@ export class RelationController {
         res.status(404).send(`Unknown action ${req.params.action}`);
         return;
     }
-    publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationUpdate", data: relation }));
     return await this.relationRepository.save(relation);
   }
 
@@ -244,7 +241,6 @@ export class RelationController {
       res.status(404).send("Relation not found");
       return;
     }
-    publisher.publish(`user:${req.params.userTwoId}`, JSON.stringify({ action: "relationDelete", data: relation.id }));
     const relId = relation.id;
     await this.relationRepository.remove(relation);
     return {id: relId};

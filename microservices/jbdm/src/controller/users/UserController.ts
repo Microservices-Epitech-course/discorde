@@ -32,7 +32,6 @@ export class UserController {
     try {
       const user = await this.userRepository.findOneOrFail(userId);
       user.username = username;
-      publisher.publish(`user:${userId}`, JSON.stringify({action: "userUpdate", data: user}))
       return await this.userRepository.save(user);
     } catch (e) {
       res.status(404).send();

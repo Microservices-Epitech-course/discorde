@@ -1,5 +1,6 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository, AfterInsert, AfterUpdate } from "typeorm";
 import { Member, Channel, Reaction } from ".";
+import { publisher } from "../config";
 
 @Entity()
 export class Message {
@@ -26,10 +27,23 @@ export class Message {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AfterInsert()
+  async insertListener() {
+    const message = await getRepository(Message).findOne(this.id, { relations: ['user']});
+    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageAdd", data: message }));
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const message = await getRepository(Message).findOne(this.id, { relations: ['user']});
+    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageUpdate", data: message }));
+  }
+
   @BeforeRemove()
   async deleteListener() {
     const message = await getRepository(Message).findOne(this.id, {relations: ['reactions']});
 
+    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageDelete", data: this.id }));
     await getRepository(Reaction).remove(message.reactions);
   }
 }

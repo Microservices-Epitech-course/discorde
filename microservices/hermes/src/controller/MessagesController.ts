@@ -58,7 +58,6 @@ export class MessagesController {
     await this.messageRepository.save(message);
 
     const sendMessage = await this.messageRepository.findOne(message.id, { relations: ["author"]});
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageAdd", data: sendMessage}));
     return sendMessage;
   }
 
@@ -85,7 +84,6 @@ export class MessagesController {
     await this.messageRepository.save(message);
 
     const sendMessage = await this.messageRepository.findOne(message.id, { relations: ["author"]});
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageUpdate", data: sendMessage}));
     return sendMessage;
   }
 
@@ -106,7 +104,6 @@ export class MessagesController {
         return;
       }
     }
-    publisher.publish(`channel:${channel.id}`, JSON.stringify({action: "messageDelete", data: messageId}));
     return this.messageRepository.remove(message);
   }
 }

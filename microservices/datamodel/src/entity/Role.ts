@@ -1,5 +1,6 @@
-import { Entity, Column, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinTable, BeforeRemove, getRepository } from "typeorm";
+import { Entity, Column, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, JoinTable, BeforeRemove, getRepository, AfterInsert, AfterUpdate } from "typeorm";
 import { Member, Server, ChannelRoleSettings } from ".";
+import { publisher } from "../config";
 
 @Entity()
 export class Role {
@@ -82,10 +83,23 @@ export class Role {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AfterInsert()
+  async insertListener() {
+    const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleAdd", data: role}));
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleUpdate", data: role}));
+  }
+
   @BeforeRemove()
   async deleteListener() {
     const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
 
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleDelete", data: this.id}));
     await getRepository(ChannelRoleSettings).remove(role.channelRoleSettings);
   }
 }

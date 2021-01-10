@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, BeforeRemove, getRepository, BeforeInsert, AfterUpdate } from "typeorm";
 import { Member, Relation } from ".";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import jwtSecret from "../config/jwtSecret";
+import { publisher } from "../config";
 
 export enum UserGender {
   FEMALE = "female",
@@ -69,10 +70,16 @@ export class User {
     this.password = bcrypt.hashSync(this.password, 8);
   }
 
+  @AfterUpdate()
+  async updateListener() {
+    publisher.publish(`userbc:${this.id}`, JSON.stringify({action: 'userUpdate', data: this}));
+  }
+
   @BeforeRemove()
   async deleteListener() {
     const user = await getRepository(User).findOne(this.id, { relations: ['relations', 'members'] });
 
+    publisher.publish(`userbc:${this.id}`, JSON.stringify({action: 'userDelete', data: this.id}));
     await getRepository(Relation).remove(user.relations);
     await getRepository(Member).remove(user.members);
   }

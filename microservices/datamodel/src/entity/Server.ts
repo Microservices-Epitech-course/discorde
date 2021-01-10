@@ -1,5 +1,6 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, BeforeRemove, getRepository, Column } from "typeorm";
+import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, BeforeRemove, getRepository, Column, AfterInsert, AfterUpdate } from "typeorm";
 import { Member, Channel, Role, Invitation } from ".";
+import { publisher } from "../config";
 
 export enum ServerType {
   SERVER = "server",
@@ -34,11 +35,25 @@ export class Server {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AfterInsert()
+  async insertListener() {
+    const server = await getRepository(Server).findOne(this.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+    server.members.forEach((e) => {
+      publisher.publish(`user:${e.user.id}`, JSON.stringify({action: `${this.type === ServerType.SERVER ? "server" : "conversation"}Add`, data: server}));
+    });
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const server = await getRepository(Server).findOne(this.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+    publisher.publish(`server:${this.id}`, JSON.stringify({action: "serverUpdate", data: server}));
+  }
 
   @BeforeRemove()
   async deleteListener() {
     const server = await getRepository(Server).findOne(this.id, { relations: ['members', 'channels', 'roles', 'invitations'] });
 
+    publisher.publish(`server:${this.id}`, JSON.stringify({action: "serverDelete", data: this.id}));
     await getRepository(Member).remove(server.members);
     await getRepository(Channel).remove(server.channels);
     await getRepository(Role).remove(server.roles);

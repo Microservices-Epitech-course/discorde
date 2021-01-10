@@ -1,5 +1,6 @@
-import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
+import { Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne, Column, AfterInsert, BeforeRemove, getRepository, AfterUpdate } from "typeorm";
 import { Role, Channel } from ".";
+import { publisher } from "../config";
 
 export enum ChannelRoleSettingsModifier {
   DENY = "deny",
@@ -39,6 +40,21 @@ export class ChannelRoleSettings {
   //// readMessageHistory
   //// sendTTS
 
+  @AfterInsert()
+  async insertListener() {
+    const channelRole = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['channel'] });
+    const channelRoleSend = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['role'] });
+
+    publisher.publish(`channel:${channelRole.channel.id}`, JSON.stringify({action: "channelRoleAdd", data: channelRoleSend}));
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const channelRole = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['channel'] });
+    const channelRoleSend = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['role'] });
+
+    publisher.publish(`channel:${channelRole.channel.id}`, JSON.stringify({action: "channelRoleUpdate", data: channelRoleSend}));
+  }
 
   @CreateDateColumn()
   createdAt: Date;

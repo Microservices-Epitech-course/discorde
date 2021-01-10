@@ -1,4 +1,5 @@
-import { Entity, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository, Column } from "typeorm";
+import { Entity, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository, Column, AfterInsert, AfterUpdate } from "typeorm";
+import { publisher } from "../config";
 import { User, Role, Server, ServerType, Message, Reaction } from "./";
 import { ChannelRoleSettingsModifier } from "./ChannelRoleSettings";
 
@@ -33,10 +34,27 @@ export class Member {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AfterInsert()
+  async insertListener() {
+    const server = await getRepository(Server).findOne(this.server.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+    const member = await getRepository(Member).findOne(this.id, { relations: ['user']});
+
+    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: "serverAdd", data: server }))
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const member = await getRepository(Member).findOne(this.id, { relations: ['user']});
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberUpdate", data: member }))
+  }
+
   @BeforeRemove()
   async deleteListener() {
     const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server', 'server.members']});
 
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberDelete", data: this.id}));
+    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: "serverDelete", data: this.server.id}));
     await getRepository(Message).remove(member.messages);
     await getRepository(Reaction).remove(member.reactions);
     if (member.server.type === ServerType.CONVERSATION && member.server.members.length === 1)

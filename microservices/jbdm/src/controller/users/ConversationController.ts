@@ -37,7 +37,6 @@ export class ConversationController {
       exist.quit = false;
       await getRepository(Member).save(exist);
       const existSend = await this.memberRepository.findOne(exist.id, { relations: ["user"] });
-      publisher.publish(`server:${exist.server.id}`, JSON.stringify({action: "memberAdd", data: existSend}));
       return exist.server;
     }
 
@@ -81,7 +80,6 @@ export class ConversationController {
       server.id, {
         relations: ["members", "members.user", "channels", "roles", "roles.members"]
       });
-    users.map((e) => publisher.publish(`user:${e}`, JSON.stringify({action: "conversationAdd", data: serverSend})))
     return serverSend;
   }
 }

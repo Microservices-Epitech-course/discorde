@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Channel, publisher, Server, UserRole } from "@discorde/datamodel";
+import { Channel, Server, UserRole } from "@discorde/datamodel";
 
 export class ChannelController {
     private channelRepository = getRepository(Channel);
@@ -96,7 +96,6 @@ export class ChannelController {
         channel.server = server;
         channel.name = name;
         await this.channelRepository.save(channel);
-        publisher.publish(`server:${server.id}`, JSON.stringify({action: "channelAdd", data: channel}));
         return channel;
     }
 

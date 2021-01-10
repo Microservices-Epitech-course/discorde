@@ -1,5 +1,6 @@
-import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, AfterInsert, getRepository, JoinTable } from "typeorm";
+import { Entity, Column, Unique, Check, ManyToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, AfterInsert, getRepository, JoinTable, AfterUpdate, BeforeRemove } from "typeorm";
 import { User } from ".";
+import { publisher } from "../config";
 
 export enum RelationStatus {
   PENDING = "pending",
@@ -30,6 +31,27 @@ export class Relation {
 
   @ManyToMany(type => User, user => user.relations)
   users: User[];
+
+  @AfterInsert()
+  async insertListener() {
+    const relation = getRepository(Relation).findOne(this.id, { relations: ["users"]});
+    publisher.publish(`user:${this.userOneId}`, JSON.stringify({ action: "relationAdd", data: relation}));
+    publisher.publish(`user:${this.userTwoId}`, JSON.stringify({ action: "relationAdd", data: relation}));
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    const relation = getRepository(Relation).findOne(this.id, { relations: ["users"]});
+    publisher.publish(`user:${this.userOneId}`, JSON.stringify({ action: "relationUpdate", data: relation}));
+    publisher.publish(`user:${this.userTwoId}`, JSON.stringify({ action: "relationUpdate", data: relation}));
+  }
+
+  @BeforeRemove()
+  async deleteListener() {
+    const relation = getRepository(Relation).findOne(this.id, { relations: ["users"]});
+    publisher.publish(`user:${this.userOneId}`, JSON.stringify({ action: "relationDelete", data: this.id}));
+    publisher.publish(`user:${this.userTwoId}`, JSON.stringify({ action: "relationDelete", data: this.id}));
+  }
 
   @CreateDateColumn()
   createdAt: Date;

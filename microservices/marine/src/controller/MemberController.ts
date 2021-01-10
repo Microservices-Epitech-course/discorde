@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Member, publisher, Role, Server, User, UserRole } from "@discorde/datamodel";
+import { Member, Role, Server, User, UserRole } from "@discorde/datamodel";
 
 export class MemberController {
     private memberRepository = getRepository(Member);
@@ -85,7 +85,6 @@ export class MemberController {
         if (existList.length !== 0) {
             const exist = existList[0];
             exist.quit = false;
-            publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: exist}));
             const serverSend = await this.serverRepository.findOne(server.id, {
                 relations: ["members", "members.user", "channels", "roles", "roles.members"]
             });
@@ -127,10 +126,7 @@ export class MemberController {
             // return this.memberRepository.remove(member);
         // } else {
         member.quit = true;
-        publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberDelete", data: member.id}));
-        publisher.publish(`user:${member.user.id}`, JSON.stringify({action: "serverDelete", data: server.id}));
-        await this.memberRepository.save(member);
-        return member.id;
+        return await this.memberRepository.save(member);
     }
 
     async changeRole(req: Request, res: Response) {

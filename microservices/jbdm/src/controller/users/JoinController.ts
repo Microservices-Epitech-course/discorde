@@ -31,8 +31,6 @@ export class JoinController {
       } else {
         existingMember.quit = false;
         await this.memberRepository.save(existingMember);
-        const memberSend = await this.memberRepository.find({where: { id: existingMember.id }, relations: ["user"]});
-        publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}))
         const serverSend = await getRepository(Server).findOne(server.id, {
           relations: ["members", "members.user", "channels", "roles", "roles.members"]
         });
@@ -48,8 +46,6 @@ export class JoinController {
       const serverSend = await getRepository(Server).findOne(server.id, {
         relations: ["members", "members.user", "channels", "roles", "roles.members"]
       });
-      publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}));
-      publisher.publish(`user:${res.locals.user.id}`, JSON.stringify({action: "serverAdd", data: serverSend}));
       return serverSend;
     }
   }

@@ -1,4 +1,4 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository } from "typeorm";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany, ManyToOne, BeforeRemove, getRepository, AfterInsert, AfterUpdate } from "typeorm";
 import { Server, ChannelRoleSettings, Message } from ".";
 import { publisher } from "../config/redis";
 
@@ -32,11 +32,21 @@ export class Channel {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AfterInsert()
+  async insertListener() {
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({action: "channelAdd", data: this}));
+  }
+
+  @AfterUpdate()
+  async updateListener() {
+    publisher.publish(`channel:${this.id}`, JSON.stringify({action: "channelUpdate", data: this}));
+  }
+
   @BeforeRemove()
   async deleteListener() {
     const channel = await getRepository(Channel).findOne(this.id, { relations: ['channelRoleSettings', 'messages', 'server'] });
 
-    publisher.publish(`server:${channel.server.id}`, JSON.stringify({ action: "channelDelete", data: channel.id }));
+    publisher.publish(`channel:${this.id}`, JSON.stringify({ action: "channelDelete", data: channel.id }));
     await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
     await getRepository(Message).remove(channel.messages);
   }
