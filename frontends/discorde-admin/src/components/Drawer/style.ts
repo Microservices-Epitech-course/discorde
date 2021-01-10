@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div<{ open?: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -12,11 +13,20 @@ export const Container = styled.div<{ open?: boolean }>`
   transition: margin-left var(--transition);
   margin-left: ${({ open }) => (!open ? 'calc((250px - 2rem - 15px) * -1)' : 0)};
   & #burgerMenu {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: sticky;
+    left: 1rem;
     user-select: none;
     cursor: pointer;
     transition: var(--transition);
-    width: ${({ open }) => (open ? '15px' : '100%')};
     text-align: right;
+    #label {
+      white-space: nowrap;
+      text-align: center;
+      flex-grow: 1;
+    }
     img {
       width: 15px;
       filter: invert(1);

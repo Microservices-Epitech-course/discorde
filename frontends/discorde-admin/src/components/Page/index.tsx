@@ -56,7 +56,7 @@ const Page: React.FC<Props> = ({ title, protectedResources, children }: Props) =
       <Header user={user} title={title} />
       <RowContainer>
         <Drawer />
-        <Container>{children}</Container>
+        <Container id="content">{children}</Container>
       </RowContainer>
     </Container>
   );
