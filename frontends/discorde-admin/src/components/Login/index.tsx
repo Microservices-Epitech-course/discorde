@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { jbdm, sven } from 'utils/api/client';
 
 import { useRouter } from 'next/router';
@@ -12,6 +12,10 @@ const Login = (): JSX.Element => {
   const [error, setError] = useState('');
   const [timeoutId, setTimeoutId] = useState(-1);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.localStorage.removeItem('token');
+  }, []);
 
   const handleError = (err, ms) => {
     setError(err);

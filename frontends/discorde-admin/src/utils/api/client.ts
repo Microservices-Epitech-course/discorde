@@ -15,3 +15,8 @@ export const jbdm = axios.create({
   baseURL: process.env.NEXT_PUBLIC_JBDM_URL || 'not_set',
 });
 jbdm.interceptors.request.use(authToken);
+
+export const marine = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_MARINE_URL || 'not_set',
+});
+marine.interceptors.request.use(authToken);

@@ -12,10 +12,11 @@ export const RowContainer = styled.div`
   display: flex;
   align-items: stretch;
   #content {
+    max-height: calc(100vh - 85px - 2rem);
     height: calc(100vh - 85px - 2rem);
     margin: 1rem;
     background-color: var(--secondary-light);
-    overflow-y: auto;
+    color: var(--primary-light);
   }
 `;
 

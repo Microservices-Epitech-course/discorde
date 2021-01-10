@@ -12,3 +12,14 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Server = {
+  id: number;
+  name: string;
+  members: unknown[];
+  channels: unknown[];
+  roles: unknow[];
+  type: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
