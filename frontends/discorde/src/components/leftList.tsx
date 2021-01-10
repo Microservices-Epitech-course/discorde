@@ -54,7 +54,6 @@ const UserBox = styled.div`
 `;
 
 const ListContainer = styled.div`
-  overflow: auto;
   flex-grow: 1;
   width: 100%;
 `;

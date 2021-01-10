@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { ReduxState } from 'store';
+import { useRouter } from 'next/router';
 
-import { getFriends, getAllFriendRequest } from 'api/users';
-
-import { createServer } from 'api/servers';
-import { ConversationList } from 'components/conversationList';
+import { createChannel } from 'api/servers';
+import { ChannelList } from 'components/channel/channelList';
 import { ServerList } from 'components/serverList';
 import { ButtonInput } from 'components/input';
 import { Error, Success } from 'components/text';
@@ -33,17 +32,23 @@ const Container = styled.div`
   }
 `;
 
-
 const Me = (): JSX.Element => {
-  const [serverName, setServerName] = useState('');
+  const router = useRouter();
+  const [channelName, setChannelName] = useState('');
+  const { serverId } = router.query;
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(channelName);
+    console.log(serverId);
 
-    const response = await createServer(dispatch, { name: serverName });
+    const response = await createChannel(dispatch, {
+      name: channelName,
+      serverId: Number(serverId)
+    });
     if (!response.success) {
       setError(response.data);
     } else {
@@ -53,26 +58,25 @@ const Me = (): JSX.Element => {
   }
   const handleChange = e => {
     if (success === true) setSuccess(false);
-    setServerName(e);
+    setChannelName(e);
   }
 
   return (
     <Flex>
-      <ServerList createServerSelected={true} />
-      <ConversationList />
+      <ServerList />
+      <ChannelList />
       <Container>
-        <label>Create a server</label>
+        <label>Create a text channel</label>
         {
-          success
-            ? <Success>Success! The server {serverName} was created.</Success>
-            : <span>Your server is where you and your friends hang out. Make yours and start talking.</span>
+          success &&
+          <Success>Success! The channel {channelName} was created.</Success>
         }
         <ButtonInput
           onSubmit={handleSubmit}
-          placeholder='Enter a server name'
-          value={serverName}
+          placeholder='Enter a channel name'
+          value={channelName}
           onChange={handleChange}
-          buttonText='Create a server'
+          buttonText='Create a channel'
         />
         {
           error && <Error>{error}</Error>

@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 
 import { ServerList } from 'components/serverList';
-import { ChannelList } from 'components/channelList';
-import { Conversation } from 'components/conversation/conversation';
+import { ChannelList } from 'components/channel/channelList';
 
 const Flex = styled.div`
   display: flex;

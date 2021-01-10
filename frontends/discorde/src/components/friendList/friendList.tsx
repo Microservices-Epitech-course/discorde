@@ -173,8 +173,8 @@ const UserRow = ({tab, user}: UserRowProps) => {
     if (user?.request === 'incoming') {
       return (
         <>
-          <Button positive>
-            <FiCheck className='icon' onClick={() => handleClickInvite('accept')} />
+          <Button positive onClick={() => handleClickInvite('accept')}>
+            <FiCheck className='icon'/>
           </Button>
           <Button negative onClick={() => handleClickInvite('deny')}>
             <FiX className='icon' />

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ReduxState } from 'store';
 
-import { ChannelList } from 'components/channelList';
+import { ChannelList } from 'components/channel/channelList';
 import { ServerList } from 'components/serverList';
 import { Error, Success } from 'components/text';
 import { ButtonInput } from 'components/input';

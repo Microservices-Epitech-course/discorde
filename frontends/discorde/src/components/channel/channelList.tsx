@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
 import { BiHash } from 'react-icons/bi';
@@ -6,20 +6,11 @@ import { IoMdPersonAdd } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import Router from 'next/router';
-
+import { FiPlus } from 'react-icons/fi';
 import { ReduxState } from 'store';
-import LeftList from './leftList';
 
-const Container = styled.div`
-  min-width: 240px;
-  background-color: #2f3136;
-  overflow-y: auto;
-
-  label {
-    margin-left: 1rem;
-    margin-top: 1rem;
-  }
-`;
+import { Tooltip } from 'components/tooltip';
+import LeftList from '../leftList';
 
 const Ul = styled.ul`
   list-style-type: none;
@@ -88,6 +79,29 @@ const Space = styled.div`
   flex-grow: 1;
 `;
 
+const ChannelName = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 1rem;
+  padding-top: 1rem;
+
+  label {
+    margin: auto;
+  }
+
+  .icon {
+    color: #8e9297;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+  }
+
+  .icon:hover {
+    color: #fff;
+  }
+`;
+
 export const ChannelList = () => {
   const router = useRouter();
   const { serverId, id } = router.query;
@@ -100,16 +114,35 @@ export const ChannelList = () => {
       header={<ServerName>{server.name}</ServerName>}
     >
       <>
-        <label style={{ marginTop: "1rem" }}>Channels</label>
+        <ChannelName>
+          <label>Channels</label>
+          <Space />
+          <Tooltip
+            text='Create Channel'
+          >
+            <FiPlus
+              className='icon'
+              onClick={() => Router.push(`/channels/${serverId}/createChannel`)}
+            />
+          </Tooltip>
+        </ChannelName>
         <Ul>
           {channels.map((channel, i) => {
             return (
-              <Link key={i} href={`/channels/${serverId}/${channel.id}`}>
+              <Link
+                key={`${channel.id}${i}`}
+                href={`/channels/${serverId}/${channel.id}`}
+              >
                 <Row selected={Number(id) === channel.id}>
                   <BiHash className='icon' />
                   <span className="channel-name">{channel.name}</span>
                   <Space />
-                  <IoMdPersonAdd onClick={() => Router.push(`/channels/${serverId}/inviteUser`)} className='icon add-user' />
+                  <Tooltip text='Create Invite'>
+                    <IoMdPersonAdd
+                      onClick={() => Router.push(`/channels/${serverId}/inviteUser`)}
+                      className='icon add-user'
+                    />
+                  </Tooltip>
                 </Row>
               </Link>
             );
