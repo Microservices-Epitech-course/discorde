@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { jbdm, sven } from 'utils/api/client';
 
 import { useRouter } from 'next/router';
-import { Container } from './style';
+import Container from './style';
 
 const Login = (): JSX.Element => {
   const router = useRouter();

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
+const Container = styled.div`
   flex-grow: 1;
   display: grid;
   place-content: center;
@@ -57,3 +57,5 @@ export const Container = styled.div`
     margin-bottom: 0;
   }
 `;
+
+export default Container;

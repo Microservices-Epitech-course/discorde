@@ -12,7 +12,7 @@ const ServersSelector: React.FC = () => {
   useEffect(() => {
     marine
       .get('/servers')
-      .then(({ status, data }) => {
+      .then(({ data }) => {
         setServers(data);
       })
       .catch((err) => {
