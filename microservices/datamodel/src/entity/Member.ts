@@ -51,9 +51,12 @@ export class Member {
   async updateListener() {
     const memberTmp = await getRepository(Member).findOne(this.id, { relations: ['server']});
     const member = await getRepository(Member).findOne(this.id, { relations: ['user']});
-    publisher.publish(`server:${memberTmp.server.id}`, JSON.stringify({ action: "memberUpdate", data: member }))
-    if (this.quit === true)
+    if (this.quit === true) {
+      publisher.publish(`server:${memberTmp.server.id}`, JSON.stringify({ action: "memberDelete", data: this.id}));
       publisher.publish(`user:${member.user.id}`, JSON.stringify({ action: `${memberTmp.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: memberTmp.server.id}));
+    } else {
+      publisher.publish(`server:${memberTmp.server.id}`, JSON.stringify({ action: "memberUpdate", data: member }))
+    }
   }
 
   @BeforeRemove()

@@ -14,17 +14,23 @@ export class MemberController {
           return null;
         }
     }
-    private async findMember(res: Response, memberId: any, serverId: any, relations?: any) {
+    private async findMember(res: Response, memberId: any, serverId: any, relations?: any, force?: boolean) {
         try {
-          return await this.memberRepository.findOneOrFail({ where: { id: memberId, server: { id: serverId }, quit: false}, relations});
+          if (force)
+            return await this.memberRepository.findOneOrFail({ where: { id: memberId, server: { id: serverId }}, relations});
+          else
+            return await this.memberRepository.findOneOrFail({ where: { id: memberId, server: { id: serverId }, quit: false}, relations});
         } catch (e) {
           res.status(404).send(`Member ${memberId} doesnt exists on Server ${serverId}`);
           return null;
         }
     }
-    private async findMemberUser(res: Response, userId: any, serverId: any, relations?: any) {
+    private async findMemberUser(res: Response, userId: any, serverId: any, relations?: any, force?: boolean) {
         try {
-          return await this.memberRepository.findOneOrFail({ where: { user: { id: userId}, server: { id: serverId }, quit: false}, relations});
+          if (force)
+            return await this.memberRepository.findOneOrFail({ where: { user: { id: userId}, server: { id: serverId }}, relations});
+          else
+            return await this.memberRepository.findOneOrFail({ where: { user: { id: userId}, server: { id: serverId }, quit: false}, relations});
         } catch (e) {
           res.status(404).send(`Member ${userId} doesnt exists on Server ${serverId}`);
           return null;
@@ -127,7 +133,7 @@ export class MemberController {
                     return;
                 }
             }
-            const member = await this[req.params.memberId === "@me" ? "findMemberUser" : "findMember"](res, userId, req.params.serverId, ["user"]);
+            const member = await this[req.params.memberId === "@me" ? "findMemberUser" : "findMember"](res, userId, req.params.serverId, ["user"], true);
             if (!member)
                 return;
             if (member.owner) {
@@ -135,11 +141,12 @@ export class MemberController {
                 return;
             }
             // TODO: Delete server if nobody on it
-            // if (req.body.clear) {
-                // return this.memberRepository.remove(member);
-            // } else {
-            member.quit = true;
-            return await this.memberRepository.save(member);
+            if (req.body.clear && res.locals.user.role === UserRole.ADMIN) {
+                return this.memberRepository.remove(member);
+            } else {
+              member.quit = true;
+              return await this.memberRepository.save(member);
+            }
         } catch (error) {
             return res.status(500).send(error);
         }
