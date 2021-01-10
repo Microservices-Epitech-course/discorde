@@ -38,7 +38,7 @@ export class Server {
   @AfterInsert()
   async insertListener() {
     const server = {...this};
-    this.members.forEach((e) => {
+    this.members?.forEach((e) => {
       publisher.publish(`user:${e.user.id}`, JSON.stringify({action: `${this.type === ServerType.SERVER ? "server" : "conversation"}Add`, data: server}));
     });
   }
@@ -46,7 +46,7 @@ export class Server {
   @AfterUpdate()
   async updateListener() {
     const server = await getRepository(Server).findOne(this.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
-    publisher.publish(`server:${this.id}`, JSON.stringify({action: "serverUpdate", data: server}));
+    publisher.publish(`server:${this.id}`, JSON.stringify({action: `${this.type === ServerType.SERVER ? "server" : "conversation"}Update`, data: server}));
   }
 
   @BeforeRemove()

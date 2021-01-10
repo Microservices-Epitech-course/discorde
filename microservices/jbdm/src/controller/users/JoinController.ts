@@ -16,37 +16,41 @@ export class JoinController {
   }
 
   async join(req: Request, res: Response) {
-    const invitation = await this.findInvitation(res, req.params.inviteString);
-    if (!invitation)
-      return;
-    if (Date.now() > Number(invitation.expirationDate)) {
-      res.status(404).send("Expired invitation");
-    }
-    const server = invitation.server;
-    const existingMember = await server.getUser(res.locals.user.id, true);
-    if (existingMember) {
-      if (!existingMember.quit) {
-        res.status(404).send(`Already Member of Server ${server.name}`);
+    try {
+      const invitation = await this.findInvitation(res, req.params.inviteString);
+      if (!invitation)
         return;
+      if (Date.now() > Number(invitation.expirationDate)) {
+        res.status(404).send("Expired invitation");
+      }
+      const server = invitation.server;
+      const existingMember = await server.getUser(res.locals.user.id, true);
+      if (existingMember) {
+        if (!existingMember.quit) {
+          res.status(404).send(`Already Member of Server ${server.name}`);
+          return;
+        } else {
+          existingMember.quit = false;
+          await this.memberRepository.save(existingMember);
+          const serverSend = await getRepository(Server).findOne(server.id, {
+            relations: ["members", "members.user", "channels", "roles", "roles.members"]
+          });
+          return serverSend;
+        }
       } else {
-        existingMember.quit = false;
-        await this.memberRepository.save(existingMember);
+        let member = new Member();
+        member.server = server;
+        member.user = res.locals.user;
+        member.roles = [await server.getEveryoneRole()];
+        await this.memberRepository.save(member);
+        const memberSend = await this.memberRepository.find({where: { id: member.id }, relations: ["user"]});
         const serverSend = await getRepository(Server).findOne(server.id, {
           relations: ["members", "members.user", "channels", "roles", "roles.members"]
         });
         return serverSend;
       }
-    } else {
-      let member = new Member();
-      member.server = server;
-      member.user = res.locals.user;
-      member.roles = [await server.getEveryoneRole()];
-      await this.memberRepository.save(member);
-      const memberSend = await this.memberRepository.find({where: { id: member.id }, relations: ["user"]});
-      const serverSend = await getRepository(Server).findOne(server.id, {
-        relations: ["members", "members.user", "channels", "roles", "roles.members"]
-      });
-      return serverSend;
+    } catch (error) {
+      return res.status(500).send(error);
     }
   }
 }

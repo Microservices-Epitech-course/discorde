@@ -43,87 +43,103 @@ export class ChannelRoleController {
 
 
   async all(req: Request, res: Response) {
-    const server = await this.findServer(res, req.params.serverId);
-    if (!server)
-      return;
-    const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
-    if (!channel)
-      return;
-    const member = await server.getUser(res.locals.user.id);
-    if (!member && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
-      return;
-    }
-    if (res.locals.user.role !== UserRole.ADMIN) {
-      if (!(await member.hasChannelPermission("viewChannels", Number(req.params.channelId)))) {
+    try {
+      const server = await this.findServer(res, req.params.serverId);
+      if (!server)
+        return;
+      const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
+      if (!channel)
+        return;
+      const member = await server.getUser(res.locals.user.id);
+      if (!member && res.locals.user.role !== UserRole.ADMIN) {
         res.status(404).send();
         return;
       }
+      if (res.locals.user.role !== UserRole.ADMIN) {
+        if (!(await member.hasChannelPermission("viewChannels", Number(req.params.channelId)))) {
+          res.status(404).send();
+          return;
+        }
+      }
+      return this.channelRoleRepository.find({ where: { server: {id: req.params.serverId }, channel: { id: req.params.channelId }}});
+    } catch (error) {
+      return res.status(500).send(error);
     }
-    return this.channelRoleRepository.find({ where: { server: {id: req.params.serverId }, channel: { id: req.params.channelId }}});
   }
 
   async add(req: Request, res: Response) {
-    const server = await this.findServer(res, req.params.serverId);
-    if (!server)
-      return;
-    const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
-    if (!channel)
-      return;
-    const role = await this.findRole(res, req.params.roleId, req.params.serverId);
-    if (!role)
-      return;
-    const member = await server.getUser(res.locals.user.id);
-    if ((!member || !(await member.hasChannelPermission("manageRoles", Number(req.params.channelId)))) && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
-      return;
+    try {
+      const server = await this.findServer(res, req.params.serverId);
+      if (!server)
+        return;
+      const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
+      if (!channel)
+        return;
+      const role = await this.findRole(res, req.params.roleId, req.params.serverId);
+      if (!role)
+        return;
+      const member = await server.getUser(res.locals.user.id);
+      if ((!member || !(await member.hasChannelPermission("manageRoles", Number(req.params.channelId)))) && res.locals.user.role !== UserRole.ADMIN) {
+        res.status(404).send();
+        return;
+      }
+      let channelRole = new ChannelRoleSettings();
+      channelRole.channel = channel;
+      channelRole.role = role;
+      return this.channelRoleRepository.save(channelRole);
+    } catch (error) {
+      return res.status(500).send(error);
     }
-    let channelRole = new ChannelRoleSettings();
-    channelRole.channel = channel;
-    channelRole.role = role;
-    return this.channelRoleRepository.save(channelRole);
   }
 
   async modif(req: Request, res: Response) {
-    const server = await this.findServer(res, req.params.serverId);
-    if (!server)
-      return;
-    const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
-    if (!channel)
-      return;
-    const member = await server.getUser(res.locals.user.id);
-    if ((!member || !(await member.hasChannelPermission("manageRoles", Number(req.params.channelId)))) && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
-      return;
+    try {
+      const server = await this.findServer(res, req.params.serverId);
+      if (!server)
+        return;
+      const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
+      if (!channel)
+        return;
+      const member = await server.getUser(res.locals.user.id);
+      if ((!member || !(await member.hasChannelPermission("manageRoles", Number(req.params.channelId)))) && res.locals.user.role !== UserRole.ADMIN) {
+        res.status(404).send();
+        return;
+      }
+      const channelRole = await this.findChannelRole(res, req.params.channelRoleId, req.params.channelId, req.params.serverId);
+      if (!channelRole)
+        return;
+      channelRole.viewChannels = req.body.viewChannels || channelRole.viewChannels;
+      channelRole.manageChannels = req.body.manageChannels || channelRole.manageChannels;
+      channelRole.managePermissions = req.body.managePermissions || channelRole.managePermissions;
+      channelRole.sendMessages = req.body.sendMessages || channelRole.sendMessages;
+      channelRole.addReactions = req.body.addReactions || channelRole.addReactions;
+      channelRole.mentionRoles = req.body.mentionRoles || channelRole.mentionRoles;
+      channelRole.manageMessages = req.body.manageMessages || channelRole.manageMessages;
+      return this.channelRoleRepository.save(channelRole);
+    } catch (error) {
+      return res.status(500).send(error);
     }
-    const channelRole = await this.findChannelRole(res, req.params.channelRoleId, req.params.channelId, req.params.serverId);
-    if (!channelRole)
-      return;
-    channelRole.viewChannels = req.body.viewChannels || channelRole.viewChannels;
-    channelRole.manageChannels = req.body.manageChannels || channelRole.manageChannels;
-    channelRole.managePermissions = req.body.managePermissions || channelRole.managePermissions;
-    channelRole.sendMessages = req.body.sendMessages || channelRole.sendMessages;
-    channelRole.addReactions = req.body.addReactions || channelRole.addReactions;
-    channelRole.mentionRoles = req.body.mentionRoles || channelRole.mentionRoles;
-    channelRole.manageMessages = req.body.manageMessages || channelRole.manageMessages;
-    return this.channelRoleRepository.save(channelRole);
   }
 
   async delete(req: Request, res: Response) {
-    const server = await this.findServer(res, req.params.serverId);
-    if (!server)
-      return;
-    const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
-    if (!channel)
-      return;
-    const member = await server.getUser(res.locals.user.id);
-    if ((!member || !(await member.hasGlobalPermission("manageRoles"))) && res.locals.user.role !== UserRole.ADMIN) {
-      res.status(404).send();
-      return;
+    try {
+      const server = await this.findServer(res, req.params.serverId);
+      if (!server)
+        return;
+      const channel = await this.findChannel(res, req.params.channelId, req.params.serverId);
+      if (!channel)
+        return;
+      const member = await server.getUser(res.locals.user.id);
+      if ((!member || !(await member.hasGlobalPermission("manageRoles"))) && res.locals.user.role !== UserRole.ADMIN) {
+        res.status(404).send();
+        return;
+      }
+      const channelRole = await this.findChannelRole(res, req.params.channelRoleId, req.params.channelId, req.params.serverId);
+      if (!channelRole)
+        return;
+      return this.channelRoleRepository.remove(channelRole);
+    } catch (error) {
+      return res.status(500).send(error);
     }
-    const channelRole = await this.findChannelRole(res, req.params.channelRoleId, req.params.channelId, req.params.serverId);
-    if (!channelRole)
-      return;
-    return this.channelRoleRepository.remove(channelRole);
   }
 }

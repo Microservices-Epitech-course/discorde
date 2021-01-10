@@ -58,10 +58,10 @@ export class Member {
 
   @BeforeRemove()
   async deleteListener() {
-    const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server', 'server.members']});
+    const member = await getRepository(Member).findOne(this.id, { relations: ['messages', 'reactions', 'server', 'server.members', 'user']});
 
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberDelete", data: this.id}));
-    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${member.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: member.server.id}));
+    publisher.publish(`server:${member.server.id}`, JSON.stringify({ action: "memberDelete", data: this.id}));
+    publisher.publish(`user:${member.user.id}`, JSON.stringify({ action: `${member.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: member.server.id}));
     await getRepository(Message).remove(member.messages);
     await getRepository(Reaction).remove(member.reactions);
     if (member.server.type === ServerType.CONVERSATION && member.server.members.length === 1)
