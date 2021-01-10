@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import styled from "styled-components";
 import Link from 'next/link'
 import { FiX } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ConversationSearchInput } from './input';
 import { ReduxState } from 'store';
 import { getNotMe, getUsersFromIds } from 'store/utils';
 import LeftList from './leftList';
+import { QuitConversation } from 'api';
 
 const Ul = styled.ul`
   list-style-type: none;
@@ -60,21 +61,27 @@ const Space = styled.div`
 `;
 
 export const ConversationList = () => {
+  const dispatch = useDispatch();
   const me = useSelector((state: ReduxState) => state.me);
   const conversationList = useSelector((state: ReduxState) => (
     state.conversations.map((conv) => {
       return ({
-      ...conv,
-      name: conv.members.length === 2 ?
-        getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).username :
-        conv.name,
-      image: conv.members.length === 2 ?
-        getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).image :
-        undefined
+        ...conv,
+        name: conv.members.length === 2 ?
+          getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).username :
+          conv.name,
+        image: conv.members.length === 2 ?
+          getNotMe(getUsersFromIds(state, conv.members.map((mem) => mem.userId)), me).image :
+          undefined
+      })
     })
-  })
   ));
   const [search, setSearch] = useState('');
+
+  const deleteServer = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, serverId: number) => {
+    event.preventDefault();
+    await QuitConversation(dispatch, { id: serverId });
+  }
 
   return (
     <LeftList
@@ -93,7 +100,7 @@ export const ConversationList = () => {
                 <img src={server.image} alt="profile" />
                 <span className="username-bold">{server.name}</span>
                 <Space />
-                <Button>
+                <Button onClick={(e) => deleteServer(e, server.id)}>
                   <FiX className='icon' />
                 </Button>
               </Row>

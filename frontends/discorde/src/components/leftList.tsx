@@ -74,8 +74,8 @@ const LeftList = ({header, children}: LeftListProps) => {
         {children}
       </ListContainer>
       <UserBox>
-        <img src={me.image} alt="profile"/>
-        <span className="username-bold">{me.username}</span>
+        <img src={me?.image} alt="profile"/>
+        <span className="username-bold">{me?.username}</span>
       </UserBox>
     </Container>
   );

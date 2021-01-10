@@ -78,6 +78,6 @@ export const dispatches = [
   },
   {
     action: DEL_SERVER,
-    function: delServer
-  }
+    function: delServer,
+  },
 ];

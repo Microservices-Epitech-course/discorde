@@ -56,7 +56,7 @@ export function addConversation(state: ReduxState, action: AddConversationAction
   };
 }
 export function delConversation(state: ReduxState, action: DelConversationAction) {
-  const server = state.servers.find((e) => e.id === action.payload);
+  const server = state.conversations.find((e) => e.id === action.payload);
 
   unsubscribe(state.ws, "server", action.payload);
   server.channels.forEach((e) => unsubscribe(state.ws, "channel", e.id));  

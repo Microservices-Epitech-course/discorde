@@ -153,11 +153,11 @@ const UserRow = ({tab, user}: UserRowProps) => {
     await modifyFriendRequest(dispatch, me, { id: user.id.toString(), action, relationId: user.relationId });
   }
 
-  const handleClickMessage = async () => {
+  const handleClickMessage = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    event.preventDefault();
     const response = await createConversation(dispatch, me, { usersId: [me.id, user.id] });
-
     if (response.success) {
-      Router.push(`/channels/@me/${user.id}`);
+      Router.push(`/channels/@me/${response.data.id}`);
     }
   }
 
@@ -200,7 +200,12 @@ const UserRow = ({tab, user}: UserRowProps) => {
   }
 
   return (
-    <RowContainer>
+    <RowContainer
+      onClick={(e) => {
+        if (!user?.request)
+          handleClickMessage(e);
+      }}
+    >
       <Row>
         <img src={user.image} alt="profile" />
         <Details>
