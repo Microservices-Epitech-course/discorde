@@ -17,7 +17,7 @@
     "typescript": "3.3.3333"
   },
   "dependencies": {
-    "@discorde/datamodel": "^1.0.107",
+    "@discorde/datamodel": "^1.0.109",
     "body-parser": "^1.18.1",
     "dotenv": "^8.2.0",
     "express": "^4.15.4",

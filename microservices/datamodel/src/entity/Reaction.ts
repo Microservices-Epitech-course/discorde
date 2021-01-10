@@ -19,19 +19,19 @@ export class Reaction {
 
   @AfterInsert()
   async insertListener() {
-    const reaction = getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
+    const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
     publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionAdd", data: reaction}));
   }
 
   @AfterUpdate()
   async updateListener() {
-    const reaction = getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
+    const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
     publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionUpdate", data: reaction}));
   }
 
   @AfterInsert()
   async deleteListener() {
-    const reaction = getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
+    const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
     publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionDelete", data: this.id}));
   }
 

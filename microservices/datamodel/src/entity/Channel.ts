@@ -39,14 +39,14 @@ export class Channel {
 
   @AfterUpdate()
   async updateListener() {
-    publisher.publish(`channel:${this.id}`, JSON.stringify({action: "channelUpdate", data: this}));
+    publisher.publish(`server:${this.id}`, JSON.stringify({action: "channelUpdate", data: this}));
   }
 
   @BeforeRemove()
   async deleteListener() {
     const channel = await getRepository(Channel).findOne(this.id, { relations: ['channelRoleSettings', 'messages', 'server'] });
 
-    publisher.publish(`channel:${this.id}`, JSON.stringify({ action: "channelDelete", data: channel.id }));
+    publisher.publish(`server:${this.id}`, JSON.stringify({ action: "channelDelete", data: channel.id }));
     await getRepository(ChannelRoleSettings).remove(channel.channelRoleSettings);
     await getRepository(Message).remove(channel.messages);
   }
