@@ -41,8 +41,16 @@ const Row = styled.li<{ selected: boolean }>`
   border-radius: 5px;
   margin-block-start: 2px;
 
+  .add-user {
+    display: none;
+  }
+
   &:hover {
     background-color: #4f545c29;
+
+    .add-user {
+      display: block;
+    }
 
     .channel-name {
       color: #fff;

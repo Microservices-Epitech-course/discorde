@@ -49,7 +49,7 @@ const InviteUser = (): JSX.Element => {
       <ServerList />
       <ChannelList />
       <Container>
-        <label>Create a server</label>
+        <label>Invite</label>
         <span>Invite friends to {server.name}.</span>
         <ButtonInput
           allowEmpty
