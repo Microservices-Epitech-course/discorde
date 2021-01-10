@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Member, Role, Server, User, UserRole } from "@discorde/datamodel";
+import { Member, publisher, Role, Server, User, UserRole } from "@discorde/datamodel";
 
 export class MemberController {
     private memberRepository = getRepository(Member);
@@ -80,6 +80,18 @@ export class MemberController {
         const user = await this.findUser(res, req.params.userId);
         if (!user)
             return;
+
+        const existList = await this.memberRepository.find({where: {user: {id: user.id }, server: {id: server.id }}, relations: ["user"]});
+        if (existList.length !== 0) {
+            const exist = existList[0];
+            exist.quit = false;
+            publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: exist}));
+            const serverSend = await this.serverRepository.findOne(server.id, {
+                relations: ["members", "members.user", "channels", "roles", "roles.members"]
+            });
+            return serverSend;
+        }
+
         let member = new Member();
         member.server = server;
         member.user = user;
@@ -92,7 +104,7 @@ export class MemberController {
         if (!server)
             return;
         const userId = req.params.memberId === "@me" ? res.locals.user.id : req.params.memberId;
-        if (!(await (req.params.memberId === "@me" ? server.hasUser : server.hasMember)(userId))) {
+        if (!(await server[req.params.memberId === "@me" ? "hasUser" : "hasMember"](userId))) {
             res.status(404).send();
             return;
         }
@@ -103,7 +115,7 @@ export class MemberController {
                 return;
             }
         }
-        const member = await (req.params.memberId === "@me" ? this.findMemberUser : this.findMember)(res, userId, req.params.serverId);
+        const member = await this[req.params.memberId === "@me" ? "findMemberUser" : "findMember"](res, userId, req.params.serverId);
         if (!member)
             return;
         if (member.owner) {
@@ -111,12 +123,12 @@ export class MemberController {
             return;
         }
         // TODO: Delete server if nobody on it
-        if (req.body.clear) {
-            return this.memberRepository.remove(member);
-        } else {
-            member.quit = true;
-            return this.memberRepository.save(member);
-        }
+        // if (req.body.clear) {
+            // return this.memberRepository.remove(member);
+        // } else {
+        member.quit = true;
+        publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberDelete", data: member.id}));
+        return this.memberRepository.save(member);
     }
 
     async changeRole(req: Request, res: Response) {

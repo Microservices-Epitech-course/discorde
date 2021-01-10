@@ -25,7 +25,7 @@ export class ConversationController {
           id: res.locals.user.id
         },
       },
-      relations: ["server", "server.members", "server.members.user"]
+      relations: ["server", "server.members", "server.members.user", "server.channels", "server.roles", "server.roles.members"]
     })).filter((e) => e.server.type === ServerType.CONVERSATION);
 
     const exist = userMembers.find((userMember) => {
@@ -33,8 +33,13 @@ export class ConversationController {
       return ids.reduce((acc, e, i) => acc + (sortedIds[i] === e ? 1 : 0), 0) === ids.length;
     });
 
-    if (exist)
+    if (exist) {
+      exist.quit = false;
+      await getRepository(Member).save(exist);
+      const existSend = await this.memberRepository.findOne(exist.id, { relations: ["user"] });
+      publisher.publish(`server:${exist.server.id}`, JSON.stringify({action: "memberAdd", data: existSend}));
       return exist.server;
+    }
 
     let mainChannel = new Channel();
     let server = new Server();
