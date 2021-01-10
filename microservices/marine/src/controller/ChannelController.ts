@@ -69,7 +69,7 @@ export class ChannelController {
 
     async add(req: Request, res: Response) {
         const { name } = req.body;
-        if (!name) {
+        if (!name || name === "") {
             res.status(404).send("Missing parameter name");
             return;
         }
@@ -97,7 +97,7 @@ export class ChannelController {
 
     async modif(req: Request, res: Response) {
         const { name } = req.body;
-        if (!name) {
+        if (!name || name === "") {
             res.status(404).send("Missing parameter name");
             return;
         }

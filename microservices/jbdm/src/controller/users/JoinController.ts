@@ -1,12 +1,10 @@
 import { getRepository } from "typeorm";
 import { Request, Response } from "express";
-import { Invitation, Member, UserRole } from "@discorde/datamodel";
-import * as redis from "redis";
+import { Invitation, Member, publisher, Server } from "@discorde/datamodel";
 
 export class JoinController {
   private memberRepository = getRepository(Member);
   private invitationRepository = getRepository(Invitation);
-  private publisher = redis.createClient(process.env.REDIS_URL);
 
   private async findInvitation(res: Response, inviteString: any) {
     try {
@@ -21,25 +19,37 @@ export class JoinController {
     const invitation = await this.findInvitation(res, req.params.inviteString);
     if (!invitation)
       return;
-    if (Date.now() > invitation.expirationDate.getTime()) {
+    if (Date.now() > Number(invitation.expirationDate)) {
       res.status(404).send("Expired invitation");
     }
     const server = invitation.server;
-    const user = await server.getUser(Number(req.params.userId));
-    if (user) {
-      if (!user.quit) {
+    const existingMember = await server.getUser(res.locals.user.id);
+    if (existingMember) {
+      if (!existingMember.quit) {
         res.status(404).send(`Already Member of Server ${server.name}`);
         return;
       } else {
-        user.quit = false;
-        return this.memberRepository.save(user);
+        existingMember.quit = false;
+        await this.memberRepository.save(existingMember);
+        const memberSend = await this.memberRepository.find({where: { id: existingMember.id }, relations: ["user"]});
+        publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}))
+        const serverSend = await getRepository(Server).findOne(server.id, {
+          relations: ["members", "members.user", "channels", "roles", "roles.members"]
+        });
+        return serverSend;
       }
     } else {
       let member = new Member();
       member.server = server;
       member.user = res.locals.user;
       member.roles = [await server.getEveryoneRole()];
-      return this.memberRepository.save(member);
+      await this.memberRepository.save(member);
+      const memberSend = await this.memberRepository.find({where: { id: member.id }, relations: ["user"]});
+      publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}));
+      const serverSend = await getRepository(Server).findOne(server.id, {
+        relations: ["members", "members.user", "channels", "roles", "roles.members"]
+      });
+      return serverSend;
     }
   }
 }

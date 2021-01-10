@@ -53,7 +53,7 @@ export class InvitationController {
     let invitation = new Invitation();
     invitation.server = server;
     invitation.url = Buffer.from(`${Date.now()}-${req.params.serverId}-${res.locals.user.id}`).toString('base64');
-    invitation.expirationDate = new Date(Date.parse(expirationDate));
+    invitation.expirationDate = expirationDate.toString();
     return this.invitationRepository.save(invitation);
   }
 

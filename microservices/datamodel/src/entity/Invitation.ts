@@ -13,7 +13,7 @@ export class Invitation {
   server: Server;
 
   @Column()
-  expirationDate: Date;
+  expirationDate: string;
 
   @CreateDateColumn()
   createdAt: Date;
