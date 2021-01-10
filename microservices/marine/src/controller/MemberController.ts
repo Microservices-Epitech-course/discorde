@@ -103,9 +103,9 @@ export class MemberController {
         const server = await this.findServer(res, req.params.serverId);
         if (!server)
             return;
-        const userId = req.params.memberId === "@me" ? res.locals.user.id : req.params.memberId;
+        const userId = Number(req.params.memberId === "@me" ? res.locals.user.id : req.params.memberId);
         if (!(await server[req.params.memberId === "@me" ? "hasUser" : "hasMember"](userId))) {
-            res.status(404).send();
+            res.status(404).send("User not found on server");
             return;
         }
         if (req.params.memberId !== "@me" && res.locals.user.role !== UserRole.ADMIN) {
@@ -115,7 +115,7 @@ export class MemberController {
                 return;
             }
         }
-        const member = await this[req.params.memberId === "@me" ? "findMemberUser" : "findMember"](res, userId, req.params.serverId);
+        const member = await this[req.params.memberId === "@me" ? "findMemberUser" : "findMember"](res, userId, req.params.serverId, ["user"]);
         if (!member)
             return;
         if (member.owner) {
@@ -128,7 +128,9 @@ export class MemberController {
         // } else {
         member.quit = true;
         publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberDelete", data: member.id}));
-        return this.memberRepository.save(member);
+        publisher.publish(`user:${member.user.id}`, JSON.stringify({action: "serverDelete", data: server.id}));
+        await this.memberRepository.save(member);
+        return member.id;
     }
 
     async changeRole(req: Request, res: Response) {

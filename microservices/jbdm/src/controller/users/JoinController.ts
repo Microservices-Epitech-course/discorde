@@ -45,10 +45,11 @@ export class JoinController {
       member.roles = [await server.getEveryoneRole()];
       await this.memberRepository.save(member);
       const memberSend = await this.memberRepository.find({where: { id: member.id }, relations: ["user"]});
-      publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}));
       const serverSend = await getRepository(Server).findOne(server.id, {
         relations: ["members", "members.user", "channels", "roles", "roles.members"]
       });
+      publisher.publish(`server:${server.id}`, JSON.stringify({action: "memberAdd", data: memberSend}));
+      publisher.publish(`user:${res.locals.user.id}`, JSON.stringify({action: "serverAdd", data: serverSend}));
       return serverSend;
     }
   }
