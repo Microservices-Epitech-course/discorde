@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import { Message as MessageInterface } from 'store/types/Message';
+import UserImage from 'components/userImage';
 
 const LeftContent = styled.div`
   min-width: 2.8rem;
@@ -13,6 +14,8 @@ const RightContent = styled.div`
   display: flex;
   align-items: baseline;
   flex-direction: column;
+  white-space: pre-line;
+  min-height: 1rem;
 `;
 
 const Details = styled.div`
@@ -20,19 +23,15 @@ const Details = styled.div`
   margin-bottom: .6rem;
 `;
 
-const MessageContainer = styled.div<{ first: boolean }>`
+const MessageContainer = styled.div<{ first: boolean, last: boolean }>`
   display: flex;
-  margin-top: ${({ first }) => first ? '1.5rem' : '0'};
-  padding: .6rem 1rem;
+  margin-top: ${({ first }) => first ? '1rem' : '0'};
+  padding 0 1rem;
+  padding-top: ${({first}) => first ? '.6rem' : '.125rem'};
+  padding-bottom: ${({last}) => last ? '.6rem' : '.125rem'};
 
   &:hover {
     background-color: #04040512;
-  }
-
-  img {
-    height: 40px;
-    width: 40px;
-    border-radius: 100%;
   }
 
   .username-bold {
@@ -51,10 +50,11 @@ const MessageContainer = styled.div<{ first: boolean }>`
 
 interface MessageProps {
   first: boolean,
+  last: boolean,
   info: MessageInterface,
 };
 
-export const Message = ({ first, info }: MessageProps): JSX.Element => {
+export const Message = ({ first, info, last }: MessageProps): JSX.Element => {
   const createdAt = new Date(info.createdAt);
   const day = createdAt.getDate();
   const month = createdAt.getMonth();
@@ -90,9 +90,9 @@ export const Message = ({ first, info }: MessageProps): JSX.Element => {
 
   if (first) {
     return (
-      <MessageContainer first={first}>
+      <MessageContainer first={first} last={last}>
         <LeftContent>
-          <img src={info.author?.user.image} alt='profile' />
+          <UserImage url={info.author?.user.image}/>
         </LeftContent>
         <RightContent>
           <Details>
@@ -108,7 +108,7 @@ export const Message = ({ first, info }: MessageProps): JSX.Element => {
   }
 
   return (
-    <MessageContainer first={first}>
+    <MessageContainer first={first} last={last}>
       <LeftContent>
       </LeftContent>
       <RightContent>

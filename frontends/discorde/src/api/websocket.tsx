@@ -191,6 +191,12 @@ const wsFunctions = {
       payload: data
     })
   },
+  'conversationUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_CONVERSATION,
+      payload: data
+    })
+  },
   'serverDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
       type: DEL_SERVER,

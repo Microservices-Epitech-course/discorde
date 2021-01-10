@@ -59,6 +59,10 @@ export function delConversation(state: ReduxState, action: DelConversationAction
   const server = state.conversations.find((e) => e.id === action.payload);
 
   unsubscribe(state.ws, "server", action.payload);
+  if (!server)
+    return {
+      ...state
+    }
   server.channels.forEach((e) => unsubscribe(state.ws, "channel", e.id));  
   return {
     ...state,

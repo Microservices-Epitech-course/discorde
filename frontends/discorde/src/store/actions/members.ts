@@ -37,6 +37,7 @@ export function addServerMember(state: ReduxState, action: AddMemberAction) {
   const s = server ? server : conversation;
   const member = action.payload.member;
   subscribe(state.ws, "userbc", member.id);
+  const user = {...member.user};
   member.userId = member.user.id;
   delete member.user;
   s.members = concatOrReplace(s.members, action.payload.member, "id");
@@ -44,11 +45,13 @@ export function addServerMember(state: ReduxState, action: AddMemberAction) {
     return {
       ...state,
       servers: concatOrReplace(state.servers, s, "id"),
+      users: concatOrReplace(state.users, user, "id"),
     };  
   } else {
     return {
       ...state,
       conversations: concatOrReplace(state.conversations, s, "id"),
+      users: concatOrReplace(state.users, user, "id"),
     };  
   }
 

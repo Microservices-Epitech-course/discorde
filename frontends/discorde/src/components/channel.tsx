@@ -10,18 +10,20 @@ import { MessageInput } from './input';
 import { HiAtSymbol } from 'react-icons/hi';
 import { BiHash } from 'react-icons/bi';
 import { IoMdPeople } from 'react-icons/io';
+import MemberList from './memberList';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  overflow: hidden;
 `
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - 240px);
   padding-top: 0;
   flex-grow: 1;
 
@@ -134,28 +136,36 @@ export default function ChannelDisplay({channelId, server}: ChannelDisplayProps)
       <Header>
         <ChannelHeader server={server} channel={channel} me={me} />
       </Header>
-      <Content>
-        <MessagesContainer>
-          {
-            messages.map((message, i) => {
-              const isFirst = i === messages.length - 1 || messages[i + 1].authorId !== message.authorId;
-              return (
-                <Message key={i} first={isFirst} info={message} />
-              );
-            })
-          }
-        </MessagesContainer>
-        <form onSubmit={handleSubmit}>
-          <MessageInput
-            placeholder={server.type === ServerType.CONVERSATION ?
-              (server.members.length === 2 ? `Message @${getNotMe(getUsersFromIds(state, server.members.map((e) => e.userId)), me).username}` : `Message ${server.name}`) :
-              `Message #${channel.name}`
+      <div style={{display: "flex", flexDirection: "row", flexGrow: 1}}>
+        <Content>
+          <MessagesContainer>
+            {
+              messages.map((message, i) => {
+                const isFirst = i === messages.length - 1 || messages[i + 1].authorId !== message.authorId;
+                const isLast = i === 0 || messages[i - 1].authorId !== message.authorId;
+                return (
+                  <Message key={i} first={isFirst} last={isLast} info={message} />
+                );
+              })
             }
-            value={message}
-            onChange={setMessage}
-          />
-        </form>
-      </Content>
+          </MessagesContainer>
+          <form onSubmit={handleSubmit}>
+            <MessageInput
+              placeholder={server.type === ServerType.CONVERSATION ?
+                (server.members.length === 2 ? `Message @${getNotMe(getUsersFromIds(state, server.members.map((e) => e.userId)), me).username}` : `Message ${server.name}`) :
+                `Message #${channel.name}`
+              }
+              value={message}
+              onChange={setMessage}
+            />
+          </form>
+        </Content>
+        {
+          (server.type === ServerType.SERVER || (server.type === ServerType.CONVERSATION && server.members.length === 2)) && (
+            <MemberList server={server}/>
+          )
+        }
+      </div>
     </Container>
   );
 }
