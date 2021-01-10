@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ReduxState } from 'store';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ServerList } from 'components/serverList';
 import { ConversationList } from 'components/conversationList';
-import { Conversation } from 'components/conversation/conversation';
+import ChannelDisplay from 'components/channel';
 import { loadMessages } from 'api/servers';
 
 const Flex = styled.div`
@@ -20,10 +20,15 @@ const PrivateMessage = (): JSX.Element => {
   const { id } = router.query;
   const dispatch = useDispatch();
   const conversation = useSelector((state: ReduxState) => state.conversations.find((e) => e.id === Number(id)));
+  const [_, setLoaded] = useState(false);
 
   const load = async () => {
-    if (conversation?.channels?.[0])
-      await loadMessages(dispatch, conversation.channels[0].id);
+    if (conversation?.channels?.[0]) {
+      const response = await loadMessages(dispatch, conversation.channels[0].id);
+      if (response.success) {
+        setLoaded(true);
+      }
+    }
   }
 
   useEffect(() => {
@@ -35,8 +40,11 @@ const PrivateMessage = (): JSX.Element => {
       <ServerList />
       <ConversationList />
       {
-        conversation && (
-          <Conversation id={Number(id)} conversation={conversation}/>
+        conversation?.channels?.[0].messages && (
+          <ChannelDisplay
+            server={conversation}
+            channelId={conversation.channels[0].id}
+          />
         )
       }
     </Flex>
