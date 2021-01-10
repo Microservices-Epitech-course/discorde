@@ -7,6 +7,7 @@ import * as Server from './actions/server';
 import * as Conversation from './actions/conversation';
 import * as Message from './actions/messages';
 import * as Members from './actions/members';
+import * as Channels from './actions/channels';
 
 export type ActionTypes = 
   WS.Actions |
@@ -16,7 +17,8 @@ export type ActionTypes =
   Server.Actions |
   Conversation.Actions |
   Message.Actions |
-  Members.Actions;
+  Members.Actions |
+  Channels.Actions;
 
 interface Dispatch {
   action: string,
@@ -32,6 +34,7 @@ const allDispatches: Array<Dispatch> = [
   Conversation.dispatches,
   Message.dispatches,
   Members.dispatches,
+  Channels.dispatches,
 ].flat();
 
 export function reducer(state: ReduxState, action: ActionTypes) {

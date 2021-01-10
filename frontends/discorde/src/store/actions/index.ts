@@ -6,3 +6,4 @@ export * as Conversation from './conversation';
 export * as Server from './server';
 export * as Message from './messages';
 export * as Members from './members';
+export * as Channels from './channels';
