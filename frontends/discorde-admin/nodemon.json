@@ -1,0 +1,15 @@
+{
+    "watch": [
+      ".babelrc",
+      ".env",
+      "locales/**/*.json",
+      "src/next.config.js",
+      "src/*.ts",
+      "src/*.tsx"
+    ],
+    "ignore": ["locales/**/*.missing.json"],
+    "execMap": {
+      "ts": "ts-node --transpile-only --compiler-options '{\"module\":\"commonjs\", \"target\": \"es2017\"}'"
+    }
+}
+  
