@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import Router from 'next/router';
 
 import { ReduxState } from 'store';
+import LeftList from './leftList';
 
 const Container = styled.div`
   min-width: 240px;
@@ -63,6 +64,14 @@ const Row = styled.li<{ selected: boolean }>`
   }
 `;
 
+const ServerName = styled.div`
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+`;
+
 const Space = styled.div`
   flex-grow: 1;
 `;
@@ -75,22 +84,26 @@ export const ChannelList = () => {
   const channels = server.channels;
 
   return (
-    <Container>
-      <label>Channels</label>
-      <Ul>
-        {channels.map((channel, i) => {
-          return (
-            <Link key={i} href={`/channels/${serverId}/${channel.id}`}>
-              <Row selected={Number(id) === channel.id}>
-                <BiHash className='icon' />
-                <span className="channel-name">{channel.name}</span>
-                <Space />
-                <IoMdPersonAdd onClick={() => Router.push(`/channels/${serverId}/inviteUser`)} className='icon add-user' />
-              </Row>
-            </Link>
-          );
-        })}
-      </Ul>
-    </Container>
+    <LeftList
+      header={<ServerName>{server.name}</ServerName>}
+    >
+      <>
+        <label style={{ marginTop: "1rem" }}>Channels</label>
+        <Ul>
+          {channels.map((channel, i) => {
+            return (
+              <Link key={i} href={`/channels/${serverId}/${channel.id}`}>
+                <Row selected={Number(id) === channel.id}>
+                  <BiHash className='icon' />
+                  <span className="channel-name">{channel.name}</span>
+                  <Space />
+                  <IoMdPersonAdd onClick={() => Router.push(`/channels/${serverId}/inviteUser`)} className='icon add-user' />
+                </Row>
+              </Link>
+            );
+          })}
+        </Ul>
+      </>
+    </LeftList>
   );
 };

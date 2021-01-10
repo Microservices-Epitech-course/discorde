@@ -91,7 +91,7 @@ interface ServerListProps {
 
 export const ServerList = ({ createServerSelected, meSelected }: ServerListProps) => {
   const router = useRouter();
-  const { serverId, id } = router.query;
+  const { serverId } = router.query;
   const me = useSelector((state: ReduxState) => state.me);
   const serverList = useSelector((state: ReduxState) => state.servers);
 

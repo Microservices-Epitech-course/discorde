@@ -7,8 +7,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   min-width: 240px;
+  width: 240px;
   background-color: #2f3136;
-  overflow-y: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   label {
     margin-left: 1rem;
@@ -58,7 +61,7 @@ const ListContainer = styled.div`
 `;
 
 interface LeftListProps {
-  header: React.ReactNode;
+  header?: React.ReactNode;
   children: React.ReactNode;
 }
 
