@@ -29,13 +29,17 @@ export class Message {
 
   @AfterInsert()
   async insertListener() {
-    const message = await getRepository(Message).findOne(this.id, { relations: ['author']});
+    const message = {
+      ...this,
+    };
+    delete message.channel;
+    delete message.author.user;
     publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageAdd", data: message }));
   }
 
   @AfterUpdate()
   async updateListener() {
-    const message = await getRepository(Message).findOne(this.id, { relations: ['author']});
+    const message = await getRepository(Message).findOne(this.id, { relations: ['author', 'reactions']});
     publisher.publish(`channel:${this.channel.id}`, JSON.stringify({ action: "messageUpdate", data: message }));
   }
 

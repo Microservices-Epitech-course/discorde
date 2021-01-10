@@ -34,7 +34,11 @@ export class Channel {
 
   @AfterInsert()
   async insertListener() {
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({action: "channelAdd", data: this}));
+    const channel = { ...this };
+    delete channel.channelRoleSettings;
+    delete channel.messages;
+    delete channel.server;
+    publisher.publish(`server:${this.server.id}`, JSON.stringify({action: "channelAdd", data: channel}));
   }
 
   @AfterUpdate()

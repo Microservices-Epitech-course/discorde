@@ -19,7 +19,7 @@ export class Reaction {
 
   @AfterInsert()
   async insertListener() {
-    const reaction = await getRepository(Reaction).findOne(this.id, { relations: ["members", "message"]});
+    const reaction = { ...this };
     publisher.publish(`channel:${this.message.channel.id}`, JSON.stringify({ action: "reactionAdd", data: reaction}));
   }
 

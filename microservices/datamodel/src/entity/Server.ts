@@ -37,7 +37,7 @@ export class Server {
 
   @AfterInsert()
   async insertListener() {
-    const server = await getRepository(Server).findOne(this.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+    const server = {...this};
     server.members.forEach((e) => {
       publisher.publish(`user:${e.user.id}`, JSON.stringify({action: `${this.type === ServerType.SERVER ? "server" : "conversation"}Add`, data: server}));
     });

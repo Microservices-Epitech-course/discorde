@@ -85,7 +85,9 @@ export class Role {
 
   @AfterInsert()
   async insertListener() {
-    const role = await getRepository(Role).findOne(this.id, {relations: ['channelRoleSettings']});
+    const role = {...this};
+    delete role.members;
+    delete role.server;
     publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleAdd", data: role}));
   }
 

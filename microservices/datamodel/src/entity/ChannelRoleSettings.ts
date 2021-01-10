@@ -42,10 +42,10 @@ export class ChannelRoleSettings {
 
   @AfterInsert()
   async insertListener() {
-    const channelRole = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['channel'] });
-    const channelRoleSend = await getRepository(ChannelRoleSettings).findOne(this.id, { relations: ['role'] });
+    const channelRole = { ...this };
+    delete channelRole.channel;
 
-    publisher.publish(`channel:${channelRole.channel.id}`, JSON.stringify({action: "channelRoleAdd", data: channelRoleSend}));
+    publisher.publish(`channel:${this.channel.id}`, JSON.stringify({action: "channelRoleAdd", data: channelRole}));
   }
 
   @AfterUpdate()

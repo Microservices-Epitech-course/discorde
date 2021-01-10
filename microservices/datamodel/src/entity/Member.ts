@@ -37,8 +37,12 @@ export class Member {
   @AfterInsert()
   async insertListener() {
     const server = await getRepository(Server).findOne(this.server.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
-    const member = await getRepository(Member).findOne(this.id, { relations: ['user']});
 
+    const member = {...this};
+    delete member.roles;
+    delete member.server;
+    delete member.messages;
+    delete member.reactions;
     publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: "serverAdd", data: server }))
     publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
   }

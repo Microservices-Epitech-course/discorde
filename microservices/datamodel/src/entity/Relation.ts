@@ -34,7 +34,7 @@ export class Relation {
 
   @AfterInsert()
   async insertListener() {
-    const relation = await getRepository(Relation).findOne(this.id, { relations: ["users"]});
+    const relation = {...this};
     publisher.publish(`user:${this.userOneId}`, JSON.stringify({ action: "relationAdd", data: relation}));
     publisher.publish(`user:${this.userTwoId}`, JSON.stringify({ action: "relationAdd", data: relation}));
   }
