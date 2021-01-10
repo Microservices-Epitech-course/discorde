@@ -34,7 +34,7 @@ export function setConversation(state: ReduxState, action: SetConversationAction
       subscribe(state.ws, "channel", e2.id);
     })
   });
-  users.map((e) => subscribe(state.ws, "user", e.id));
+  users.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     conversations: action.payload.map((s) => cleanServer(s)),
@@ -48,7 +48,7 @@ export function addConversation(state: ReduxState, action: AddConversationAction
   action.payload.channels.forEach((e) => {
     subscribe(state.ws, "channel", e.id);
   })
-  users.map((e) => subscribe(state.ws, "user", e.id));
+  users.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     conversations: concatOrReplace(state.conversations, cleanServer(action.payload), "id"),

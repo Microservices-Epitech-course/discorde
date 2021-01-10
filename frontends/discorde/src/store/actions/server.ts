@@ -34,7 +34,7 @@ export function setServer(state: ReduxState, action: SetServerAction) {
       subscribe(state.ws, "channel", e2.id);
     })
   });
-  users.forEach((e) => subscribe(state.ws, "user", e.id));
+  users.forEach((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     servers: action.payload.map((s) => cleanServer(s)),
@@ -48,7 +48,7 @@ export function addServer(state: ReduxState, action: AddServerAction) {
   action.payload.channels.forEach((e) => {
     subscribe(state.ws, "channel", e.id);
   })
-  users.forEach((e) => subscribe(state.ws, "user", e.id));
+  users.forEach((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     servers: concatOrReplace(state.servers, cleanServer(action.payload), "id"),
@@ -58,8 +58,10 @@ export function addServer(state: ReduxState, action: AddServerAction) {
 export function delServer(state: ReduxState, action: DelServerAction) {
   const server = state.servers.find((e) => e.id === action.payload);
 
+  if (!server)
+    return { ...state };
   unsubscribe(state.ws, "server", server.id);
-  server.channels.forEach((e) => unsubscribe(state.ws, "channel", e.id));  
+  server.channels.forEach((e) => unsubscribe(state.ws, "channel", e.id));
   return {
     ...state,
     servers: state.servers.filter(e => e.id !== action.payload),

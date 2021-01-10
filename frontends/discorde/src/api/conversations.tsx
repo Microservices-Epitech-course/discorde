@@ -61,11 +61,6 @@ export const createConversation = async (dispatch: Dispatch<any>, me: User, para
       { headers: { "authorization": localStorage.getItem('token') }},
     );
 
-    dispatch({
-      type: ADD_CONVERSATION,
-      payload: response.data
-    });
-
     return { success: true, data: response.data };
   } catch (error) {
     console.error(error);
@@ -86,10 +81,6 @@ export const QuitConversation = async (dispatch: Dispatch<any>, params: QuitConv
 
     if (Router.asPath === `/channels/@me/${params.id}`)
       Router.replace('/channels/@me');
-    dispatch({
-      type: DEL_CONVERSATION,
-      payload: params.id
-    });
 
     return { success: true, data: response };
   } catch (error) {

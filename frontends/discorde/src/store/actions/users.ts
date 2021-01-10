@@ -1,4 +1,4 @@
-import { subscribe } from "api/websocket";
+import { subscribe, unsubscribe } from "api/websocket";
 import { ReduxState } from "..";
 import * as DataModel from '../types';
 import { concatOrReplace, multiConcatOrReplace } from "./utils";
@@ -42,28 +42,28 @@ export function setMe(state: ReduxState, action: SetMeAction) {
   };
 }
 export function setUser(state: ReduxState, action: SetUserAction) {
-  action.payload.map((e) => subscribe(state.ws, "user", e.id));
+  action.payload.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     users: action.payload,
   };
 }
 export function addUser(state: ReduxState, action: AddUserAction) {
-  subscribe(state.ws, "user", action.payload.id);
+  subscribe(state.ws, "userbc", action.payload.id);
   return {
     ...state,
     users: concatOrReplace(state.users, action.payload, "id"),
   };
 }
 export function multiAddUser(state: ReduxState, action: MultiAddUserAction) {
-  action.payload.map((e) => subscribe(state.ws, "user", e.id));
+  action.payload.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
     users: multiConcatOrReplace(state.users, action.payload, "id"),
   };
 }
 export function delUser(state: ReduxState, action: DelUserAction) {
-  subscribe(state.ws, "user", action.payload);
+  unsubscribe(state.ws, "userbc", action.payload);
   return {
     ...state,
     users: state.users.filter(e => e.id !== action.payload),

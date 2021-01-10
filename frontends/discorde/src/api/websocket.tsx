@@ -1,9 +1,9 @@
 import { Dispatch } from "redux";
 import { ADD_CHANNEL, DEL_CHANNEL } from "store/actions/channels";
-import { ADD_CONVERSATION } from "store/actions/conversation";
+import { ADD_CONVERSATION, DEL_CONVERSATION } from "store/actions/conversation";
 import { ADD_FRIENDS } from "store/actions/friends";
-import { DEL_MEMBER } from "store/actions/members";
-import { ADD_MESSAGE } from "store/actions/messages";
+import { ADD_MEMBER, DEL_MEMBER } from "store/actions/members";
+import { ADD_MESSAGE, DEL_MESSAGE } from "store/actions/messages";
 import { ADD_PENDING, DEL_PENDING } from "store/actions/pending";
 import { ADD_SERVER, DEL_SERVER } from "store/actions/server";
 import { ADD_USER } from "store/actions/users";
@@ -70,11 +70,43 @@ export function createWebsocket(dispatch: Dispatch<any>, me: User, stateWs: WebS
 }
 
 const wsFunctions = {
-  'userUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  'messageAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    console.log(data);
     dispatch({
-      type: ADD_USER,
-      payload: data
-    })
+      type: ADD_MESSAGE,
+      payload: {
+        data,
+        channelId: channelId,
+      }
+    });
+  },
+  'messageUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_MESSAGE,
+      payload: {
+        data,
+        channelId: channelId,
+      }
+    });
+  },
+  'messageDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: DEL_MESSAGE,
+      payload: {
+        data,
+        channelId: channelId,
+      }
+    });
+  },
+  'channelRoleAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'channelRoleUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'reactionAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'reactionUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'reactionDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
   },
   'relationAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     const actionUser = data.users.find(e => e.id !== me?.id);
@@ -87,7 +119,7 @@ const wsFunctions = {
       payload: ({
         relationId: data.id,
         userId: actionUser.id,
-        request: RequestType.INCOMING
+        request: data.actionUserId === me.id ? RequestType.OUTGOING : RequestType.INCOMING
       })
     });
   },
@@ -135,24 +167,68 @@ const wsFunctions = {
       payload: data
     })
   },
+  'friendAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_FRIENDS,
+      payload: data.id
+    })
+  },
+  'userUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_USER,
+      payload: data
+    })
+  },
+  'userDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_USER,
+      payload: data
+    })
+  },
+  'serverUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_SERVER,
+      payload: data
+    })
+  },
   'serverDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
       type: DEL_SERVER,
       payload: data
     })
   },
-  'messageAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  'conversationDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
-      type: ADD_MESSAGE,
+      type: DEL_CONVERSATION,
+      payload: data
+    })
+  },
+  'memberAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_MEMBER,
       payload: {
-        data,
-        channelId: channelId,
+        member: data,
+        serverId: channelId,
       }
-    });
+    })
   },
-  'messageUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  'memberUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_MEMBER,
+      payload: {
+        member: data,
+        serverId: channelId,
+      }
+    })
   },
-  'messageDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  'memberDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: DEL_MEMBER,
+      payload: {
+        memberId: data,
+        serverId: channelId
+      }
+    })
   },
   'channelAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
@@ -163,6 +239,15 @@ const wsFunctions = {
       }
     })
   },
+  'channelUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_CHANNEL,
+      payload: {
+        channel: data,
+        serverId: channelId,
+      }
+    });
+  },
   'channelDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
       type: DEL_CHANNEL,
@@ -172,13 +257,10 @@ const wsFunctions = {
       }
     });
   },
-  'memberDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
-    dispatch({
-      type: DEL_MEMBER,
-      payload: {
-        memberId: data,
-        serverId: channelId
-      }
-    })
+  'roleAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'roleUpdate': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+  },
+  'roleDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
   },
 }

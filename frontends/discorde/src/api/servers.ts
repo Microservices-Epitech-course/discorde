@@ -60,10 +60,6 @@ export const createServer = async (dispatch: Dispatch<any>, params: CreateServer
       { headers: { "authorization": localStorage.getItem('token') }},
     );
 
-    dispatch({
-      type: ADD_SERVER,
-      payload: response.data,
-    });
     return { success: true, data: response };
   } catch (error) {
     console.error(error);
@@ -83,13 +79,6 @@ export const createChannel = async (dispatch: Dispatch<any>, params: CreateChann
       { headers: { "authorization": localStorage.getItem("token") }},
     );
 
-    dispatch({
-      type: ADD_CHANNEL,
-      payload: {
-        channel: response.data,
-        serverId: params.serverId,
-      }
-    });
     return { success: true, data: response.data };
   } catch (error) {
     console.error(error);
@@ -125,10 +114,6 @@ export const joinServer = async (dispatch: Dispatch<any>, url: string) => {
       { headers: { "authorization": localStorage.getItem("token") }}
     );
 
-    dispatch({
-      type: ADD_SERVER,
-      payload: response.data
-    });
     return { success: true, data: response.data };
   } catch (error) {
     console.error(error);

@@ -117,6 +117,7 @@ export default function ChannelDisplay({channelId, server}: ChannelDisplayProps)
     const members = server.members.filter((mem) => authors?.includes(mem.id));
     return members.map((mem) => ({...mem, user: getUserFromId(state, mem.userId)}));
   });
+  const state = useSelector((state: ReduxState) => state);
   const messages = channel?.messages.map((e) => ({...e, author: memberUsers.find((e2) => e2.id === e.authorId)})).reverse();
   const [message, setMessage] = React.useState('');
   const dispatch = useDispatch();
@@ -147,7 +148,7 @@ export default function ChannelDisplay({channelId, server}: ChannelDisplayProps)
         <form onSubmit={handleSubmit}>
           <MessageInput
             placeholder={server.type === ServerType.CONVERSATION ?
-              (server.members.length === 2 ? `Message @${getNotMe(memberUsers.map((e) => e.user), me).username}` : `Message ${server.name}`) :
+              (server.members.length === 2 ? `Message @${getNotMe(getUsersFromIds(state, server.members.map((e) => e.userId)), me).username}` : `Message ${server.name}`) :
               `Message #${channel.name}`
             }
             value={message}

@@ -116,10 +116,6 @@ export const modifyFriendRequest = async (dispatch: Dispatch<any>, me: User, par
         { headers: { "authorization": localStorage.getItem('token') }},
       );
 
-      dispatch({
-        type: DEL_PENDING,
-        payload: params.relationId
-      });
       return {success: true, data: response.data};
     } catch (error) {
       console.error(error);

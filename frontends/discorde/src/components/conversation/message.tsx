@@ -92,11 +92,11 @@ export const Message = ({ first, info }: MessageProps): JSX.Element => {
     return (
       <MessageContainer first={first}>
         <LeftContent>
-          <img src={info.author.user.image} alt='profile' />
+          <img src={info.author?.user.image} alt='profile' />
         </LeftContent>
         <RightContent>
           <Details>
-            <span className="username-bold">{info.author.user.username}</span>
+            <span className="username-bold">{info.author?.user.username}</span>
             <span className="date">
               {dateString()}
             </span>

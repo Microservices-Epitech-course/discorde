@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ReduxState } from 'store';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ServerList } from 'components/serverList';
@@ -24,6 +24,7 @@ const PrivateMessage = (): JSX.Element => {
 
   const load = async () => {
     if (conversation?.channels?.[0]) {
+      setLoaded(false);
       const response = await loadMessages(dispatch, conversation.channels[0].id);
       if (response.success) {
         setLoaded(true);
@@ -33,6 +34,10 @@ const PrivateMessage = (): JSX.Element => {
 
   useEffect(() => {
     load();
+
+    if (!conversation) {
+      Router.push('/channels/@me');
+    }
   }, [id, conversation?.channels?.[0]]);
 
   return (
