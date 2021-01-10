@@ -64,12 +64,16 @@ const Row = styled.li<{ selected: boolean }>`
   }
 `;
 
-const ServerName = styled.div`
+const ServerName = styled.span`
   font-weight: bold;
   font-size: 1rem;
   padding: 0 1rem;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
 `;
 
 const Space = styled.div`

@@ -20,7 +20,11 @@ const Ul = styled.ul`
 `;
 
 const ServerIcon = styled.div<{ selected: boolean, add?: boolean }>`
-  background-color: ${({ selected }) => selected ? '#7289da' : '#36393f'};
+  background-color: ${({ selected, add }) => {
+    if (add && selected) return 'var(--success)';
+    if (selected) return '#7289da';
+    return '#36393f';
+  }};
   height: 50px;
   width: 50px;
   border-radius: ${({ selected }) => selected ? '38%' : '100%'};
@@ -28,7 +32,12 @@ const ServerIcon = styled.div<{ selected: boolean, add?: boolean }>`
   align-items: center;
   justify-content: center;
   transition: border-radius 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-  color: ${({ add }) => add ? 'var(--success)' : '#fff'};
+  color: ${({ selected, add }) => {
+    if (add && selected) return '#fff';
+    if (add) return 'var(--success)';
+    return '#fff';
+  }};
+  overflow: hidden;
 
   img {
     height: 50px;

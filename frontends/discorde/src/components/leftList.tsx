@@ -9,9 +9,6 @@ const Container = styled.div`
   min-width: 240px;
   width: 240px;
   background-color: #2f3136;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 
   label {
     margin-left: 1rem;
@@ -26,6 +23,8 @@ const Header = styled.div`
   background-color: #2f3136;
   height: 3.4rem;
   position: sticky;
+  overflow: hidden;
+  align-items: center;
   top: 0;
 `;
 
