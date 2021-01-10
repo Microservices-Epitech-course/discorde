@@ -115,7 +115,7 @@ export const ServerList = ({ createServerSelected, meSelected }: ServerListProps
         <Row>
           <StyledLink href='/channels/@me'>
             <ServerIcon selected={meSelected}>
-              <img src={me.image} alt='profile' />
+              <img src={me?.image} alt='profile' />
             </ServerIcon>
           </StyledLink>
         </Row>

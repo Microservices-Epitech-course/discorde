@@ -5,6 +5,7 @@ import { ADD_FRIENDS } from "store/actions/friends";
 import { DEL_MEMBER } from "store/actions/members";
 import { ADD_MESSAGE } from "store/actions/messages";
 import { ADD_PENDING, DEL_PENDING } from "store/actions/pending";
+import { ADD_SERVER, DEL_SERVER } from "store/actions/server";
 import { ADD_USER } from "store/actions/users";
 import { SET_WS } from "store/actions/ws";
 import { RequestType, User } from "store/types";
@@ -125,6 +126,18 @@ const wsFunctions = {
   'conversationAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({
       type: ADD_CONVERSATION,
+      payload: data
+    })
+  },
+  'serverAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_SERVER,
+      payload: data
+    })
+  },
+  'serverDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: DEL_SERVER,
       payload: data
     })
   },

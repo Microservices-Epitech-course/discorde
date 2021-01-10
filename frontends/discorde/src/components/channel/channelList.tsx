@@ -107,11 +107,11 @@ export const ChannelList = () => {
   const { serverId, id } = router.query;
 
   const server = useSelector((state: ReduxState) => state.servers.find((e) => e.id === Number(serverId)));
-  const channels = server.channels;
+  const channels = server?.channels || [];
 
   return (
     <LeftList
-      header={<ServerName>{server.name}</ServerName>}
+      header={<ServerName>{server?.name}</ServerName>}
     >
       <>
         <ChannelName>

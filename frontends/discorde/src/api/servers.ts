@@ -110,7 +110,26 @@ export const createInvitation = async (dispatch: Dispatch<any>, params: CreateIn
     );
 
     const invitation: Invitation = response.data;
-    return { success: false, data: invitation };
+    return { success: true, data: invitation };
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: error.data };
+  }
+}
+
+export const joinServer = async (dispatch: Dispatch<any>, url: string) => {
+  try {
+    const response = await axios.post(
+      `${Servers.jbdm}/users/join/${url}`,
+      {},
+      { headers: { "authorization": localStorage.getItem("token") }}
+    );
+
+    dispatch({
+      type: ADD_SERVER,
+      payload: response.data
+    });
+    return { success: true, data: response.data };
   } catch (error) {
     console.error(error);
     return { success: false, data: error.data };

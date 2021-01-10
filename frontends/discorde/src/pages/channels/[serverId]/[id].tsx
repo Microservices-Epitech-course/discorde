@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 import { ServerList } from 'components/serverList';
 import { ChannelList } from 'components/channel/channelList';
@@ -34,6 +34,10 @@ const Channel = (): JSX.Element => {
 
   useEffect(() => {
     load();
+
+    if (!server) {
+      Router.push('/channels/@me');
+    }
   }, [id, server]);
 
   return (

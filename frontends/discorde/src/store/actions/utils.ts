@@ -44,6 +44,7 @@ export function cleanServer(server: Server) {
         delete mem.user;
       }
       return mem;
-    })
+    }),
+    channels: server.channels.sort((a, b) => a.id - b.id)
   }
 }
