@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { ADD_CHANNEL } from 'store/actions/channels';
 import { ADD_MESSAGE, MULTI_ADD_MESSAGE } from 'store/actions/messages';
 import { ADD_SERVER } from 'store/actions/server';
-import { Invitation } from 'store/types';
+import { ChannelType, Invitation } from 'store/types';
 import * as Servers from './apis';
 
 export const loadMessages = async (dispatch: Dispatch<any>, channelId: number) => {
@@ -79,7 +79,7 @@ export const createChannel = async (dispatch: Dispatch<any>, params: CreateChann
   try {
     const response = await axios.post(
       `${Servers.marine}/servers/${params.serverId}/channels`,
-      { name: params.name },
+      { name: params.name, type: ChannelType.TEXTUAL /*TODO Change*/ },
       { headers: { "authorization": localStorage.getItem("token") }},
     );
 
@@ -90,6 +90,7 @@ export const createChannel = async (dispatch: Dispatch<any>, params: CreateChann
         serverId: params.serverId,
       }
     });
+    return { success: true, data: response.data };
   } catch (error) {
     console.error(error);
     return { success: false, data: error.data };
