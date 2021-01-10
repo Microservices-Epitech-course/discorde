@@ -1,4 +1,5 @@
 import { Dispatch } from "redux";
+import { ADD_CHANNEL, DEL_CHANNEL } from "store/actions/channels";
 import { ADD_CONVERSATION } from "store/actions/conversation";
 import { ADD_FRIENDS } from "store/actions/friends";
 import { DEL_MEMBER } from "store/actions/members";
@@ -140,7 +141,23 @@ const wsFunctions = {
   },
   'messageDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
   },
+  'channelAdd': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: ADD_CHANNEL,
+      payload: {
+        channel: data,
+        serverId: channelId,
+      }
+    })
+  },
   'channelDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
+    dispatch({
+      type: DEL_CHANNEL,
+      payload: {
+        channelId: data,
+        serverId: channelId,
+      }
+    });
   },
   'memberDelete': (dispatch: Dispatch<any>, data: any, action: any, channelType: string, channelId: number, me: User) => {
     dispatch({

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
+import { ADD_CHANNEL } from 'store/actions/channels';
 import { ADD_MESSAGE, MULTI_ADD_MESSAGE } from 'store/actions/messages';
 import { ADD_SERVER } from 'store/actions/server';
 import * as Servers from './apis';
@@ -65,6 +66,31 @@ export const createServer = async (dispatch: Dispatch<any>, params: CreateServer
     return { success: true, data: response };
   } catch (error) {
     console.error(error);
-    return { success: false, data: error.response.data };
+    return { success: false, data: error.data };
+  }
+}
+
+interface CreateChannelParams {
+  serverId: number,
+  name: string,
+}
+export const createChannel = async (dispatch: Dispatch<any>, params: CreateChannelParams) => {
+  try {
+    const response = await axios.post(
+      `${Servers.marine}/servers/${params.serverId}/channels`,
+      { name: params.name },
+      { headers: { "authorization": localStorage.getItem("token") }},
+    );
+
+    dispatch({
+      type: ADD_CHANNEL,
+      payload: {
+        channel: response.data,
+        serverId: params.serverId,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return { success: false, data: error.data };
   }
 }
