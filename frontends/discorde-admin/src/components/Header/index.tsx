@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { Container, UserInteraction } from './style';
 
 type Props = {
-  title?: string;
+  title: string;
   user?: User;
 };
 
@@ -40,7 +40,6 @@ const Header: React.FC<Props> = ({ user, title }: Props) => {
 };
 
 Header.defaultProps = {
-  title: 'Back-Office Discorde',
   user: {
     id: -1,
     role: 'user',
