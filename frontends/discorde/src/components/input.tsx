@@ -119,7 +119,7 @@ const StyledConversationSearchInput = styled.input`
   color: #72767d;
   border-radius: 5px;
   padding-left: .5rem;
-
+  height: 60%;
 `;
 
 interface ConversationSearchInputProps {
