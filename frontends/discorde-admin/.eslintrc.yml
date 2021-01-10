@@ -1,0 +1,52 @@
+env:
+  browser: true
+  es6: true
+  node: true
+
+extends:
+  - "airbnb-typescript"
+  - "airbnb/hooks"
+  - "plugin:@typescript-eslint/eslint-recommended"
+  - "plugin:@typescript-eslint/recommended"
+  - "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  - "prettier"
+  - "prettier/react"
+  - "prettier/@typescript-eslint"
+  - "plugin:prettier/recommended"
+
+parserOptions:
+  project: "./tsconfig.json"
+
+plugins:
+  - "react"
+  - "@typescript-eslint"
+
+settings:
+  import/resolver:
+    typescript: {} #  set <rootdir>/tsconfig.json to eslint
+rules:
+    no-console:
+      - "warn"
+      - allow:
+          - "warn"
+          - "error"
+    react/jsx-props-no-spreading: 0
+    react/prefer-default-export: 0
+    react/jsx-filename-extension:
+      - 1
+      - extensions:
+          - '.tsx'
+          - '.jsx'
+    no-plusplus: 0
+    '@typescript-eslint/camelcase': 0
+    import/extensions:
+      - "error"
+      - "ignorePackages"
+      -
+        js: "never"
+        mjs: "never"
+        jsx: "never"
+        ts: "never"
+        tsx: "never"
+globals:
+  "React": "writable"

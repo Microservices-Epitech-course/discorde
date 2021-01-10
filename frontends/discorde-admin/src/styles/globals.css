@@ -1,0 +1,47 @@
+:root {
+  --primary: #2F3136;
+  --primary-light: #36393F;
+  --primary-dark: #202225;
+  --primary-text: #dbdbdb;
+  --primary-text-light: white;
+  --secondary: #eeeeee;
+  --secondary-light: white;
+  --secondary-dark: #dddddd;
+  --transition: 0.2s ease-out;
+}
+
+html,
+body {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  font-family: Montserrat, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0;
+    background-color: var(--secondary);
+    color: var(--primary-text);
+}
+
+#__next {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 100vw;
+  overflow: hidden auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
