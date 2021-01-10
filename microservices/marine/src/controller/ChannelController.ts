@@ -68,9 +68,13 @@ export class ChannelController {
     }
 
     async add(req: Request, res: Response) {
-        const { name } = req.body;
+        const { name, type } = req.body;
         if (!name || name === "") {
             res.status(404).send("Missing parameter name");
+            return;
+        }
+        if (!type || type === "") {
+            res.status(404).send("Missing parameter type");
             return;
         }
         const server = await this.findServer(res, req.params.serverId);
@@ -88,8 +92,9 @@ export class ChannelController {
             }
         }
         let channel = new Channel();
-        channel.type = req.body.type;
+        channel.type = type;
         channel.server = server;
+        channel.name = name;
         await this.channelRepository.save(channel);
         publisher.publish(`server:${server.id}`, JSON.stringify({action: "channelAdd", data: channel}));
         return channel;
