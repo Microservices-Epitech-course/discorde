@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ReduxState } from 'store';
 
@@ -8,6 +8,7 @@ import { ChannelList } from 'components/server/channelList';
 import { ServerList } from 'components/serverList';
 import { Error, Success } from 'components/text';
 import { ButtonInput } from 'components/input';
+import { createInvitation } from 'api/servers';
 
 const Flex = styled.div`
   display: flex;
@@ -34,14 +35,18 @@ const Container = styled.div`
 const InviteUser = (): JSX.Element => {
   const [inviteLink, setInviteLink] = useState('');
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
 
   const router = useRouter();
   const { serverId, id } = router.query;
   const server = useSelector((state: ReduxState) => state.servers.find((e) => e.id === Number(serverId)));
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setInviteLink('im a link hihi');
+    const res = await createInvitation(dispatch, {serverId: Number(serverId)});
+    if (res.success) {
+      setInviteLink(res.data.url);
+    }
   }
 
   return (

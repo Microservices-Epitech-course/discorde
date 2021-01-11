@@ -20,8 +20,9 @@ const Invite = () => {
   }
 
   useEffect(() => {
-    join();
-  }, []);
+    if (id)
+      join();
+  }, [id]);
 
   return (
     <div>
