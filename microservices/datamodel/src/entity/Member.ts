@@ -43,6 +43,7 @@ export class Member {
     delete member.reactions;
     if (this.server) {
       const server = await getRepository(Server).findOne(this.server.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+      server.members.push(member);
       publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${this.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Add`, data: server }))
       publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
     }
