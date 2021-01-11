@@ -1,4 +1,4 @@
-import { Server } from "store/types";
+import { Server, User } from "store/types";
 
 export const concatOrReplace = <T>(array: T[], item: T, discrimField: string) => {
   const existing = array.findIndex((e) => e[discrimField] === item[discrimField]);
@@ -38,6 +38,20 @@ export const removeDuplicates = <T>(array: T[], discrimField?: string) => {
 export function cleanServer(server: Server) {
   return {
     ...server,
+    members: server.members.map((mem) => {
+      if (mem.user) {
+        mem.userId = mem.user.id;
+        delete mem.user;
+      }
+      return mem;
+    }),
+    channels: server.channels.sort((a, b) => a.id - b.id)
+  }
+}
+export function cleanConversation(server: Server, me: User) {
+  return {
+    ...server,
+    name: server.members.filter((e) => e.user.id !== me.id).map((e) => e.user.username).join(', '),
     members: server.members.map((mem) => {
       if (mem.user) {
         mem.userId = mem.user.id;

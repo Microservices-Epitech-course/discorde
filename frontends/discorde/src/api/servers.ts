@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { Dispatch } from 'redux';
-import { ADD_CHANNEL } from 'store/actions/channels';
 import { ADD_MESSAGE, MULTI_ADD_MESSAGE } from 'store/actions/messages';
-import { ADD_SERVER } from 'store/actions/server';
 import { ChannelType, Invitation } from 'store/types';
 import * as Servers from './apis';
 

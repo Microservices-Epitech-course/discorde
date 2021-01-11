@@ -136,6 +136,7 @@ export const ConversationSearchInput = ({ placeholder, value, onChange, ...props
       value={value}
       placeholder={placeholder ? placeholder : ""}
       onChange={handleChange}
+      {...props}
     />
   );
 };

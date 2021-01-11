@@ -4,7 +4,7 @@ import { Channel, Server, ServerType, User } from "store/types";
 import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store';
 import { getNotMe, getUserFromId, getUsersFromIds } from 'store/utils';
-import { Message } from './conversation/message';
+import { Message } from './channel/message';
 import { sendMessages } from 'api/servers';
 import { MessageInput } from './input';
 import { HiAtSymbol } from 'react-icons/hi';

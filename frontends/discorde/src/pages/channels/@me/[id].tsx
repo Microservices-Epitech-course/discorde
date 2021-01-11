@@ -5,7 +5,7 @@ import Router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ServerList } from 'components/serverList';
-import { ConversationList } from 'components/conversationList';
+import { ConversationList } from 'components/conversation/conversationList';
 import ChannelDisplay from 'components/channel';
 import { loadMessages } from 'api/servers';
 

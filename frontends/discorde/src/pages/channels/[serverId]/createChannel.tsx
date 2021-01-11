@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { ReduxState } from 'store';
+import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 
 import { createChannel } from 'api/servers';
-import { ChannelList } from 'components/channel/channelList';
+import { ChannelList } from 'components/server/channelList';
 import { ServerList } from 'components/serverList';
 import { ButtonInput } from 'components/input';
 import { Error, Success } from 'components/text';

@@ -2,9 +2,9 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 
-const Image = styled.img<{ size: number | string}>`
-  height: ${({size}) => size}px;
-  width: ${({size}) => size}px;
+const Image = styled.img<{ size: number | string }>`
+  height: ${({ size }) => size }px;
+  width: ${({ size }) => size }px;
   border-radius: 100%;
 `;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FriendList } from 'components/friendList/friendList';
-import { ConversationList } from 'components/conversationList';
+import { ConversationList } from 'components/conversation/conversationList';
 import { ServerList } from 'components/serverList';
 
 const Flex = styled.div`

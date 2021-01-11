@@ -1,7 +1,7 @@
 import { subscribe, unsubscribe } from "api/websocket";
 import { Server } from "store/types";
 import { ReduxState } from "..";
-import { cleanServer, concatOrReplace, multiConcatOrReplace, removeDuplicates } from "./utils";
+import { cleanConversation, concatOrReplace, multiConcatOrReplace, removeDuplicates } from "./utils";
 
 /* Actions */
 export const SET_CONVERSATION = 'SET_CONVERSATION';
@@ -37,7 +37,7 @@ export function setConversation(state: ReduxState, action: SetConversationAction
   users.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
-    conversations: action.payload.map((s) => cleanServer(s)),
+    conversations: action.payload.map((s) => cleanConversation(s, state.me)),
     users: multiConcatOrReplace(state.users, removeDuplicates(users, "id"), "id"),
   }
 }
@@ -51,7 +51,7 @@ export function addConversation(state: ReduxState, action: AddConversationAction
   users.map((e) => subscribe(state.ws, "userbc", e.id));
   return {
     ...state,
-    conversations: concatOrReplace(state.conversations, cleanServer(action.payload), "id"),
+    conversations: concatOrReplace(state.conversations, cleanConversation(action.payload, state.me), "id"),
     users: multiConcatOrReplace(state.users, removeDuplicates(users, "id"), "id"),
   };
 }

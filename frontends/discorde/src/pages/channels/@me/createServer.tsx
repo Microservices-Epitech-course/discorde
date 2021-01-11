@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { ReduxState } from 'store';
-
-import { getFriends, getAllFriendRequest } from 'api/users';
+import { useDispatch } from 'react-redux';
 
 import { createServer } from 'api/servers';
-import { ConversationList } from 'components/conversationList';
+import { ConversationList } from 'components/conversation/conversationList';
 import { ServerList } from 'components/serverList';
 import { ButtonInput } from 'components/input';
 import { Error, Success } from 'components/text';

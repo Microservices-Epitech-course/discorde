@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Router, { useRouter } from 'next/router';
 
 import { ServerList } from 'components/serverList';
-import { ChannelList } from 'components/channel/channelList';
+import { ChannelList } from 'components/server/channelList';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReduxState } from 'store';
 import { loadMessages } from 'api/servers';
