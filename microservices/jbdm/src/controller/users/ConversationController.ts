@@ -9,16 +9,22 @@ export class ConversationController {
 
   async add(req: Request, res: Response) {
     try {
-      const { usersId } = req.body;
+      const usersId: number[] = req.body.usersId;
       if (!usersId) {
         res.status(403).send("Missing usersId parameter");
         return;
       }
       if (res.locals.user.role !== UserRole.ADMIN && !usersId.includes(res.locals.user.id)) {
         res.status(401).send("Cant create conversation without self");
+        return;
       }
 
-      const sortedIds = usersId.sort();
+      const sortedIds = usersId.filter((e, i) => usersId.findIndex((e2) => e2 === e) === i).sort();
+
+      if (sortedIds.length < 2) {
+        res.status(403).send("Too few users");
+        return;
+      }
 
       const userMembers = (await this.memberRepository.find({
         where: {
@@ -31,7 +37,7 @@ export class ConversationController {
 
       const exist = userMembers.find((userMember) => {
         const ids = userMember.server.members.map((member) => member.user.id).sort();
-        return ids.reduce((acc, e, i) => acc + (sortedIds[i] === e ? 1 : 0), 0) === ids.length;
+        return ids.reduce((acc, e, i) => acc + (sortedIds[i] === e ? 1 : 0), 0) === sortedIds.length;
       });
 
       if (exist) {
@@ -47,21 +53,22 @@ export class ConversationController {
 
       server.name = sortedIds.reduce((acc, e) => acc + e, "");
       server.type = ServerType.CONVERSATION;
-      await this.serverRepository.save(server);
 
       mainChannel.name = "Main";
-      mainChannel.server = server;
       mainChannel.type = ChannelType.TEXTUAL;
 
       everyoneRole.name = "everyone";
       everyoneRole.isEveryone = true;
-      everyoneRole.server = server;
 
       await getRepository(Channel).save(mainChannel)
       await getRepository(Role).save(everyoneRole);
 
+      server.channels = [mainChannel]
+      server.roles = [everyoneRole];
+
       const names = [];
       const users = [];
+      server.members = [];
       const filteredUserId = sortedIds.filter((e, i) => sortedIds.findIndex((e2) => e2 === e) === i);
       for (let i in filteredUserId) {
         try {
@@ -69,11 +76,13 @@ export class ConversationController {
           const user = await this.userRepository.findOneOrFail(filteredUserId[i]);
           member.user = user;
           member.roles = [everyoneRole];
-          member.server = server;
           names.push(user.username);
           users.push(user.id);
           await this.memberRepository.save(member);
-        } catch (e) {}
+          server.members.push(member);
+        } catch (e) {
+          console.error(e);
+        }
       }
       server.name = names.join('-');
       await this.serverRepository.save(server);
@@ -83,6 +92,7 @@ export class ConversationController {
         });
       return serverSend;
     } catch (error) {
+      console.error(error);
       return res.status(500).send(error);
     }
   }

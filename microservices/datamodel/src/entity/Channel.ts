@@ -38,7 +38,8 @@ export class Channel {
     delete channel.channelRoleSettings;
     delete channel.messages;
     delete channel.server;
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({action: "channelAdd", data: channel}));
+    if (this.server)
+      publisher.publish(`server:${this.server.id}`, JSON.stringify({action: "channelAdd", data: channel}));
   }
 
   @AfterUpdate()

@@ -88,7 +88,8 @@ export class Role {
     const role = {...this};
     delete role.members;
     delete role.server;
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleAdd", data: role}));
+    if (this.server)
+      publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "roleAdd", data: role}));
   }
 
   @AfterUpdate()

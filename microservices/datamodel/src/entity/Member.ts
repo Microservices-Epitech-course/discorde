@@ -36,15 +36,16 @@ export class Member {
 
   @AfterInsert()
   async insertListener() {
-    const server = await getRepository(Server).findOne(this.server.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
-
     const member = {...this};
     delete member.roles;
     delete member.server;
     delete member.messages;
     delete member.reactions;
-    publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${this.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Add`, data: server }))
-    publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
+    if (this.server) {
+      const server = await getRepository(Server).findOne(this.server.id, { relations: ["members", "members.user", "channels", "roles", "roles.members"]});
+      publisher.publish(`user:${this.user.id}`, JSON.stringify({ action: `${this.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Add`, data: server }))
+      publisher.publish(`server:${this.server.id}`, JSON.stringify({ action: "memberAdd", data: member }))
+    }
   }
 
   @AfterUpdate()
@@ -67,8 +68,9 @@ export class Member {
     publisher.publish(`user:${member.user.id}`, JSON.stringify({ action: `${member.server.type === ServerType.CONVERSATION ? "conversation" : "server"}Delete`, data: member.server.id}));
     await getRepository(Message).remove(member.messages);
     await getRepository(Reaction).remove(member.reactions);
-    if (member.server.type === ServerType.CONVERSATION && member.server.members.length === 1)
-      await getRepository(Server).remove(member.server);
+    // TODO In api functions instead of here
+    // if (member.server.type === ServerType.CONVERSATION && member.server.members.length === 1)
+    //   await getRepository(Server).remove(member.server);
   }
 
   async isAdmin() {
