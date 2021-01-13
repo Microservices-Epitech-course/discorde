@@ -1,1 +1,1 @@
-web: mkdir ./microservices/yahoo/node_modules && cp -r ./node_modules/@discorde/ ./microservices/yahoo/node_modules/ && yarn --cwd microservices/yahoo/ start 
+web: node ./microservices/yahoo/build/index.js 

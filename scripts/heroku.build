@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+PROJECT_ROOT="$(cd $(dirname $0)/..; pwd)"
+
+cd $PROJECT_ROOT
+
+SERVICE_FOLDER="./microservices/$BUILD_ENV"
+
+mkdir "$SERVICE_FOLDER/node_modules"
+cp -r ./node_modules/@discorde/ "$SERVICE_FOLDER/node_modules/"
+
+yarn --cwd $SERVICE_FOLDER build

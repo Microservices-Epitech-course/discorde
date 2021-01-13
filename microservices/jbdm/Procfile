@@ -1,1 +1,1 @@
-web: mkdir ./microservices/jbdm/node_modules && cp -r ./node_modules/@discorde/ ./microservices/jbdm/node_modules/ && yarn --cwd microservices/jbdm/ start 
+web: node ./microservices/jbdm/build/index.js 

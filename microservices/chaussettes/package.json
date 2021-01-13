@@ -27,6 +27,7 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
+      "build": "tsc",
       "watch": "nodemon -e ts,tsx,js,jsx,graphql --watch . --exec npm run start"
    }
 }

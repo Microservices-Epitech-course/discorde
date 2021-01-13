@@ -1,1 +1,1 @@
-web: mkdir ./microservices/marine/node_modules && cp -r ./node_modules/@discorde/ ./microservices/marine/node_modules/ && yarn --cwd microservices/marine/ start 
+web: node ./microservices/marine/build/index.js 

@@ -29,7 +29,9 @@
     "typescript": "3.3.3333",
     "ws": "^7.4.1"
   },
-  "scripts": {},
+  "scripts": {
+    "heroku-postbuild": "./scripts/heroku.build"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Microservices-Epitech-course/discorde.git"

@@ -1,1 +1,1 @@
-web: mkdir ./microservices/sven/node_modules && cp -r ./node_modules/@discorde/ ./microservices/sven/node_modules/ && yarn --cwd microservices/sven/ start 
+web: node ./microservices/sven/build/index.js 
