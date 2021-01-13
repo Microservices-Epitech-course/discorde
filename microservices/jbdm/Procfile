@@ -1,1 +1,1 @@
-web: node ./microservices/jbdm/build/index.js 
+web: cd ./microservices/jbdm && node ./build/index.js 

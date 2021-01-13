@@ -1,1 +1,1 @@
-web: node ./microservices/sven/build/index.js 
+web: cd ./microservices/sven && node ./build/index.js 

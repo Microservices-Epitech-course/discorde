@@ -1,1 +1,1 @@
-web: node ./microservices/hermes/build/index.js 
+web: cd ./microservices/hermes && node ./build/index.js 

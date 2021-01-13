@@ -1,1 +1,1 @@
-web: node ./microservices/kamoulox/build/index.js 
+web: cd ./microservices/kamoulox && node ./build/index.js 
